@@ -1,0 +1,131 @@
+:root {
+  /* ==========================================================================
+     NETSPEED PROFESSIONAL DESIGN SYSTEM — DARK THEME (DEFAULT)
+     ========================================================================== */
+  --bg-primary: #050811;
+  --bg-secondary: #0a0f1d;
+  --bg-tertiary: #10172a;
+  --bg-card: rgba(13, 20, 36, 0.72);
+  --bg-card-hover: rgba(18, 28, 50, 0.88);
+  --bg-card-solid: #0e1628;
+  --bg-overlay: rgba(3, 6, 15, 0.85);
+
+  /* Primary Brand Accents */
+  --accent-cyan: #00e5ff;
+  --accent-cyan-hover: #33ebff;
+  --accent-cyan-glow: rgba(0, 229, 255, 0.4);
+  
+  --accent-purple: #8b5cf6;
+  --accent-purple-glow: rgba(139, 92, 246, 0.4);
+  
+  --accent-emerald: #10b981;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.4);
+  
+  --accent-coral: #f43f5e;
+  --accent-coral-glow: rgba(244, 63, 94, 0.4);
+  
+  --accent-amber: #f59e0b;
+  --accent-amber-glow: rgba(245, 158, 11, 0.4);
+  
+  --accent-blue: #38bdf8;
+
+  /* Sleek Gradients */
+  --grad-primary: linear-gradient(135deg, #00e5ff 0%, #38bdf8 45%, #8b5cf6 100%);
+  --grad-download: linear-gradient(135deg, #00e5ff 0%, #0284c7 100%);
+  --grad-upload: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --grad-ping: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  --grad-button: linear-gradient(135deg, #00e5ff 0%, #0284c7 50%, #7c3aed 100%);
+  --grad-button-hover: linear-gradient(135deg, #33ebff 0%, #0369a1 50%, #6d28d9 100%);
+  --grad-card-border: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --grad-card-highlight: linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.2) 50%, transparent 100%);
+
+  /* High-Contrast Typography */
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-muted: #475569;
+  --text-inverse: #050811;
+
+  /* Borders & Dividers */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color-hover: rgba(0, 229, 255, 0.35);
+  --border-light: rgba(255, 255, 255, 0.04);
+
+  /* Shadows & Neon Ambient Halos */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 50px rgba(0, 0, 0, 0.6);
+  --shadow-cyan-glow: 0 0 35px rgba(0, 229, 255, 0.35);
+  --shadow-emerald-glow: 0 0 35px rgba(16, 185, 129, 0.35);
+  --shadow-button: 0 8px 32px rgba(0, 229, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+  /* Fonts */
+  --font-sans: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Radii & Layout */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  --container-width: 1240px;
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   LIGHT THEME — CLEAN, CRISP STUDIO GRADE
+   ========================================================================== */
+[data-theme="light"] {
+  --bg-primary: #f6f8fc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #edf2f7;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-hover: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-overlay: rgba(15, 23, 42, 0.5);
+
+  --accent-cyan: #0284c7;
+  --accent-cyan-hover: #0369a1;
+  --accent-cyan-glow: rgba(2, 132, 199, 0.25);
+  
+  --accent-purple: #7c3aed;
+  --accent-purple-glow: rgba(124, 58, 237, 0.25);
+  
+  --accent-emerald: #059669;
+  --accent-emerald-glow: rgba(5, 150, 105, 0.25);
+  
+  --accent-coral: #e11d48;
+  --accent-coral-glow: rgba(225, 29, 72, 0.25);
+  
+  --accent-amber: #d97706;
+  --accent-amber-glow: rgba(217, 119, 6, 0.25);
+
+  --grad-primary: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%);
+  --grad-download: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  --grad-upload: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --grad-ping: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  --grad-button: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%);
+  --grad-button-hover: linear-gradient(135deg, #0369a1 0%, #1d4ed8 50%, #6d28d9 100%);
+  --grad-card-border: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.02) 100%);
+  --grad-card-highlight: linear-gradient(90deg, transparent 0%, rgba(2, 132, 199, 0.15) 50%, transparent 100%);
+
+  --text-primary: #0b1120;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-color-hover: rgba(2, 132, 199, 0.4);
+  --border-light: rgba(0, 0, 0, 0.04);
+
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.09);
+  --shadow-cyan-glow: 0 0 25px rgba(2, 132, 199, 0.2);
+  --shadow-emerald-glow: 0 0 25px rgba(5, 150, 105, 0.2);
+  --shadow-button: 0 8px 24px rgba(2, 132, 199, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
