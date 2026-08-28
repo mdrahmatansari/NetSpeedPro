@@ -20,6 +20,10 @@ export default function Footer({ onNavClick, lang = 'en' }) {
           <p className="footer-desc">
             Professional high-speed broadband and latency diagnostic suite powered by real browser-based network streaming telemetry.
           </p>
+          <div className="footer-founder-card">
+            <span className="footer-founder-tag">FOUNDED & BUILT BY</span>
+            <span className="footer-founder-name">MD RAHMAT ANSARI</span>
+          </div>
         </div>
 
         {/* Navigation Links */}
@@ -53,9 +57,6 @@ export default function Footer({ onNavClick, lang = 'en' }) {
           <div className="footer-copyright-wrap">
             <span className="footer-copyright">
               © {new Date().getFullYear()} NETSPEEDPRO Technologies. All rights reserved.
-            </span>
-            <span className="footer-founder-credit">
-              Founded & Built by <strong>MD RAHMAT ANSARI</strong>
             </span>
           </div>
           <div className="footer-security-pill">
@@ -127,6 +128,33 @@ export default function Footer({ onNavClick, lang = 'en' }) {
           color: var(--text-tertiary);
         }
 
+        .footer-founder-card {
+          display: inline-flex;
+          flex-direction: column;
+          gap: 2px;
+          padding: 8px 14px;
+          background: rgba(0, 229, 255, 0.06);
+          border: 1px solid rgba(0, 229, 255, 0.22);
+          border-radius: var(--radius-xs);
+          margin-top: 6px;
+          width: fit-content;
+        }
+
+        .footer-founder-tag {
+          font-size: 0.65rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          color: var(--accent-cyan);
+          text-transform: uppercase;
+        }
+
+        .footer-founder-name {
+          font-size: 0.95rem;
+          font-weight: 800;
+          color: var(--text-primary);
+          letter-spacing: 0.02em;
+        }
+
         .footer-links-group {
           display: flex;
           gap: 48px;
@@ -183,18 +211,6 @@ export default function Footer({ onNavClick, lang = 'en' }) {
         .footer-copyright {
           font-size: 0.78rem;
           color: var(--text-tertiary);
-        }
-
-        .footer-founder-credit {
-          font-size: 0.78rem;
-          color: var(--text-secondary);
-          border-left: 1px solid var(--border-color);
-          padding-left: 14px;
-        }
-
-        .footer-founder-credit strong {
-          color: var(--accent-cyan);
-          font-weight: 700;
         }
 
         .footer-security-pill {
