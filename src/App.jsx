@@ -100,7 +100,7 @@ export default function App() {
           name: 'Mumbai Server',
           city: 'Mumbai',
           country: 'India',
-          sponsor: 'NetSpeed Core Node'
+          sponsor: 'NetSpeedPro Core Node'
         };
         setServers([fallbackServer]);
         setSelectedServer(fallbackServer);

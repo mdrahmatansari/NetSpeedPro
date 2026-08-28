@@ -52,7 +52,7 @@ export default function Footer({ onNavClick, lang = 'en' }) {
         <div className="container footer-bottom-inner">
           <div className="footer-copyright-wrap">
             <span className="footer-copyright">
-              © {new Date().getFullYear()} NETSPEED Technologies. All rights reserved.
+              © {new Date().getFullYear()} NETSPEEDPRO Technologies. All rights reserved.
             </span>
             <span className="footer-founder-credit">
               Founded & Built by <strong>MD RAHMAT ANSARI</strong>

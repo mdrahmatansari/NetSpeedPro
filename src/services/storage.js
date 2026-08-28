@@ -1,5 +1,7 @@
-const HISTORY_KEY = 'netspeed_test_history_v1';
-const SETTINGS_KEY = 'netspeed_settings_v1';
+const HISTORY_KEY = 'netspeedpro_test_history_v1';
+const SETTINGS_KEY = 'netspeedpro_settings_v1';
+const OLD_HISTORY_KEY = 'netspeed_test_history_v1';
+const OLD_SETTINGS_KEY = 'netspeed_settings_v1';
 
 export const DEFAULT_SETTINGS = {
   theme: 'dark', // 'dark' | 'light'
@@ -17,7 +19,7 @@ export const storageService = {
    */
   getHistory() {
     try {
-      const data = localStorage.getItem(HISTORY_KEY);
+      const data = localStorage.getItem(HISTORY_KEY) || localStorage.getItem(OLD_HISTORY_KEY);
       return data ? JSON.parse(data) : [];
     } catch {
       return [];
@@ -76,7 +78,7 @@ export const storageService = {
    */
   getSettings() {
     try {
-      const data = localStorage.getItem(SETTINGS_KEY);
+      const data = localStorage.getItem(SETTINGS_KEY) || localStorage.getItem(OLD_SETTINGS_KEY);
       return data ? { ...DEFAULT_SETTINGS, ...JSON.parse(data) } : DEFAULT_SETTINGS;
     } catch {
       return DEFAULT_SETTINGS;

@@ -16,7 +16,7 @@ export default function About({ lang = 'en' }) {
 
       <div className="about-body">
         <p className="about-lead">
-          <strong>NETSPEED</strong> is a high-precision, browser-based internet speed and broadband diagnostics platform designed to measure raw network capacity, latency responsiveness, jitter variance, and line stability without requiring third-party plugins or desktop software.
+          <strong>NETSPEEDPRO</strong> is a high-precision, browser-based internet speed and broadband diagnostics platform designed to measure raw network capacity, latency responsiveness, jitter variance, and line stability without requiring third-party plugins or desktop software.
         </p>
 
         {/* Founder Attribution Card */}
@@ -40,7 +40,7 @@ export default function About({ lang = 'en' }) {
             </div>
             <h5>Multi-Stream Architecture</h5>
             <p>
-              By launching multiple concurrent streaming workers, NETSPEED completely saturates modern fiber and broadband pipes up to multi-gigabit throughput.
+              By launching multiple concurrent streaming workers, NETSPEEDPRO completely saturates modern fiber and broadband pipes up to multi-gigabit throughput.
             </p>
           </div>
 

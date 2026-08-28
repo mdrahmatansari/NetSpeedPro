@@ -4,7 +4,7 @@ export const exportService = {
   /**
    * Export single or all results to CSV
    */
-  exportToCsv(results, filename = 'netspeed-results.csv') {
+  exportToCsv(results, filename = 'netspeedpro-results.csv') {
     const list = Array.isArray(results) ? results : [results];
     if (list.length === 0) return;
 
@@ -49,7 +49,7 @@ export const exportService = {
   /**
    * Export to raw JSON
    */
-  exportToJson(results, filename = 'netspeed-results.json') {
+  exportToJson(results, filename = 'netspeedpro-results.json') {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results, null, 2));
     const link = document.createElement('a');
     link.setAttribute('href', dataStr);
@@ -89,7 +89,7 @@ export const exportService = {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(24);
     doc.setTextColor(...primaryColor);
-    doc.text('NETSPEED', 20, 25);
+    doc.text('NETSPEEDPRO', 20, 25);
 
     doc.setFontSize(10);
     doc.setTextColor(148, 163, 184);
@@ -235,8 +235,8 @@ export const exportService = {
     // Footer
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
-    doc.text('© 2026 NETSPEED. Generated via secure browser network telemetry.', pageWidth / 2, 285, { align: 'center' });
+    doc.text('© 2026 NETSPEEDPRO. Generated via secure browser network telemetry.', pageWidth / 2, 285, { align: 'center' });
 
-    doc.save(`netspeed-report-${Date.now()}.pdf`);
+    doc.save(`netspeedpro-report-${Date.now()}.pdf`);
   }
 };

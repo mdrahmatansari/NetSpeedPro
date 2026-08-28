@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    brand: "NETSPEED",
+    brand: "NETSPEEDPRO",
     tagline: "Fast. Simple. Accurate.",
     navSpeedTest: "Speed Test",
     navHistory: "History",
@@ -70,7 +70,7 @@ export const translations = {
     saveHistoryToggle: "Save History Locally",
     dataWarning: "Speed tests can consume significant data (up to 100MB+ per test).",
     faqTitle: "Frequently Asked Questions",
-    aboutTitle: "About NETSPEED",
+    aboutTitle: "About NETSPEEDPRO",
     privacyTitle: "Privacy Policy",
     termsTitle: "Terms of Service",
     compareTitle: "Compare Your Speed",
@@ -82,7 +82,7 @@ export const translations = {
     percentileText: "Faster than approximately {percent}% of tested broadband connections."
   },
   hi: {
-    brand: "NETSPEED",
+    brand: "NETSPEEDPRO",
     tagline: "तेज़। सरल। सटीक।",
     navSpeedTest: "स्पीड टेस्ट",
     navHistory: "इतिहास",
@@ -152,7 +152,7 @@ export const translations = {
     saveHistoryToggle: "इतिहास सहेजें",
     dataWarning: "स्पीड टेस्ट में अधिक डेटा खर्च हो सकता है।",
     faqTitle: "अक्सर पूछे जाने वाले प्रश्न",
-    aboutTitle: "NETSPEED के बारे में",
+    aboutTitle: "NETSPEEDPRO के बारे में",
     privacyTitle: "गोपनीयता नीति",
     termsTitle: "उपयोग की शर्तें",
     compareTitle: "स्पीड तुलना",
@@ -164,7 +164,7 @@ export const translations = {
     percentileText: "आपके क्षेत्र के लगभग {percent}% ब्रॉडबैंड कनेक्शनों से तेज़।"
   },
   es: {
-    brand: "NETSPEED",
+    brand: "NETSPEEDPRO",
     tagline: "Rápido. Simple. Preciso.",
     navSpeedTest: "Test de Velocidad",
     navHistory: "Historial",
@@ -234,7 +234,7 @@ export const translations = {
     saveHistoryToggle: "Guardar Historial",
     dataWarning: "El test de velocidad puede consumir gran cantidad de datos.",
     faqTitle: "Preguntas Frecuentes",
-    aboutTitle: "Acerca de NETSPEED",
+    aboutTitle: "Acerca de NETSPEEDPRO",
     privacyTitle: "Política de Privacidad",
     termsTitle: "Términos de Servicio",
     compareTitle: "Comparar Velocidad",
@@ -246,7 +246,7 @@ export const translations = {
     percentileText: "Más rápido que aproximadamente el {percent}% de las conexiones."
   },
   fr: {
-    brand: "NETSPEED",
+    brand: "NETSPEEDPRO",
     tagline: "Rapide. Simple. Précis.",
     navSpeedTest: "Test de Débit",
     navHistory: "Historique",
@@ -316,7 +316,7 @@ export const translations = {
     saveHistoryToggle: "Sauvegarder l'Historique",
     dataWarning: "Ce test peut consommer une quantité importante de données.",
     faqTitle: "Questions Fréquentes",
-    aboutTitle: "À Propos de NETSPEED",
+    aboutTitle: "À Propos de NETSPEEDPRO",
     privacyTitle: "Politique de Confidentialité",
     termsTitle: "Conditions d'Utilisation",
     compareTitle: "Comparer Débit",
@@ -328,7 +328,7 @@ export const translations = {
     percentileText: "Plus rapide qu'environ {percent}% des connexions testées."
   },
   de: {
-    brand: "NETSPEED",
+    brand: "NETSPEEDPRO",
     tagline: "Schnell. Einfach. Präzise.",
     navSpeedTest: "Speedtest",
     navHistory: "Verlauf",
@@ -398,7 +398,7 @@ export const translations = {
     saveHistoryToggle: "Verlauf speichern",
     dataWarning: "Der Test kann ein hohes Datenvolumen verbrauchen.",
     faqTitle: "Häufige Fragen",
-    aboutTitle: "Über NETSPEED",
+    aboutTitle: "Über NETSPEEDPRO",
     privacyTitle: "Datenschutz",
     termsTitle: "Nutzungsbedingungen",
     compareTitle: "Geschwindigkeit vergleichen",
@@ -410,7 +410,7 @@ export const translations = {
     percentileText: "Schneller als etwa {percent}% aller gemessenen Anschlüsse."
   },
   ja: {
-    brand: "NETSPEED",
+    brand: "NETSPEEDPRO",
     tagline: "高速。シンプル。正確。",
     navSpeedTest: "速度テスト",
     navHistory: "履歴",
@@ -480,7 +480,7 @@ export const translations = {
     saveHistoryToggle: "履歴を保存",
     dataWarning: "速度測定によりデータ通信量を消費します。",
     faqTitle: "よくある質問",
-    aboutTitle: "NETSPEEDについて",
+    aboutTitle: "NETSPEEDPROについて",
     privacyTitle: "プライバシーポリシー",
     termsTitle: "利用規約",
     compareTitle: "速度比較",

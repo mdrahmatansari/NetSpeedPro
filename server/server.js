@@ -29,7 +29,7 @@ app.use('/api/speedtest', speedtestRouter);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
-    service: 'NETSPEED Measurement Backend',
+    service: 'NETSPEEDPRO Measurement Backend',
     timestamp: new Date().toISOString()
   });
 });
@@ -45,7 +45,7 @@ app.get('*', (req, res, next) => {
   }
   res.sendFile(path.join(distPath, 'index.html'), (err) => {
     if (err) {
-      res.status(200).send('NETSPEED Backend API is active. Start Vite development server for frontend UI.');
+      res.status(200).send('NETSPEEDPRO Backend API is active. Start Vite development server for frontend UI.');
     }
   });
 });
@@ -61,7 +61,7 @@ app.use((err, req, res, next) => {
 
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`=========================================`);
-  console.log(`  NETSPEED Server Running Successfully!   `);
+  console.log(`  NETSPEEDPRO Server Running Successfully!`);
   console.log(`  URL:  http://localhost:${PORT}          `);
   console.log(`  IP:   http://127.0.0.1:${PORT}          `);
   console.log(`  API:  http://localhost:${PORT}/api/speedtest/ping`);

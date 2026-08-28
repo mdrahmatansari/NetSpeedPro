@@ -14,7 +14,7 @@ export default function ServerCard({ server, onOpenModal, lang = 'en', ping = 0 
       <div className="server-details">
         <span className="server-card-label">{t.server}</span>
         <h4 className="server-name">{server?.name || 'Mumbai Server'}</h4>
-        <span className="server-sponsor">{server?.sponsor || 'NetSpeed Edge Core Node'}</span>
+        <span className="server-sponsor">{server?.sponsor || 'NetSpeedPro Edge Core Node'}</span>
       </div>
 
       <div className="server-meta">

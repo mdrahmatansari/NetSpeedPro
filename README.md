@@ -1,6 +1,6 @@
-# 🚀 NETSPEED — Professional Network & Internet Speed Test Platform
+# 🚀 NETSPEEDPRO — Professional Network & Internet Speed Test Platform
 
-**NETSPEED** is a modern, high-precision, production-grade internet speed test application built with a Node.js/Express backend and a responsive React frontend with interactive Canvas visualizations.
+**NETSPEEDPRO** is a modern, high-precision, production-grade internet speed test application built with a Node.js/Express backend and a responsive React frontend with interactive Canvas visualizations.
 
 ---
 
@@ -128,4 +128,4 @@ npm run dev
 ---
 
 ## 📄 License
-© 2026 NETSPEED Technologies. All rights reserved.
+© 2026 NETSPEEDPRO Technologies. All rights reserved.

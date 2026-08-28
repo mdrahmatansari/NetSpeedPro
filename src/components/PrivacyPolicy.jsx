@@ -19,7 +19,7 @@ export default function PrivacyPolicy({ lang = 'en' }) {
         <section className="legal-section">
           <h4>1. Our Privacy Commitment</h4>
           <p>
-            At NETSPEED, we believe speed testing should be fast, accurate, and respect your digital privacy. We do not sell your personal IP information, track your web browsing history, or share telemetry data with third-party data brokers.
+            At NETSPEEDPRO, we believe speed testing should be fast, accurate, and respect your digital privacy. We do not sell your personal IP information, track your web browsing history, or share telemetry data with third-party data brokers.
           </p>
         </section>
 

@@ -17,12 +17,12 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
   if (!isOpen || !result) return null;
 
   const shareText = 
-`🚀 My Internet Speed Test on NETSPEED:
+`🚀 My Internet Speed Test on NETSPEEDPRO:
 📥 Download: ${result.download || 0} ${unit}
 📤 Upload: ${result.upload || 0} ${unit}
 ⚡ Ping: ${result.ping || 0} ms | Jitter: ${result.jitter || 0} ms
 🛡️ Stability: ${result.stabilityRating || 'Excellent'} (${result.stability || 100}%)
-🌐 Tested via NETSPEED (https://netspeed.app)`;
+🌐 Tested via NETSPEEDPRO (https://netspeedpro.app)`;
 
   const shareUrl = window.location.origin;
 
@@ -40,7 +40,7 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'My Internet Speed Test on NETSPEED',
+          title: 'My Internet Speed Test on NETSPEEDPRO',
           text: shareText,
           url: shareUrl
         });
@@ -81,7 +81,7 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
         {/* Share Summary Preview Box */}
         <div className="share-preview-card">
           <div className="share-preview-header">
-            <span className="brand-badge-mini">NETSPEED CERTIFIED</span>
+            <span className="brand-badge-mini">NETSPEEDPRO CERTIFIED</span>
             <span className="share-date">{result.formattedDate || new Date().toLocaleDateString()}</span>
           </div>
 

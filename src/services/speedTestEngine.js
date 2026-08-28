@@ -1,5 +1,5 @@
 /**
- * NETSPEED Core Real Network Measurement Engine
+ * NETSPEEDPRO Core Real Network Measurement Engine
  * Measures 100% genuine real-time network throughput and latency directly over the internet.
  * Zero random numbers, zero fake curves, zero mock fallbacks.
  */

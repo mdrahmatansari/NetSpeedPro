@@ -87,7 +87,6 @@ export default function Navbar({
           </div>
           <div className="brand-text">
             <span className="brand-name">{t.brand}</span>
-            <span className="brand-badge">PRO</span>
           </div>
         </div>
 

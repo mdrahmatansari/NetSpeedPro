@@ -42,7 +42,7 @@ export default function FAQ({ lang = 'en' }) {
     },
     {
       q: "How accurate is a browser-based speed test?",
-      a: "NETSPEED measures real network transfers by saturating multiple parallel HTTP/HTTPS streams with binary chunks and timing them using high-precision performance timers. While browser security sandboxes add minimal overhead compared to low-level native sockets, browser tests reflect real-world web performance with 98%+ accuracy."
+      a: "NETSPEEDPRO measures real network transfers by saturating multiple parallel HTTP/HTTPS streams with binary chunks and timing them using high-precision performance timers. While browser security sandboxes add minimal overhead compared to low-level native sockets, browser tests reflect real-world web performance with 98%+ accuracy."
     },
     {
       q: "Does running a speed test consume my data plan?",

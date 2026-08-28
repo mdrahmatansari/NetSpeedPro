@@ -19,21 +19,21 @@ export default function Terms({ lang = 'en' }) {
         <section className="legal-section">
           <h4>1. Acceptance of Terms</h4>
           <p>
-            By accessing or running speed tests on NETSPEED, you agree to these Terms of Service. If you do not agree with any portion of these terms, please do not use the application.
+            By accessing or running speed tests on NETSPEEDPRO, you agree to these Terms of Service. If you do not agree with any portion of these terms, please do not use the application.
           </p>
         </section>
 
         <section className="legal-section">
           <h4>2. Acceptable Network Usage</h4>
           <p>
-            NETSPEED is intended for personal and enterprise broadband speed diagnostics. You agree not to automate denial-of-service (DoS) stress tests, scrape backend binary streams maliciously, or overload network edge nodes without authorization.
+            NETSPEEDPRO is intended for personal and enterprise broadband speed diagnostics. You agree not to automate denial-of-service (DoS) stress tests, scrape backend binary streams maliciously, or overload network edge nodes without authorization.
           </p>
         </section>
 
         <section className="legal-section">
           <h4>3. Measurement Accuracy & Disclaimers</h4>
           <p>
-            While NETSPEED employs multi-stream precision algorithms, actual throughput can vary depending on Wi-Fi interference, router hardware limits, background apps, device CPU load, and transit peering between ISPs. Results are provided for informational and troubleshooting purposes.
+            While NETSPEEDPRO employs multi-stream precision algorithms, actual throughput can vary depending on Wi-Fi interference, router hardware limits, background apps, device CPU load, and transit peering between ISPs. Results are provided for informational and troubleshooting purposes.
           </p>
         </section>
       </div>
