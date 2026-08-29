@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 import { storageService } from '../services/storage';
 
 // High-speed benchmark scale points
@@ -19,7 +19,7 @@ export default function Speedometer({
   const currentSpeedRef = useRef(0);
   const targetSpeedRef = useRef(currentSpeed);
   const animationFrameRef = useRef(null);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   targetSpeedRef.current = currentSpeed;
 
@@ -283,11 +283,11 @@ export default function Speedometer({
           </div>
 
           <div className="speedometer-substatus">
-            {phase === 'download' && <span className="substatus-download">▼ LIVE DOWNLOAD STREAM</span>}
-            {phase === 'upload' && <span className="substatus-upload">▲ LIVE UPLOAD STREAM</span>}
-            {phase === 'ping' && <span className="substatus-ping">● PROBING RTT LATENCY</span>}
-            {phase === 'idle' && <span className="substatus-idle">Ready for benchmark</span>}
-            {phase === 'complete' && <span className="substatus-complete">✔ Telemetry Verified</span>}
+            {phase === 'download' && <span className="substatus-download">{t.liveDownloadStream}</span>}
+            {phase === 'upload' && <span className="substatus-upload">{t.liveUploadStream}</span>}
+            {phase === 'ping' && <span className="substatus-ping">{t.probingLatency}</span>}
+            {phase === 'idle' && <span className="substatus-idle">{t.readyForBenchmark}</span>}
+            {phase === 'complete' && <span className="substatus-complete">{t.telemetryVerified}</span>}
           </div>
         </div>
       </div>

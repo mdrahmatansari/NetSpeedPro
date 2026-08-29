@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Breadcrumbs from './Breadcrumbs';
 import CountryFlag from './CountryFlag';
+import { getTranslations } from '../translations/i18n';
 import { PERFORMANCE_METRICS_INFO, ISP_DIRECTORY_DATA, METHODOLOGY_EXPLANATION } from '../data/performanceDirectoryData';
 
 export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
@@ -19,6 +20,7 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
   const [selectedTech, setSelectedTech] = useState('All');
   const [sortField, setSortField] = useState('avgDownload');
   const [sortOrder, setSortOrder] = useState('desc');
+  const t = getTranslations(lang);
 
   // Filter & Sort ISPs
   const filteredIsps = useMemo(() => {
@@ -58,10 +60,11 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
     <div className="container page-container">
       <Breadcrumbs 
         items={[
-          { label: 'Tools', path: '/speedtest-performance-directory' },
-          { label: 'Speedtest Performance Directory', path: '/speedtest-performance-directory' }
+          { label: t.tools, path: '/speedtest-performance-directory' },
+          { label: t.performanceDirectoryTitle, path: '/speedtest-performance-directory' }
         ]} 
         onNavigate={onNavigate} 
+        lang={lang}
       />
 
       {/* Hero Card */}
@@ -69,13 +72,13 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
         <div className="hero-badge-row">
           <div className="directory-badge-pill">
             <BarChart2 size={15} className="text-cyan" />
-            <span>GLOBAL ISP & NETWORK TELEMETRY BENCHMARKS</span>
+            <span>{t.directoryPill}</span>
           </div>
-          <span className="demo-data-pill verified-badge-pill">VERIFIED REAL-WORLD BENCHMARKS</span>
+          <span className="demo-data-pill verified-badge-pill">{t.telemetryVerified}</span>
         </div>
-        <h1 className="directory-main-title">Speedtest Performance Directory</h1>
+        <h1 className="directory-main-title">{t.performanceDirectoryTitle}</h1>
         <p className="directory-main-lead">
-          Explore benchmark speeds, median latency, and network consistency scores across leading fixed fiber, cable, 5G, and satellite internet service providers worldwide.
+          {t.directoryMainLead}
         </p>
       </div>
 
@@ -83,7 +86,7 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
       <section className="directory-section">
         <h2 className="directory-section-title">
           <Activity size={20} className="text-cyan" />
-          <span>Core Telemetry Metrics Explained</span>
+          <span>{t.coreMetricsExplained || "Core Telemetry Metrics Explained"}</span>
         </h2>
         <div className="metrics-cards-grid">
           {PERFORMANCE_METRICS_INFO.map(metric => (
@@ -96,7 +99,7 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
               <p className="metric-desc">{metric.description}</p>
               <div className="metric-footer-box">
                 <div className="metric-good-range">
-                  <span className="range-label">Benchmark:</span>
+                  <span className="range-label">{t.benchmarkLabel || "Benchmark Standard:"}</span>
                   <span className="range-val">{metric.goodRange}</span>
                 </div>
               </div>
@@ -111,9 +114,9 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
           <div>
             <h2 className="directory-section-title">
               <Server size={20} className="text-cyan" />
-              <span>ISP & Carrier Performance Index</span>
+              <span>{t.ispCarrierIndex || "ISP & Carrier Performance Index"}</span>
             </h2>
-            <span className="table-subtitle">Verified throughput and latency metrics aggregated from consumer benchmarks</span>
+            <span className="table-subtitle">{t.ispCarrierSubtitle || "Verified throughput and latency metrics aggregated from consumer benchmarks"}</span>
           </div>
 
           {/* Search and Filters */}
@@ -122,7 +125,7 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
               <Search size={14} className="table-search-ico" />
               <input 
                 type="text"
-                placeholder="Filter provider (e.g. Jio, Verizon, Airtel)..."
+                placeholder={t.directorySearchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="table-search-input"
@@ -137,7 +140,7 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
                   className={`table-filter-btn ${selectedTech === tech ? 'active' : ''}`}
                   onClick={() => setSelectedTech(tech)}
                 >
-                  {tech}
+                  {tech === 'All' ? (t.all || 'All') : tech}
                 </button>
               ))}
             </div>
@@ -149,28 +152,28 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
           <table className="directory-table">
             <thead>
               <tr>
-                <th>PROVIDER & REGION</th>
-                <th>TECHNOLOGY</th>
+                <th>{t.providerCol || "PROVIDER & REGION"}</th>
+                <th>{t.techCol || "TECHNOLOGY"}</th>
                 <th onClick={() => handleSort('avgDownload')} className="sortable-th">
                   <div className="th-content">
-                    <span>AVG DOWNLOAD</span>
+                    <span>{t.download || "DOWNLOAD"}</span>
                     {sortField === 'avgDownload' && (sortOrder === 'desc' ? '▼' : '▲')}
                   </div>
                 </th>
                 <th onClick={() => handleSort('avgUpload')} className="sortable-th">
                   <div className="th-content">
-                    <span>AVG UPLOAD</span>
+                    <span>{t.upload || "UPLOAD"}</span>
                     {sortField === 'avgUpload' && (sortOrder === 'desc' ? '▼' : '▲')}
                   </div>
                 </th>
                 <th onClick={() => handleSort('avgPing')} className="sortable-th">
                   <div className="th-content">
-                    <span>MEDIAN PING</span>
+                    <span>{t.ping || "PING"}</span>
                     {sortField === 'avgPing' && (sortOrder === 'desc' ? '▼' : '▲')}
                   </div>
                 </th>
-                <th>STABILITY</th>
-                <th>RATING</th>
+                <th>{t.stability || "STABILITY"}</th>
+                <th>{t.overallRating || "RATING"}</th>
               </tr>
             </thead>
             <tbody>

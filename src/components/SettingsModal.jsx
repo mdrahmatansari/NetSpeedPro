@@ -13,7 +13,7 @@ import {
   Globe, 
   Cpu 
 } from 'lucide-react';
-import { translations, LANGUAGES } from '../translations/i18n';
+import { getTranslations, LANGUAGES } from '../translations/i18n';
 import CountryFlag from './CountryFlag';
 
 export default function SettingsModal({ 
@@ -25,7 +25,7 @@ export default function SettingsModal({
   lang = 'en', 
   setLang 
 }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   if (!isOpen) return null;
 
@@ -42,7 +42,7 @@ export default function SettingsModal({
             <Settings size={22} className="text-cyan" />
             <span>{t.settings}</span>
           </div>
-          <button className="btn-icon" onClick={onClose} aria-label="Close modal">
+          <button className="btn-icon" onClick={onClose} aria-label={t.close}>
             <X size={18} />
           </button>
         </div>
@@ -55,10 +55,10 @@ export default function SettingsModal({
                 {settings.theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
                 <span className="setting-label">{t.theme}</span>
               </div>
-              <span className="setting-desc">Switch between high-contrast dark and light interfaces</span>
+              <span className="setting-desc">{t.themeToggle}</span>
             </div>
             <button className="btn-secondary theme-switch-btn" onClick={handleToggleTheme}>
-              {settings.theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+              {settings.theme === 'dark' ? t.dark : t.light}
             </button>
           </div>
 
@@ -69,7 +69,7 @@ export default function SettingsModal({
                 <Gauge size={16} />
                 <span className="setting-label">{t.units}</span>
               </div>
-              <span className="setting-desc">Distinguish Megabits/s from Megabytes/s (1 MB/s = 8 Mbps)</span>
+              <span className="setting-desc">Mbps / MB/s / Gbps</span>
             </div>
             <div className="unit-pill-group">
               {['Mbps', 'MB/s', 'Gbps'].map((u) => (
@@ -91,7 +91,7 @@ export default function SettingsModal({
                 <Clock size={16} />
                 <span className="setting-label">{t.duration}</span>
               </div>
-              <span className="setting-desc">Longer duration provides maximum accuracy for gigabit links</span>
+              <span className="setting-desc">{t.settingsSubtitle}</span>
             </div>
             <select 
               value={settings.duration} 
@@ -111,17 +111,17 @@ export default function SettingsModal({
                 <Network size={16} />
                 <span className="setting-label">{t.parallelStreams}</span>
               </div>
-              <span className="setting-desc">Concurrent streams to fully saturate broadband pipeline</span>
+              <span className="setting-desc">{t.multiStreamArch}</span>
             </div>
             <select 
               value={settings.parallelStreams} 
               onChange={(e) => onUpdateSettings({ parallelStreams: parseInt(e.target.value, 10) })}
               className="settings-select"
             >
-              <option value={1}>1 Stream (Single-thread)</option>
-              <option value={2}>2 Streams</option>
-              <option value={4}>4 Streams (Recommended)</option>
-              <option value={8}>8 Streams (Gigabit+)</option>
+              <option value={1}>{t.streamSingular || "1 Stream"}</option>
+              <option value={2}>{(t.streamsPlural || "{n} Streams").replace('{n}', '2')}</option>
+              <option value={4}>{(t.streamsPlural || "{n} Streams").replace('{n}', '4')}</option>
+              <option value={8}>{(t.streamsPlural || "{n} Streams").replace('{n}', '8')}</option>
             </select>
           </div>
 
@@ -132,7 +132,7 @@ export default function SettingsModal({
                 <Database size={16} />
                 <span className="setting-label">{t.saveHistoryToggle}</span>
               </div>
-              <span className="setting-desc">Keep record of your past speed tests in browser storage</span>
+              <span className="setting-desc">{t.testHistorySubtitle}</span>
             </div>
             <label className="toggle-switch">
               <input 
@@ -144,16 +144,14 @@ export default function SettingsModal({
             </label>
           </div>
 
-
-
-          {/* Section 7: Language Selector (24 Languages) */}
+          {/* Section 6: Language Selector */}
           <div className="setting-row lang-setting-row">
             <div className="setting-info">
               <div className="setting-label-row">
                 <Globe size={16} />
-                <span className="setting-label">Language / भाषा ({LANGUAGES.length} Languages)</span>
+                <span className="setting-label">{t.currentLanguage} ({LANGUAGES.length})</span>
               </div>
-              <span className="setting-desc">Select your preferred regional or global interface language</span>
+              <span className="setting-desc">{t.searchLanguages}</span>
             </div>
             <div className="lang-pills-grid">
               {LANGUAGES.map((item) => (
@@ -188,7 +186,7 @@ export default function SettingsModal({
           <button 
             className="btn-secondary clear-all-btn" 
             onClick={() => {
-              if (window.confirm('Are you sure you want to delete all saved test history?')) {
+              if (window.confirm(t.confirmClearHistory || 'Are you sure you want to delete all saved test history?')) {
                 onClearHistory();
               }
             }}

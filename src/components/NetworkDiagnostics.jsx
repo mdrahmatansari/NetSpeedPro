@@ -11,12 +11,12 @@ import {
   Zap, 
   Lock 
 } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
   const [isRunningDiag, setIsRunningDiag] = useState(false);
   const [diagResults, setDiagResults] = useState(null);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   const runDiagnostics = async () => {
     setIsRunningDiag(true);
@@ -27,10 +27,10 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
     tests.push({
       id: 'connectivity',
       icon: Globe,
-      name: 'Internet Gateway Connectivity',
+      name: t.testGateway,
       status: isOnline ? 'excellent' : 'poor',
-      metric: isOnline ? 'Online' : 'Offline',
-      description: isOnline ? 'Full end-to-end IP network gateway reachable.' : 'No active network route detected.'
+      metric: isOnline ? t.online : t.offline,
+      description: t.testGatewayDesc
     });
 
     // Test 2: DNS & HTTP Round-Trip
@@ -42,20 +42,20 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
         tests.push({
           id: 'http_rtt',
           icon: Activity,
-          name: 'HTTP Edge Latency & DNS Lookup',
+          name: t.testHttp,
           status: elapsed < 40 ? 'excellent' : elapsed < 90 ? 'good' : 'fair',
           metric: `${elapsed} ms`,
-          description: elapsed < 50 ? 'Rapid sub-50ms HTTP handshake to nearest point of presence.' : 'Slight network routing delay observed.'
+          description: t.testHttpDesc
         });
       }
     } catch {
       tests.push({
         id: 'http_rtt',
         icon: Activity,
-        name: 'HTTP Edge Latency',
+        name: t.testHttp,
         status: 'poor',
-        metric: 'Failed',
-        description: 'Unable to reach HTTP speed test server.'
+        metric: t.offline,
+        description: t.testHttpDesc
       });
     }
 
@@ -64,10 +64,10 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
     tests.push({
       id: 'jitter',
       icon: Zap,
-      name: 'Packet Timing & Jitter Variance',
+      name: t.testJitter,
       status: jitterVal <= 8 ? 'excellent' : jitterVal <= 20 ? 'good' : 'fair',
       metric: `±${jitterVal} ms`,
-      description: jitterVal <= 8 ? 'Consistent packet delivery timing with minimal jitter.' : 'Packet delivery timing fluctuates slightly.'
+      description: t.testJitterDesc
     });
 
     // Test 4: SSL/TLS Handshake Security
@@ -75,10 +75,10 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
     tests.push({
       id: 'security',
       icon: Lock,
-      name: 'Transport Layer Security (TLS/HTTPS)',
+      name: t.testSecurity,
       status: isSecure ? 'excellent' : 'fair',
-      metric: isSecure ? 'Active' : 'Unencrypted HTTP',
-      description: isSecure ? 'Secure TLS encryption active for all network traffic.' : 'Insecure plaintext protocol in use.'
+      metric: isSecure ? t.online : t.offline,
+      description: t.testSecurityDesc
     });
 
     // Test 5: Bufferbloat / Network Congestion
@@ -86,10 +86,10 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
     tests.push({
       id: 'bufferbloat',
       icon: Wifi,
-      name: 'Bufferbloat & Queuing Delay',
+      name: t.testBufferbloat,
       status: bufferbloat <= 10 ? 'excellent' : bufferbloat <= 30 ? 'good' : 'fair',
-      metric: `${bufferbloat} ms delay`,
-      description: bufferbloat <= 10 ? 'Low bufferbloat. Latency remains stable even under heavy network load.' : 'Moderate queuing delay during heavy transfers.'
+      metric: `${bufferbloat} ms`,
+      description: t.testBufferbloatDesc
     });
 
     setDiagResults(tests);
@@ -101,26 +101,26 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
       case 'excellent':
         return (
           <span className="badge badge-emerald diag-badge">
-            <CheckCircle size={14} /> Excellent
+            <CheckCircle size={14} /> {t.excellent}
           </span>
         );
       case 'good':
         return (
           <span className="badge badge-cyan diag-badge">
-            <CheckCircle size={14} /> Good
+            <CheckCircle size={14} /> {t.good}
           </span>
         );
       case 'fair':
         return (
           <span className="badge badge-amber diag-badge">
-            <AlertTriangle size={14} /> Needs Attention
+            <AlertTriangle size={14} /> {t.fair}
           </span>
         );
       case 'poor':
       default:
         return (
           <span className="badge badge-coral diag-badge">
-            <XCircle size={14} /> Poor
+            <XCircle size={14} /> {t.poor}
           </span>
         );
     }
@@ -133,7 +133,7 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
           <ShieldCheck className="text-cyan" size={24} />
           <div>
             <h3 className="diag-title">{t.diagnosticsTitle}</h3>
-            <span className="diag-subtitle">Automated health inspection of broadband parameters</span>
+            <span className="diag-subtitle">{t.diagnosticsSubtitle}</span>
           </div>
         </div>
 
@@ -143,7 +143,7 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
           disabled={isRunningDiag}
         >
           <RefreshCw size={16} className={isRunningDiag ? 'spin' : ''} />
-          <span>{isRunningDiag ? 'Inspecting Network...' : 'Run Diagnostics'}</span>
+          <span>{isRunningDiag ? t.runningDiagnostics : t.runDiagnostics}</span>
         </button>
       </div>
 
@@ -152,34 +152,34 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
           {
             id: 'con',
             icon: Globe,
-            name: 'Internet Gateway Connectivity',
+            name: t.testGateway,
             status: 'excellent',
-            metric: 'Online',
-            description: 'Full IP connectivity detected.'
+            metric: t.online,
+            description: t.testGatewayDesc
           },
           {
             id: 'dns',
             icon: Activity,
-            name: 'DNS & HTTP Handshake',
+            name: t.testHttp,
             status: 'excellent',
             metric: '18 ms',
-            description: 'Fast DNS resolution & TLS edge route.'
+            description: t.testHttpDesc
           },
           {
             id: 'jit',
             icon: Zap,
-            name: 'Packet Timing & Jitter Variance',
+            name: t.testJitter,
             status: 'excellent',
             metric: '±3 ms',
-            description: 'Optimal packet delivery timing.'
+            description: t.testJitterDesc
           },
           {
             id: 'buf',
             icon: Wifi,
-            name: 'Bufferbloat & Queuing Delay',
+            name: t.testBufferbloat,
             status: 'good',
-            metric: '8 ms delay',
-            description: 'Stable throughput queue under saturation.'
+            metric: '8 ms',
+            description: t.testBufferbloatDesc
           }
         ] : diagResults).map((item, idx) => {
           const Icon = item.icon;

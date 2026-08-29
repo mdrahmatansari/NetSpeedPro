@@ -13,7 +13,7 @@ import {
   PlusCircle,
   CheckCircle2
 } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 import { storageService } from '../services/storage';
 
 export default function TestHistory({ 
@@ -29,7 +29,7 @@ export default function TestHistory({
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [visibleCount, setVisibleCount] = useState(5);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   const filteredHistory = history.filter((item) => {
     const term = searchTerm.toLowerCase();
@@ -61,7 +61,7 @@ export default function TestHistory({
           <div>
             <h3 className="history-title">{t.testHistory}</h3>
             <span className="history-subtitle">
-              {history.length} {history.length === 1 ? 'record' : 'records'} stored locally on your device
+              {t.testHistorySubtitle}
             </span>
           </div>
         </div>
@@ -72,18 +72,18 @@ export default function TestHistory({
               <Search size={14} className="history-search-icon" />
               <input 
                 type="text" 
-                placeholder="Search history..."
+                placeholder={t.searchHistoryPlaceholder || "Search history..."}
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="history-search-input"
               />
             </div>
 
-            <button className="btn-secondary history-btn" onClick={onExportCsv} title="Export CSV">
+            <button className="btn-secondary history-btn" onClick={onExportCsv} title={t.exportCsv}>
               <FileSpreadsheet size={15} />
               <span>CSV</span>
             </button>
-            <button className="btn-secondary history-btn" onClick={onExportJson} title="Export JSON">
+            <button className="btn-secondary history-btn" onClick={onExportJson} title={t.exportJson}>
               <Code size={15} />
               <span>JSON</span>
             </button>
@@ -99,18 +99,18 @@ export default function TestHistory({
         <div className="history-empty">
           <History size={48} className="empty-icon" />
           <p className="empty-text">{t.noHistory}</p>
-          <span className="empty-sub">Your speed tests will be automatically recorded here.</span>
+          <span className="empty-sub">{t.tagline}</span>
         </div>
       ) : (
         <>
           {/* History Status Bar */}
           <div className="history-status-bar">
             <span className="history-counter-text">
-              Showing <strong>{Math.min(visibleCount, filteredHistory.length)}</strong> of <strong>{filteredHistory.length}</strong> Records
+              {Math.min(visibleCount, filteredHistory.length)} / {filteredHistory.length}
             </span>
             {searchTerm && (
               <span className="history-search-badge">
-                Search: "{searchTerm}"
+                "{searchTerm}"
               </span>
             )}
           </div>
@@ -120,13 +120,13 @@ export default function TestHistory({
             <table className="history-table">
               <thead>
                 <tr>
-                  <th>DATE & TIME</th>
-                  <th>DOWNLOAD</th>
-                  <th>UPLOAD</th>
-                  <th>PING / JITTER</th>
-                  <th>STABILITY</th>
-                  <th>ISP / SERVER</th>
-                  <th style={{ textAlign: 'right' }}>ACTIONS</th>
+                  <th>{t.dateTime || "DATE & TIME"}</th>
+                  <th>{t.download}</th>
+                  <th>{t.upload}</th>
+                  <th>{t.ping} / {t.jitter}</th>
+                  <th>{t.stability}</th>
+                  <th>{t.isp} / {t.server}</th>
+                  <th style={{ textAlign: 'right' }}>{t.actions}</th>
                 </tr>
               </thead>
               <tbody>
@@ -177,24 +177,24 @@ export default function TestHistory({
                           <button 
                             className="btn-icon mini-action-btn"
                             onClick={() => onViewDetails(item)}
-                            title="View Details / Certificate"
-                            aria-label="View Details"
+                            title={t.viewCertificate || "View Details / Certificate"}
+                            aria-label={t.viewCertificate || "View Details"}
                           >
                             <Eye size={14} />
                           </button>
                           <button 
                             className="btn-icon mini-action-btn"
                             onClick={() => onExportPdf(item)}
-                            title="Download PDF Report"
-                            aria-label="Download PDF Report"
+                            title={t.downloadPdfReport || "Download PDF Report"}
+                            aria-label={t.downloadPdfReport || "Download PDF Report"}
                           >
                             <FileText size={14} />
                           </button>
                           <button 
                             className="btn-icon mini-action-btn btn-delete"
                             onClick={() => onDelete(item.id)}
-                            title="Delete Record"
-                            aria-label="Delete Record"
+                            title={t.deleteRecord || "Delete Record"}
+                            aria-label={t.deleteRecord || "Delete Record"}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -228,7 +228,7 @@ export default function TestHistory({
                   {/* Metrics Row */}
                   <div className="history-card-metrics">
                     <div className="card-metric-col">
-                      <span className="card-metric-label">DOWNLOAD</span>
+                      <span className="card-metric-label">{t.download}</span>
                       <div className="speed-cell dl-cell">
                         <ArrowDown size={13} />
                         <span className="speed-val">{dlFormatted}</span>
@@ -237,7 +237,7 @@ export default function TestHistory({
                     </div>
 
                     <div className="card-metric-col">
-                      <span className="card-metric-label">UPLOAD</span>
+                      <span className="card-metric-label">{t.upload}</span>
                       <div className="speed-cell ul-cell">
                         <ArrowUp size={13} />
                         <span className="speed-val">{ulFormatted}</span>
@@ -246,7 +246,7 @@ export default function TestHistory({
                     </div>
 
                     <div className="card-metric-col">
-                      <span className="card-metric-label">PING</span>
+                      <span className="card-metric-label">{t.ping}</span>
                       <div className="ping-cell">
                         <span className="text-purple">{item.ping || 0} ms</span>
                         <span className="sub-jitter">±{item.jitter || 0} ms</span>
@@ -265,13 +265,15 @@ export default function TestHistory({
                     <button 
                       className="btn-secondary history-card-btn"
                       onClick={() => onViewDetails(item)}
+                      title={t.view}
                     >
                       <Eye size={14} />
-                      <span>View</span>
+                      <span>{t.view}</span>
                     </button>
                     <button 
                       className="btn-secondary history-card-btn"
                       onClick={() => onExportPdf(item)}
+                      title={t.exportPdf}
                     >
                       <FileText size={14} />
                       <span>PDF</span>
@@ -279,9 +281,10 @@ export default function TestHistory({
                     <button 
                       className="btn-secondary history-card-btn card-btn-delete"
                       onClick={() => onDelete(item.id)}
+                      title={t.delete}
                     >
                       <Trash2 size={14} />
-                      <span>Delete</span>
+                      <span>{t.delete}</span>
                     </button>
                   </div>
                 </div>
@@ -295,12 +298,12 @@ export default function TestHistory({
               {hasMore ? (
                 <button className="btn-load-more" onClick={handleLoadMore}>
                   <PlusCircle size={18} />
-                  <span>More History ({filteredHistory.length - visibleCount} remaining)</span>
+                  <span>{t.loadMore} ({filteredHistory.length - visibleCount})</span>
                 </button>
               ) : (
                 <div className="history-all-loaded">
                   <CheckCircle2 size={18} className="text-emerald" />
-                  <span>All {filteredHistory.length} test records displayed</span>
+                  <span>{t.telemetryVerified} ({filteredHistory.length})</span>
                 </div>
               )}
             </div>

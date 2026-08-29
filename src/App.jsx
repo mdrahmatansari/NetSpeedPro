@@ -25,7 +25,7 @@ import GlobalIndex from './components/GlobalIndex';
 import SpeedtestAwards from './components/SpeedtestAwards';
 import Footer from './components/Footer';
 
-import { translations } from './translations/i18n';
+import { getTranslations } from './translations/i18n';
 import { storageService } from './services/storage';
 import { SpeedTestEngine } from './services/speedTestEngine';
 import { exportService } from './services/exportService';
@@ -142,12 +142,19 @@ export default function App() {
   const [shareTargetResult, setShareTargetResult] = useState(null);
 
   const engineRef = useRef(null);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   // Apply Theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  // Apply Language & Direction (RTL support for Arabic, Urdu, Persian, Hebrew)
+  useEffect(() => {
+    const isRtl = ['ar', 'ur', 'fa', 'he'].includes(lang);
+    document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', lang);
+  }, [lang]);
 
   // Synchronize Browser Back / Forward History Navigation
   useEffect(() => {
@@ -396,7 +403,7 @@ export default function App() {
             <section className="hero-section">
               <div className="hero-badge">
                 <Sparkles size={14} className="text-cyan" />
-                <span>Next-Generation Network Telemetry</span>
+                <span>{t.heroBadge}</span>
               </div>
               <h1 className="hero-heading">{t.heroTitle}</h1>
               <p className="hero-subtitle">{t.heroSubtitle}</p>
@@ -448,9 +455,9 @@ export default function App() {
               <div className="error-alert-banner">
                 <AlertCircle size={20} />
                 <div className="error-text">
-                  <strong>Measurement Notice:</strong> {errorMessage}
+                  <strong>{t.measurementNotice}:</strong> {errorMessage}
                 </div>
-                <button className="btn-secondary" onClick={() => setErrorMessage(null)}>Dismiss</button>
+                <button className="btn-secondary" onClick={() => setErrorMessage(null)}>{t.dismiss}</button>
               </div>
             )}
 
@@ -615,8 +622,8 @@ export default function App() {
           <div className="container page-container">
             <div className="glass-card servers-page-card">
               <div className="servers-page-header">
-                <h3>Global & Regional Speed Test Servers</h3>
-                <p>Select any node to benchmark connection latency and throughput.</p>
+                <h3>{t.globalRegionalServers}</h3>
+                <p>{t.serversPageSubtitle}</p>
               </div>
               <div className="grid-3 server-cards-grid">
                 {(servers && servers.length > 0 ? servers : DEFAULT_SERVERS).map((s) => (
@@ -630,11 +637,11 @@ export default function App() {
                   >
                     <div className="node-item-top">
                       <span className="node-city">{s.city}, {s.country}</span>
-                      <span className="badge badge-emerald">Online</span>
+                      <span className="badge badge-emerald">{t.online}</span>
                     </div>
                     <span className="node-sponsor">{s.sponsor}</span>
                     <button className="btn-secondary node-select-btn">
-                      {selectedServer?.id === s.id ? 'Currently Selected' : 'Select Server'}
+                      {selectedServer?.id === s.id ? t.currentlySelected : t.selectServer}
                     </button>
                   </div>
                 ))}

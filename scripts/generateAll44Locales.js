@@ -1,17 +1,20 @@
-// NETSPEEDPRO Multi-Language Localization System (44 Global, European, Asian, American & African Languages)
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import { en_dict as en, hi_dict as hi, es_dict as es, fr_dict as fr, de_dict as de } from './locales/lang_en_hi_es_fr_de.js';
-import { ja_dict as ja, zh_dict as zh, ar_dict as ar, pt_dict as pt, ru_dict as ru } from './locales/lang_ja_zh_ar_pt_ru.js';
-import { it_dict as it, ko_dict as ko, tr_dict as tr, bn_dict as bn, ur_dict as ur } from './locales/lang_it_ko_tr_bn_ur.js';
-import { id_dict as id, vi_dict as vi, th_dict as th, ta_dict as ta, te_dict as te } from './locales/lang_id_vi_th_ta_te.js';
-import { mr_dict as mr, gu_dict as gu, pa_dict as pa, nl_dict as nl, pl_dict as pl } from './locales/lang_mr_gu_pa_nl_pl.js';
-import { uk_dict as uk, sv_dict as sv, el_dict as el, cs_dict as cs, ro_dict as ro } from './locales/lang_uk_sv_el_cs_ro.js';
-import { hu_dict as hu, da_dict as da, fi_dict as fi, no_dict as no, he_dict as he } from './locales/lang_hu_da_fi_no_he.js';
-import { fa_dict as fa, ms_dict as ms, tl_dict as tl, sw_dict as sw, sk_dict as sk } from './locales/lang_fa_ms_tl_sw_sk.js';
-import { bg_dict as bg, sr_dict as sr, hr_dict as hr, lt_dict as lt } from './locales/lang_bg_sr_hr_lt.js';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-export const LANGUAGES = [
-  // Global & Regional Languages (with explicit 2-letter ISO country codes for real flag rendering)
+const LOCALES_DIR = path.join(__dirname, '../src/translations/locales');
+if (!fs.existsSync(LOCALES_DIR)) {
+  fs.mkdirSync(LOCALES_DIR, { recursive: true });
+}
+
+import { en } from './generateTranslations.js';
+import { LOCALES_DATA } from './compileTranslations.js';
+
+// Comprehensive 44 Language Translation Builder
+const languages = [
   { code: 'en', label: 'English', native: 'English', short: 'EN', flag: '🇺🇸', country: 'us', region: 'Global' },
   { code: 'hi', label: 'Hindi', native: 'हिन्दी', short: 'HI', flag: '🇮🇳', country: 'in', region: 'India' },
   { code: 'es', label: 'Spanish', native: 'Español', short: 'ES', flag: '🇪🇸', country: 'es', region: 'Europe/LatAm' },
@@ -36,8 +39,6 @@ export const LANGUAGES = [
   { code: 'gu', label: 'Gujarati', native: 'ગુજરાતી', short: 'GU', flag: '🇮🇳', country: 'in', region: 'India' },
   { code: 'pa', label: 'Punjabi', native: 'ਪੰਜਾਬੀ', short: 'PA', flag: '🇮🇳', country: 'in', region: 'India' },
   { code: 'nl', label: 'Dutch', native: 'Nederlands', short: 'NL', flag: '🇳🇱', country: 'nl', region: 'Europe' },
-
-  // Foreign & Global Languages
   { code: 'pl', label: 'Polish', native: 'Polski', short: 'PL', flag: '🇵🇱', country: 'pl', region: 'Europe' },
   { code: 'uk', label: 'Ukrainian', native: 'Українська', short: 'UK', flag: '🇺🇦', country: 'ua', region: 'Europe' },
   { code: 'sv', label: 'Swedish', native: 'Svenska', short: 'SV', flag: '🇸🇪', country: 'se', region: 'Nordic' },
@@ -60,44 +61,4 @@ export const LANGUAGES = [
   { code: 'lt', label: 'Lithuanian', native: 'Lietuvių', short: 'LT', flag: '🇱🇹', country: 'lt', region: 'Europe' }
 ];
 
-export const translations = {
-  en, hi, es, fr, de,
-  ja, zh, ar, pt, ru,
-  it, ko, tr, bn, ur,
-  id, vi, th, ta, te,
-  mr, gu, pa, nl, pl,
-  uk, sv, el, cs, ro,
-  hu, da, fi, no, he,
-  fa, ms, tl, sw, sk,
-  bg, sr, hr, lt
-};
-
-// Safe translation getter with proxy fallback to English
-export function getTranslations(langCode = 'en') {
-  const current = translations[langCode] || translations.en || {};
-  return new Proxy(current, {
-    get(target, prop) {
-      if (typeof prop === 'string') {
-        if (prop in target && target[prop] !== undefined && target[prop] !== '') {
-          return target[prop];
-        }
-        if (prop in en && en[prop] !== undefined) {
-          return en[prop];
-        }
-        return prop;
-      }
-      return target[prop];
-    }
-  });
-}
-
-// Single key translation helper with fallback
-export function getTranslation(langCode, key, fallback = '') {
-  if (translations[langCode] && translations[langCode][key]) {
-    return translations[langCode][key];
-  }
-  if (translations.en && translations.en[key]) {
-    return translations.en[key];
-  }
-  return fallback || key;
-}
+console.log(`Generating translations for ${languages.length} languages...`);

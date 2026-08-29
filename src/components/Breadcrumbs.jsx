@@ -1,17 +1,20 @@
 import React from 'react';
 import { ChevronRight, Home } from 'lucide-react';
+import { getTranslations } from '../translations/i18n';
 
-export default function Breadcrumbs({ items = [], onNavigate }) {
+export default function Breadcrumbs({ items = [], onNavigate, lang = 'en' }) {
+  const t = getTranslations(lang);
+
   return (
     <nav className="breadcrumbs-nav" aria-label="Breadcrumbs">
       <button 
         type="button" 
         className="breadcrumb-link home-crumb" 
         onClick={() => onNavigate('/')}
-        title="Go to Speed Test Home"
+        title={t.navSpeedTest || 'Home'}
       >
         <Home size={14} />
-        <span>Home</span>
+        <span>{t.home || 'Home'}</span>
       </button>
 
       {items.map((item, idx) => {

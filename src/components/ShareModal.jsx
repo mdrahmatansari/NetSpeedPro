@@ -8,11 +8,11 @@ import {
   Send, 
   Smartphone 
 } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lang = 'en' }) {
   const [copied, setCopied] = useState(false);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   if (!isOpen || !result) return null;
 
@@ -22,7 +22,7 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
 📤 Upload: ${result.upload || 0} ${unit}
 ⚡ Ping: ${result.ping || 0} ms | Jitter: ${result.jitter || 0} ms
 🛡️ Stability: ${result.stabilityRating || 'Excellent'} (${result.stability || 100}%)
-🌐 Tested via NETSPEEDPRO (https://netspeedpro.app)`;
+🌐 Tested via NETSPEEDPRO (${window.location.origin})`;
 
   const shareUrl = window.location.origin;
 
@@ -71,9 +71,9 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
         <div className="modal-header">
           <div className="modal-title">
             <Share2 size={22} className="text-cyan" />
-            <span>{t.shareResult}</span>
+            <span>{t.shareModalTitle || t.shareResult}</span>
           </div>
-          <button className="btn-icon" onClick={onClose} aria-label="Close modal">
+          <button className="btn-icon" onClick={onClose} aria-label={t.close}>
             <X size={18} />
           </button>
         </div>
@@ -81,31 +81,31 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
         {/* Share Summary Preview Box */}
         <div className="share-preview-card">
           <div className="share-preview-header">
-            <span className="brand-badge-mini">NETSPEEDPRO CERTIFIED</span>
+            <span className="brand-badge-mini">{t.brand} {t.telemetryVerified}</span>
             <span className="share-date">{result.formattedDate || new Date().toLocaleDateString()}</span>
           </div>
 
           <div className="share-stats-row">
             <div className="share-stat-item">
-              <span className="share-stat-label">DOWNLOAD</span>
+              <span className="share-stat-label">{t.download}</span>
               <span className="share-stat-val text-cyan">{result.download || 0}</span>
               <span className="share-stat-unit">{unit}</span>
             </div>
             <div className="share-stat-item">
-              <span className="share-stat-label">UPLOAD</span>
+              <span className="share-stat-label">{t.upload}</span>
               <span className="share-stat-val text-emerald">{result.upload || 0}</span>
               <span className="share-stat-unit">{unit}</span>
             </div>
             <div className="share-stat-item">
-              <span className="share-stat-label">PING</span>
+              <span className="share-stat-label">{t.ping}</span>
               <span className="share-stat-val text-purple">{result.ping || 0}</span>
               <span className="share-stat-unit">ms</span>
             </div>
           </div>
 
           <div className="share-meta-row">
-            <span>Server: {result.server || 'Mumbai'}</span>
-            <span>Stability: {result.stabilityRating || 'Excellent'}</span>
+            <span>{t.server}: {result.server || 'Auto Node'}</span>
+            <span>{t.stability}: {result.stabilityRating || t.excellent}</span>
           </div>
         </div>
 
@@ -113,13 +113,13 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
         <div className="copy-action-row">
           <button className="btn-primary copy-main-btn" onClick={handleCopyText}>
             {copied ? <Check size={18} /> : <Copy size={18} />}
-            <span>{copied ? 'Copied to Clipboard!' : 'Copy Formatted Result'}</span>
+            <span>{copied ? t.copied : t.copyLink}</span>
           </button>
 
           {navigator.share && (
             <button className="btn-secondary native-share-btn" onClick={handleNativeShare} title="Share via device">
               <Smartphone size={18} />
-              <span>Device Share</span>
+              <span>{t.shareResult}</span>
             </button>
           )}
         </div>
@@ -128,26 +128,26 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
         <div className="social-share-grid">
           <button className="social-btn whatsapp-btn" onClick={shareWhatsApp}>
             <MessageCircle size={18} />
-            <span>WhatsApp</span>
+            <span>{t.shareWhatsapp || 'WhatsApp'}</span>
           </button>
 
           <button className="social-btn twitter-btn" onClick={shareTwitter}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
             </svg>
-            <span>X (Twitter)</span>
+            <span>{t.shareTwitter || 'X / Twitter'}</span>
           </button>
 
           <button className="social-btn telegram-btn" onClick={shareTelegram}>
             <Send size={18} />
-            <span>Telegram</span>
+            <span>{t.shareTelegram || 'Telegram'}</span>
           </button>
 
           <button className="social-btn facebook-btn" onClick={shareFacebook}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
             </svg>
-            <span>Facebook</span>
+            <span>{t.shareFacebook || 'Facebook'}</span>
           </button>
         </div>
       </div>

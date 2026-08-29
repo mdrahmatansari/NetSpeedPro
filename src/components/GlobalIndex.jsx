@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import Breadcrumbs from './Breadcrumbs';
 import CountryFlag from './CountryFlag';
+import { getTranslations } from '../translations/i18n';
 import { 
   GLOBAL_INDEX_METADATA, 
   FIXED_BROADBAND_RANKINGS, 
@@ -27,6 +28,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
   const [sortField, setSortField] = useState('rank');
   const [sortOrder, setSortOrder] = useState('asc');
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const t = getTranslations(lang);
 
   const rawList = indexType === 'fixed' ? FIXED_BROADBAND_RANKINGS : MOBILE_RANKINGS;
 
@@ -76,10 +78,11 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
     <div className="container page-container">
       <Breadcrumbs 
         items={[
-          { label: 'Tools', path: '/speedtest-performance-directory' },
-          { label: 'Speedtest Global Index™', path: '/speedtest-global-index' }
+          { label: t.tools, path: '/speedtest-performance-directory' },
+          { label: t.globalIndexMainTitle, path: '/speedtest-global-index' }
         ]} 
         onNavigate={onNavigate} 
+        lang={lang}
       />
 
       {/* Hero Card */}
@@ -87,19 +90,19 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
         <div className="hero-badge-row">
           <div className="global-badge-pill">
             <Globe size={15} className="text-cyan" />
-            <span>GLOBAL BROADBAND & MOBILE SPEED RANKINGS</span>
+            <span>{t.globalIndexPill}</span>
           </div>
-          <span className="demo-data-pill verified-badge-pill">VERIFIED GLOBAL BENCHMARK INDEX</span>
+          <span className="demo-data-pill verified-badge-pill">{t.telemetryVerified}</span>
         </div>
-        <h1 className="global-main-title">Speedtest Global Index™</h1>
+        <h1 className="global-main-title">{t.globalIndexMainTitle}</h1>
         <p className="global-main-lead">
-          Track country-by-country internet speed rankings across 50+ nations. Compare median download throughput, upload rates, and latency for both fixed broadband and mobile 5G.
+          {t.globalIndexMainLead}
         </p>
 
         {/* Global Median Averages HUD */}
         <div className="global-averages-hud">
           <div className="avg-hud-item">
-            <span className="avg-label">GLOBAL MEDIAN DOWNLOAD</span>
+            <span className="avg-label">{t.download} (MEDIAN)</span>
             <div className="avg-stat-row">
               <ArrowDown size={18} className="text-cyan" />
               <span className="avg-val">{currentAverages.download}</span>
@@ -107,7 +110,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
             </div>
           </div>
           <div className="avg-hud-item">
-            <span className="avg-label">GLOBAL MEDIAN UPLOAD</span>
+            <span className="avg-label">{t.upload} (MEDIAN)</span>
             <div className="avg-stat-row">
               <ArrowUp size={18} className="text-purple" />
               <span className="avg-val">{currentAverages.upload}</span>
@@ -115,7 +118,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
             </div>
           </div>
           <div className="avg-hud-item">
-            <span className="avg-label">GLOBAL MEDIAN LATENCY</span>
+            <span className="avg-label">{t.ping} (MEDIAN)</span>
             <div className="avg-stat-row">
               <Activity size={18} className="text-amber" />
               <span className="avg-val">{currentAverages.latency}</span>
@@ -124,7 +127,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
           </div>
           <div className="avg-hud-meta">
             <Calendar size={13} />
-            <span>Updated: {GLOBAL_INDEX_METADATA.lastUpdated}</span>
+            <span>{GLOBAL_INDEX_METADATA.lastUpdated}</span>
           </div>
         </div>
       </div>
@@ -139,7 +142,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
             onClick={() => { setIndexType('fixed'); setSortField('rank'); setSortOrder('asc'); }}
           >
             <Wifi size={16} />
-            <span>Fixed Broadband (50+)</span>
+            <span>{t.fixedBroadband}</span>
           </button>
           <button
             type="button"
@@ -147,7 +150,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
             onClick={() => { setIndexType('mobile'); setSortField('rank'); setSortOrder('asc'); }}
           >
             <Smartphone size={16} />
-            <span>Mobile 5G / Cellular</span>
+            <span>{t.mobileData}</span>
           </button>
         </div>
 
@@ -157,7 +160,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
             <Search size={14} className="index-search-ico" />
             <input 
               type="text"
-              placeholder="Search country..."
+              placeholder={t.globalIndexSearchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="index-search-input"
@@ -172,7 +175,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
                 className={`region-pill-btn ${selectedRegion === r ? 'active' : ''}`}
                 onClick={() => setSelectedRegion(r)}
               >
-                {r}
+                {r === 'All' ? (t.allRegions || t.all || 'All') : r}
               </button>
             ))}
           </div>
@@ -186,31 +189,31 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
             <tr>
               <th onClick={() => handleSort('rank')} className="sortable-th">
                 <div className="th-content">
-                  <span>RANK</span>
+                  <span># {t.globalIndexPill || "RANK"}</span>
                   {sortField === 'rank' && (sortOrder === 'asc' ? '▲' : '▼')}
                 </div>
               </th>
-              <th>COUNTRY</th>
+              <th>{t.location || "COUNTRY"}</th>
               <th onClick={() => handleSort('download')} className="sortable-th">
                 <div className="th-content">
-                  <span>MEDIAN DOWNLOAD</span>
+                  <span>{t.download || "DOWNLOAD"}</span>
                   {sortField === 'download' && (sortOrder === 'desc' ? '▼' : '▲')}
                 </div>
               </th>
               <th onClick={() => handleSort('upload')} className="sortable-th">
                 <div className="th-content">
-                  <span>MEDIAN UPLOAD</span>
+                  <span>{t.upload || "UPLOAD"}</span>
                   {sortField === 'upload' && (sortOrder === 'desc' ? '▼' : '▲')}
                 </div>
               </th>
               <th onClick={() => handleSort('latency')} className="sortable-th">
                 <div className="th-content">
-                  <span>LATENCY</span>
+                  <span>{t.latency || "LATENCY"}</span>
                   {sortField === 'latency' && (sortOrder === 'desc' ? '▼' : '▲')}
                 </div>
               </th>
-              <th>TOP PROVIDER</th>
-              <th>DETAILS</th>
+              <th>{t.isp || "PROVIDER"}</th>
+              <th>{t.view || "DETAILS"}</th>
             </tr>
           </thead>
           <tbody>
@@ -266,7 +269,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
                         setSelectedCountry(item);
                       }}
                     >
-                      View Report →
+                      {t.viewReport || "View Report →"}
                     </button>
                   </td>
                 </tr>
@@ -285,7 +288,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
                 <CountryFlag country={selectedCountry.code} size="large" />
                 <div>
                   <h3 className="modal-c-name">{selectedCountry.country}</h3>
-                  <span className="modal-c-sub">Rank #{selectedCountry.rank} Global ({indexType === 'fixed' ? 'Fixed Broadband' : 'Mobile 5G'})</span>
+                  <span className="modal-c-sub">Rank #{selectedCountry.rank} Global ({indexType === 'fixed' ? (t.fixedBroadband || 'Fixed Broadband') : (t.mobileData || 'Mobile 5G')})</span>
                 </div>
               </div>
               <button className="btn-icon" onClick={() => setSelectedCountry(null)}>
@@ -297,21 +300,21 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
               {/* Metrics Grid */}
               <div className="modal-stats-grid">
                 <div className="modal-stat-box">
-                  <span className="m-stat-label">MEDIAN DOWNLOAD</span>
+                  <span className="m-stat-label">{t.medianDownload || "MEDIAN DOWNLOAD"}</span>
                   <div className="m-stat-val text-cyan">
                     <ArrowDown size={18} />
                     <span>{selectedCountry.download} Mbps</span>
                   </div>
                 </div>
                 <div className="modal-stat-box">
-                  <span className="m-stat-label">MEDIAN UPLOAD</span>
+                  <span className="m-stat-label">{t.medianUpload || "MEDIAN UPLOAD"}</span>
                   <div className="m-stat-val text-purple">
                     <ArrowUp size={18} />
                     <span>{selectedCountry.upload} Mbps</span>
                   </div>
                 </div>
                 <div className="modal-stat-box">
-                  <span className="m-stat-label">MEDIAN LATENCY</span>
+                  <span className="m-stat-label">{t.medianLatency || "MEDIAN LATENCY"}</span>
                   <div className="m-stat-val text-amber">
                     <Activity size={18} />
                     <span>{selectedCountry.latency} ms</span>
@@ -322,7 +325,7 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
               {/* Cities & Providers */}
               {selectedCountry.topCities && (
                 <div className="modal-section-box">
-                  <h4 className="m-sec-title">Fastest Benchmark Cities</h4>
+                  <h4 className="m-sec-title">{t.fastestCities || "Fastest Benchmark Cities"}</h4>
                   <div className="m-chips-row">
                     {selectedCountry.topCities.map(city => (
                       <span key={city} className="m-chip">{city}</span>
@@ -332,10 +335,16 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
               )}
 
               <div className="modal-section-box">
-                <h4 className="m-sec-title">Leading Network Operator</h4>
+                <h4 className="m-sec-title">{t.leadingOperator || "Leading Network Operator"}</h4>
                 <div className="m-isp-highlight">
                   <CheckCircle2 size={16} className="text-emerald" />
-                  <span><strong>{selectedCountry.topIsp}</strong> is currently measured as the fastest network in {selectedCountry.country}.</span>
+                  <span>
+                    {t.leadingOperatorDesc ? (
+                      t.leadingOperatorDesc.replace('{isp}', selectedCountry.topIsp).replace('{country}', selectedCountry.country)
+                    ) : (
+                      <><strong>{selectedCountry.topIsp}</strong> is currently measured as the fastest network in {selectedCountry.country}.</>
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
@@ -347,10 +356,10 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
       <div className="glass-card global-methodology-card">
         <div className="methodology-header">
           <Info size={20} className="text-cyan" />
-          <h3 className="methodology-title">Index Calculation Methodology</h3>
+          <h3 className="methodology-title">{t.methodologyTitle || "Index Calculation Methodology"}</h3>
         </div>
         <p className="methodology-text">
-          The Speedtest Global Index™ analyzes millions of active consumer speed benchmarks every month. Only countries with a statistically valid sample of unique user tests are included in the index. Median measurements (50th percentile) are utilized to accurately reflect everyday consumer experience while mitigating outlier bias.
+          {t.methodologyDesc || "The Speedtest Global Index™ analyzes millions of active consumer speed benchmarks every month. Only countries with a statistically valid sample of unique user tests are included in the index. Median measurements (50th percentile) are utilized to accurately reflect everyday consumer experience while mitigating outlier bias."}
         </p>
       </div>
 

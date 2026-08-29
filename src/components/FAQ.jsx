@@ -1,10 +1,44 @@
 import React, { useState, useMemo } from 'react';
 import { HelpCircle, ChevronDown, Search, PlusCircle, CheckCircle2, Sparkles, Filter, Zap, AlertTriangle, Lightbulb } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 import { FAQ_DATA, FAQ_CATEGORIES } from '../data/faqData';
 
-// Component that parses and highlights key terms, bullet lists, and callout badges
-function FormattedFAQAnswer({ text }) {
+// Helper to highlight key terms, bold tokens, and prefix definitions before colons
+function renderHighlightedText(text) {
+  if (!text) return null;
+
+  // Split by markdown bold **text** if present
+  const boldRegex = /(\*\*[^*]+\*\*)/g;
+  const parts = text.split(boldRegex);
+
+  return parts.map((part, idx) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={idx} className="faq-highlight-term">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Check if line contains a "Key Definition:" or "Title:" prefix before a colon
+    const colonIdx = part.indexOf(':');
+    if (colonIdx > 0 && colonIdx <= 50 && !part.startsWith('http') && !part.startsWith('//')) {
+      const prefix = part.substring(0, colonIdx + 1);
+      const remainder = part.substring(colonIdx + 1);
+      return (
+        <React.Fragment key={idx}>
+          <strong className="faq-highlight-term">{prefix}</strong>
+          <span>{remainder}</span>
+        </React.Fragment>
+      );
+    }
+
+    return <span key={idx}>{part}</span>;
+  });
+}
+
+// Component that parses and highlights key terms, bullet lists, subheadings, and callout badges
+function FormattedFAQAnswer({ text, t = {} }) {
   if (!text) return null;
 
   const paragraphs = text.split('\n\n');
@@ -24,84 +58,109 @@ function FormattedFAQAnswer({ text }) {
           const match = firstLine.match(/^(Tip|Pro Tip|Fix|How to Fix|Diagnosis|Formula|Practical Conversion Formula|Key Takeaways?|Recommendation|Warning|Why You Must Use One):/i);
           const calloutType = match ? match[1] : 'Tip';
           const calloutBody = para.replace(/^(Tip|Pro Tip|Fix|How to Fix|Diagnosis|Formula|Practical Conversion Formula|Key Takeaways?|Recommendation|Warning|Why You Must Use One):\s*/i, '');
+          const calloutLines = calloutBody.split('\n').filter(l => l.trim().length > 0);
 
           let icon = <Sparkles size={16} className="text-cyan" />;
           let badgeClass = 'callout-cyan';
+          let displayCalloutType = calloutType;
 
           if (/fix|how to fix/i.test(calloutType)) {
             icon = <Zap size={16} className="text-emerald" />;
             badgeClass = 'callout-emerald';
-          } else if (/formula|diagnosis/i.test(calloutType)) {
+            displayCalloutType = t.fix || calloutType;
+          } else if (/formula/i.test(calloutType)) {
             icon = <Lightbulb size={16} className="text-purple" />;
             badgeClass = 'callout-purple';
+            displayCalloutType = t.formula || calloutType;
+          } else if (/diagnosis/i.test(calloutType)) {
+            icon = <Lightbulb size={16} className="text-purple" />;
+            badgeClass = 'callout-purple';
+            displayCalloutType = t.diagnosis || calloutType;
           } else if (/warning/i.test(calloutType)) {
             icon = <AlertTriangle size={16} className="text-amber" />;
             badgeClass = 'callout-amber';
+            displayCalloutType = t.warning || calloutType;
+          } else if (/tip/i.test(calloutType)) {
+            displayCalloutType = t.proTip || t.tip || calloutType;
           }
 
           return (
             <div key={pIdx} className={`faq-callout-box ${badgeClass}`}>
               <div className="callout-header">
                 {icon}
-                <span className="callout-tag">{calloutType.toUpperCase()}</span>
+                <span className="callout-tag">{displayCalloutType}</span>
               </div>
               <div className="callout-content">
-                {calloutBody.split('\n').map((cl, cIdx) => (
-                  <p key={cIdx} className="callout-line">{cl}</p>
+                {calloutLines.map((cLine, cIdx) => (
+                  <div key={cIdx} className="callout-line">
+                    {renderHighlightedText(cLine)}
+                  </div>
                 ))}
               </div>
             </div>
           );
         }
 
-        // 2. Detect Bullet Lists or Numbered Steps
-        const isBulletList = lines.some(l => l.trim().startsWith('•') || l.trim().startsWith('-') || /^\d+\.\s/.test(l.trim()));
+        // 2. Check if paragraph contains bullet lines or numbered lines
+        const hasBullets = lines.some(l => /^[-•*]|\d+\./.test(l.trim()));
 
-        if (isBulletList) {
+        if (hasBullets) {
           return (
             <div key={pIdx} className="faq-bullet-group">
               {lines.map((line, lIdx) => {
                 const trimmed = line.trim();
-                const isBullet = trimmed.startsWith('•') || trimmed.startsWith('-') || /^\d+\.\s/.test(trimmed);
+                const isBullet = /^[-•*]/.test(trimmed);
+                const isNumbered = /^\d+\./.test(trimmed);
 
                 if (isBullet) {
-                  const content = trimmed.replace(/^[•\-]\s*/, '').replace(/^\d+\.\s*/, '');
-                  const colonIndex = content.indexOf(':');
-
-                  if (colonIndex > 0 && colonIndex < 45) {
-                    const label = content.slice(0, colonIndex);
-                    const rest = content.slice(colonIndex + 1);
-                    return (
-                      <div key={lIdx} className="faq-bullet-item">
-                        <span className="faq-bullet-dot" />
-                        <div className="faq-bullet-text">
-                          <strong className="faq-highlight-term">{label}:</strong>
-                          <span>{rest}</span>
-                        </div>
-                      </div>
-                    );
-                  }
-
+                  const cleanText = trimmed.replace(/^[-•*]\s*/, '');
                   return (
                     <div key={lIdx} className="faq-bullet-item">
                       <span className="faq-bullet-dot" />
-                      <div className="faq-bullet-text">{content}</div>
+                      <span className="faq-bullet-text">
+                        {renderHighlightedText(cleanText)}
+                      </span>
                     </div>
                   );
                 }
 
+                if (isNumbered) {
+                  const numMatch = trimmed.match(/^(\d+)\.\s*/);
+                  const numStr = numMatch ? numMatch[1] : `${lIdx + 1}`;
+                  const cleanText = trimmed.replace(/^\d+\.\s*/, '');
+                  return (
+                    <div key={lIdx} className="faq-bullet-item faq-numbered-item">
+                      <span className="faq-bullet-num">#{numStr}</span>
+                      <span className="faq-bullet-text">
+                        {renderHighlightedText(cleanText)}
+                      </span>
+                    </div>
+                  );
+                }
+
+                // If line ends with a colon or is a section subhead
+                if (trimmed.endsWith(':') || lIdx === 0) {
+                  return (
+                    <h5 key={lIdx} className="faq-sub-heading">
+                      {trimmed}
+                    </h5>
+                  );
+                }
+
                 return (
-                  <h5 key={lIdx} className="faq-sub-heading">{trimmed}</h5>
+                  <p key={lIdx} className="faq-standard-para">
+                    {renderHighlightedText(trimmed)}
+                  </p>
                 );
               })}
             </div>
           );
         }
 
-        // 3. Standard Paragraph with Highlighted Importance
+        // 3. Normal Standard Paragraph with Inline Highlights
         return (
           <p key={pIdx} className="faq-standard-para">
-            {para}
+            {renderHighlightedText(para)}
           </p>
         );
       })}
@@ -114,7 +173,7 @@ export default function FAQ({ lang = 'en' }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [visibleCount, setVisibleCount] = useState(10);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   // Filter FAQs based on search query and category
   const filteredFaqs = useMemo(() => {
@@ -160,10 +219,10 @@ export default function FAQ({ lang = 'en' }) {
           </div>
           <div>
             <div className="faq-title-row">
-              <h3 className="faq-title">{t.faqTitle || 'Frequently Asked Questions'}</h3>
-              <span className="faq-badge-count">115+ FAQs</span>
+              <h3 className="faq-title">{t.faqTitle}</h3>
+              <span className="faq-badge-count">{t.faqBadge || "115+ FAQs"}</span>
             </div>
-            <span className="faq-subtitle">Comprehensive encyclopedia on speed benchmarking, latency, fiber, 5G & network optimization</span>
+            <span className="faq-subtitle">{t.faqSubtitle}</span>
           </div>
         </div>
 
@@ -172,7 +231,7 @@ export default function FAQ({ lang = 'en' }) {
           <Search size={16} className="faq-search-icon" />
           <input 
             type="text"
-            placeholder="Search 115+ questions (e.g. ping, 5G, fiber)..."
+            placeholder={t.searchFaqPlaceholder || t.faqSearchPlaceholder || "Search 115+ questions..."}
             value={searchQuery}
             onChange={handleSearchChange}
             className="faq-search-input"
@@ -188,6 +247,8 @@ export default function FAQ({ lang = 'en' }) {
         <div className="category-scroll-wrap">
           {FAQ_CATEGORIES.map(cat => {
             const isSelected = selectedCategory === cat;
+            const categoryKey = 'cat' + cat.replace(/[^a-zA-Z0-9]/g, '');
+            const categoryLabel = cat === 'All' ? (t.all || 'All') : (t[categoryKey] || cat);
             return (
               <button
                 key={cat}
@@ -195,7 +256,7 @@ export default function FAQ({ lang = 'en' }) {
                 onClick={() => handleCategoryChange(cat)}
               >
                 {cat === 'All' && <Filter size={12} />}
-                <span>{cat}</span>
+                <span>{categoryLabel}</span>
               </button>
             );
           })}
@@ -205,11 +266,11 @@ export default function FAQ({ lang = 'en' }) {
       {/* Counter Status */}
       <div className="faq-status-bar">
         <span className="faq-counter-text">
-          Showing <strong>{Math.min(visibleCount, filteredFaqs.length)}</strong> of <strong>{filteredFaqs.length}</strong> Questions
+          {Math.min(visibleCount, filteredFaqs.length)} / {filteredFaqs.length}
         </span>
         {selectedCategory !== 'All' && (
           <span className="faq-active-filter-badge">
-            Category: <strong>{selectedCategory}</strong>
+            {selectedCategory}
           </span>
         )}
       </div>
@@ -219,10 +280,9 @@ export default function FAQ({ lang = 'en' }) {
         {displayedFaqs.length === 0 ? (
           <div className="faq-empty-state">
             <HelpCircle size={40} className="text-muted" />
-            <h4>No matching questions found</h4>
-            <p>Try searching for a different keyword like "ping", "router", "Wi-Fi" or "upload".</p>
+            <h4>{t.noQuestionsFound || "No questions found matching your search"}</h4>
             <button className="btn-secondary" onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}>
-              Reset Filters
+              {t.resetDefaults || "Reset Filters"}
             </button>
           </div>
         ) : (
@@ -249,7 +309,7 @@ export default function FAQ({ lang = 'en' }) {
                 {isOpen && (
                   <div className="faq-answer-container">
                     <div className="faq-answer-content">
-                      <FormattedFAQAnswer text={item.a} />
+                      <FormattedFAQAnswer text={item.a} t={t} />
                     </div>
                   </div>
                 )}
@@ -263,14 +323,16 @@ export default function FAQ({ lang = 'en' }) {
       {filteredFaqs.length > 0 && (
         <div className="faq-pagination-footer">
           {hasMore ? (
-            <button className="btn-load-more" onClick={handleLoadMore}>
-              <PlusCircle size={18} />
-              <span>More Questions ({filteredFaqs.length - visibleCount} remaining)</span>
-            </button>
+            <div className="faq-load-more-row">
+              <button className="btn-secondary faq-load-more-btn" onClick={handleLoadMore}>
+                <PlusCircle size={16} />
+                <span>{t.loadMoreFaqs || t.loadMore || "Load More"}</span>
+              </button>
+            </div>
           ) : (
             <div className="faq-all-loaded">
               <CheckCircle2 size={18} className="text-emerald" />
-              <span>All {filteredFaqs.length} questions displayed</span>
+              <span>{t.telemetryVerified} ({filteredFaqs.length})</span>
             </div>
           )}
         </div>
@@ -615,12 +677,37 @@ export default function FAQ({ lang = 'en' }) {
           font-size: 0.92rem;
           line-height: 1.6;
           color: var(--text-secondary);
-        }
-
         .faq-highlight-term {
           color: var(--accent-cyan);
           font-weight: 800;
-          margin-right: 6px;
+          margin-right: 4px;
+        }
+
+        .faq-highlight-bold {
+          color: var(--text-primary);
+          font-weight: 800;
+        }
+
+        .faq-bullet-num {
+          font-family: var(--font-mono);
+          font-size: 0.76rem;
+          font-weight: 800;
+          color: var(--accent-purple);
+          background: rgba(139, 92, 246, 0.12);
+          border: 1px solid rgba(139, 92, 246, 0.25);
+          padding: 2px 6px;
+          border-radius: 4px;
+          flex-shrink: 0;
+          margin-top: 1px;
+        }
+
+        .faq-numbered-item {
+          background: rgba(139, 92, 246, 0.03);
+          border-color: rgba(139, 92, 246, 0.18);
+        }
+
+        .faq-numbered-item:hover {
+          border-color: rgba(139, 92, 246, 0.4);
         }
 
         /* Callout Highlight Cards */

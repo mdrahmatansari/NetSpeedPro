@@ -17,12 +17,14 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import Breadcrumbs from './Breadcrumbs';
+import { getTranslations } from '../translations/i18n';
 import { GUIDES_DATA, GUIDE_CATEGORIES } from '../data/guidesData';
 
 export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en' }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [copied, setCopied] = useState(false);
+  const t = getTranslations(lang);
 
   // If a slug is provided, find the active guide
   const currentGuide = useMemo(() => {
@@ -55,17 +57,18 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 1. SINGLE GUIDE READER VIEW (Schema: Introduction → Explanation → Steps → Tips → Common Mistakes → Conclusion)
+  // 1. SINGLE GUIDE READER VIEW
   if (currentGuide) {
     return (
       <div className="container page-container">
         <Breadcrumbs 
           items={[
-            { label: 'Learn', path: '/key-terms' },
-            { label: 'Guides & Tutorials', path: '/guides' },
+            { label: t.learn, path: '/key-terms' },
+            { label: t.guidesMainTitle, path: '/guides' },
             { label: currentGuide.title, path: `/guides/${currentGuide.slug}` }
           ]} 
           onNavigate={onNavigate} 
+          lang={lang}
         />
 
         <div className="single-guide-layout">
@@ -76,7 +79,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
               onClick={() => onNavigate('/guides')}
             >
               <ArrowLeft size={16} />
-              <span>Back to all guides</span>
+              <span>{t.backToGuides || "Back to all guides"}</span>
             </button>
 
             {/* Article Header */}
@@ -100,7 +103,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
             <section className="guide-section-block">
               <h2 className="guide-section-heading">
                 <BookOpen size={18} className="text-cyan" />
-                <span>1. Introduction</span>
+                <span>{t.guideIntro || "1. Introduction"}</span>
               </h2>
               <div className="guide-text-body">
                 <p>{currentGuide.intro}</p>
@@ -111,7 +114,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
             <section className="guide-section-block">
               <h2 className="guide-section-heading">
                 <Sparkles size={18} className="text-purple" />
-                <span>2. In-Depth Technical Explanation</span>
+                <span>{t.guideExplanation || "2. In-Depth Technical Explanation"}</span>
               </h2>
               <div className="guide-text-body guide-explanation-box">
                 <p>{currentGuide.explanation}</p>
@@ -122,7 +125,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
             <section className="guide-section-block">
               <h2 className="guide-section-heading">
                 <ListOrdered size={18} className="text-cyan" />
-                <span>3. Step-by-Step Instructions</span>
+                <span>{t.guideSteps || "3. Step-by-Step Instructions"}</span>
               </h2>
               <div className="guide-steps-list">
                 {currentGuide.steps.map((step) => (
@@ -142,13 +145,13 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
               <section className="guide-section-block">
                 <h2 className="guide-section-heading">
                   <Lightbulb size={18} className="text-emerald" />
-                  <span>4. Expert Pro Tips</span>
+                  <span>{t.guideTips || "4. Expert Tips"}</span>
                 </h2>
                 <div className="guide-tips-grid">
                   {currentGuide.tips.map((tip, idx) => (
                     <div key={idx} className="guide-tip-card">
                       <Sparkles size={16} className="text-emerald" />
-                      <p className="tip-text"><strong>Tip {idx + 1}:</strong> {tip}</p>
+                      <p className="tip-text"><strong>{t.tipPrefix || 'Tip'} {idx + 1}:</strong> {tip}</p>
                     </div>
                   ))}
                 </div>
@@ -160,13 +163,13 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
               <section className="guide-section-block">
                 <h2 className="guide-section-heading">
                   <AlertOctagon size={18} className="text-amber" />
-                  <span>5. Common Mistakes to Avoid</span>
+                  <span>{t.guideMistakes || "5. Common Mistakes to Avoid"}</span>
                 </h2>
                 <div className="guide-mistakes-grid">
                   {currentGuide.commonMistakes.map((mistake, idx) => (
                     <div key={idx} className="guide-mistake-card">
                       <AlertTriangle size={16} className="text-amber" />
-                      <p className="mistake-text"><strong>Mistake {idx + 1}:</strong> {mistake}</p>
+                      <p className="mistake-text"><strong>{t.mistakePrefix || 'Mistake'} {idx + 1}:</strong> {mistake}</p>
                     </div>
                   ))}
                 </div>
@@ -177,7 +180,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
             <section className="guide-section-block">
               <h2 className="guide-section-heading">
                 <CheckCircle2 size={18} className="text-cyan" />
-                <span>6. Key Takeaways & Conclusion</span>
+                <span>{t.guideConclusion || "6. Summary & Key Takeaways"}</span>
               </h2>
               <div className="guide-conclusion-box">
                 <p>{currentGuide.conclusion}</p>
@@ -186,14 +189,14 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
 
             {/* Share Article Bar */}
             <div className="guide-share-bar">
-              <span className="share-text">Found this guide helpful?</span>
+              <span className="share-text">{t.foundHelpful || "Was this guide helpful?"}</span>
               <button 
                 type="button" 
                 className="btn-share-guide"
                 onClick={() => handleShareGuide(currentGuide.slug)}
               >
                 {copied ? <Check size={14} className="text-emerald" /> : <Share2 size={14} />}
-                <span>{copied ? 'Link Copied!' : 'Share Guide'}</span>
+                <span>{copied ? (t.copied || 'Link Copied!') : (t.shareResult || 'Share Guide')}</span>
               </button>
             </div>
           </article>
@@ -496,10 +499,11 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
     <div className="container page-container">
       <Breadcrumbs 
         items={[
-          { label: 'Learn', path: '/key-terms' },
-          { label: 'Guides & Tutorials', path: '/guides' }
+          { label: t.learn, path: '/key-terms' },
+          { label: t.guidesMainTitle, path: '/guides' }
         ]} 
         onNavigate={onNavigate} 
+        lang={lang}
       />
 
       {/* Hero Card */}
@@ -507,11 +511,11 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
         <div className="guides-hero-left">
           <div className="guides-badge-pill">
             <Compass size={15} className="text-cyan" />
-            <span>STEP-BY-STEP TUTORIALS & MASTERCLASSES</span>
+            <span>{t.guidesPill}</span>
           </div>
-          <h1 className="guides-main-title">Network Optimization Guides</h1>
+          <h1 className="guides-main-title">{t.guidesMainTitle}</h1>
           <p className="guides-main-lead">
-            Explore 19 comprehensive, actionable guides written by network engineers to optimize Wi-Fi, reduce gaming ping, fix bufferbloat, and maximize throughput.
+            {t.guidesMainLead}
           </p>
 
           {/* Search Box */}
@@ -519,7 +523,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
             <Search size={18} className="guides-search-ico" />
             <input 
               type="text"
-              placeholder="Search guides (e.g. Wi-Fi speed, reduce ping, 5GHz vs 6GHz)..."
+              placeholder={t.guidesSearchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="guides-search-input"
@@ -538,14 +542,14 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
           >
             <div className="featured-top-tag">
               <Sparkles size={13} className="text-cyan" />
-              <span>FEATURED GUIDE</span>
+              <span>{t.featuredGuide || "FEATURED GUIDE"}</span>
             </div>
             <h3 className="featured-guide-title">{featuredGuide.title}</h3>
             <p className="featured-guide-desc">{featuredGuide.summary}</p>
             <div className="featured-meta-row">
               <span className="feat-badge">{featuredGuide.readTime}</span>
               <span className="feat-badge">{featuredGuide.difficulty}</span>
-              <span className="feat-read-btn">Read Now →</span>
+              <span className="feat-read-btn">{t.readGuide || "Read Now"} →</span>
             </div>
           </div>
         )}
@@ -562,7 +566,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
               onClick={() => setSelectedCategory(cat)}
             >
               {cat === 'All' && <Layers size={13} />}
-              <span>{cat}</span>
+              <span>{cat === 'All' ? (t.allCategories || t.all || 'All') : cat}</span>
             </button>
           ))}
         </div>
@@ -571,14 +575,18 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
       {/* Counter Bar */}
       <div className="guides-status-bar">
         <span className="guides-count-text">
-          Showing <strong>{filteredGuides.length}</strong> of <strong>{GUIDES_DATA.length}</strong> Guides
+          {t.showingGuides ? (
+            t.showingGuides.replace('{count}', filteredGuides.length).replace('{total}', GUIDES_DATA.length)
+          ) : (
+            <>Showing <strong>{filteredGuides.length}</strong> of <strong>{GUIDES_DATA.length}</strong> Guides</>
+          )}
         </span>
         {(selectedCategory !== 'All' || searchQuery) && (
           <button 
             className="guides-reset-btn"
             onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
           >
-            Reset Filters
+            {t.resetDefaults || "Reset Filters"}
           </button>
         )}
       </div>
@@ -607,7 +615,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
                 <span>{guide.readTime}</span>
               </span>
               <span className="guide-read-link">
-                <span>Read Full Guide</span>
+                <span>{t.readGuide || "Read Full Guide"}</span>
                 <ArrowRight size={14} />
               </span>
             </div>

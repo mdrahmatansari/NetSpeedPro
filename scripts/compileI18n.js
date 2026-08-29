@@ -1,4 +1,41 @@
-// NETSPEEDPRO Multi-Language Localization System (44 Global, European, Asian, American & African Languages)
+// Script to build src/translations/i18n.js and copy locales to src/translations/locales/
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
+
+const groupFiles = [
+  'lang_en_hi_es_fr_de.js',
+  'lang_ja_zh_ar_pt_ru.js',
+  'lang_it_ko_tr_bn_ur.js',
+  'lang_id_vi_th_ta_te.js',
+  'lang_mr_gu_pa_nl_pl.js',
+  'lang_uk_sv_el_cs_ro.js',
+  'lang_hu_da_fi_no_he.js',
+  'lang_fa_ms_tl_sw_sk.js',
+  'lang_bg_sr_hr_lt.js'
+];
+
+const localesDir = path.join(rootDir, 'src', 'translations', 'locales');
+if (!fs.existsSync(localesDir)) {
+  fs.mkdirSync(localesDir, { recursive: true });
+}
+
+// Copy each group file to src/translations/locales/ fixing import
+groupFiles.forEach(file => {
+  const srcPath = path.join(rootDir, 'scripts', 'data', file);
+  const destPath = path.join(localesDir, file);
+  let content = fs.readFileSync(srcPath, 'utf8');
+  content = content.replace("from '../generateTranslations.js';", "from './master_en.js';");
+  fs.writeFileSync(destPath, content, 'utf8');
+  console.log(`Copied ${file} to ${destPath}`);
+});
+
+// Now construct src/translations/i18n.js
+const i18nContent = `// NETSPEEDPRO Multi-Language Localization System (44 Global, European, Asian, American & African Languages)
 
 import { en_dict as en, hi_dict as hi, es_dict as es, fr_dict as fr, de_dict as de } from './locales/lang_en_hi_es_fr_de.js';
 import { ja_dict as ja, zh_dict as zh, ar_dict as ar, pt_dict as pt, ru_dict as ru } from './locales/lang_ja_zh_ar_pt_ru.js';
@@ -101,3 +138,7 @@ export function getTranslation(langCode, key, fallback = '') {
   }
   return fallback || key;
 }
+`;
+
+fs.writeFileSync(path.join(rootDir, 'src', 'translations', 'i18n.js'), i18nContent, 'utf8');
+console.log('Successfully updated src/translations/i18n.js with all 44 languages!');

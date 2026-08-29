@@ -16,7 +16,7 @@ import {
   Server,
   Globe
 } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 import { storageService } from '../services/storage';
 
 export default function ResultDashboard({ 
@@ -29,7 +29,7 @@ export default function ResultDashboard({
   onExportCsv, 
   onExportJson 
 }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   if (!results) return null;
 
@@ -47,29 +47,29 @@ export default function ResultDashboard({
     if (d >= 100 && p <= 20) {
       return {
         title: t.ultraFastTitle,
-        desc: 'Exceptional 4K/8K HDR streaming, competitive cloud gaming, and high-capacity network multi-tasking.',
-        badge: 'Tier 1 Enterprise',
+        desc: t.ultraFastDesc,
+        badge: t.tier1,
         badgeColor: 'badge-cyan'
       };
     } else if (d >= 40 && p <= 45) {
       return {
         title: t.fastTitle,
-        desc: 'Ideal for 4K Ultra HD streaming, multi-user Zoom video conferencing, and quick file downloads.',
-        badge: 'High-Speed Broadband',
+        desc: t.fastDesc,
+        badge: t.highSpeedBroadband,
         badgeColor: 'badge-emerald'
       };
     } else if (d >= 15) {
       return {
         title: t.averageTitle,
-        desc: 'Reliable for 1080p HD video streaming, general web browsing, and remote work tasks.',
-        badge: 'Standard Connection',
+        desc: t.averageDesc,
+        badge: t.standardConnection,
         badgeColor: 'badge-amber'
       };
     } else {
       return {
         title: t.slowTitle,
-        desc: 'Limited bandwidth detected. May experience buffering during video calls or multi-device usage.',
-        badge: 'Congested / Slow',
+        desc: t.slowDesc,
+        badge: t.congestedSlow,
         badgeColor: 'badge-purple'
       };
     }
@@ -111,7 +111,7 @@ export default function ResultDashboard({
             <Wifi size={18} />
           </div>
           <div className="result-network-text">
-            <span className="result-network-label">CONNECTED NETWORK / ISP</span>
+            <span className="result-network-label">{t.connectedNetwork}</span>
             <span className="result-network-value">{results.isp || 'BSNL (Bharat Sanchar Nigam Ltd)'}</span>
           </div>
         </div>
@@ -123,8 +123,8 @@ export default function ResultDashboard({
             <Server size={18} />
           </div>
           <div className="result-network-text">
-            <span className="result-network-label">BENCHMARK SERVER (AUTO)</span>
-            <span className="result-network-value">{results.server || 'Patna Server, India'}</span>
+            <span className="result-network-label">{t.serverNode}</span>
+            <span className="result-network-value">{results.server || 'Auto Selected Node'}</span>
           </div>
         </div>
 
@@ -135,8 +135,8 @@ export default function ResultDashboard({
             <Globe size={18} />
           </div>
           <div className="result-network-text">
-            <span className="result-network-label">CLIENT IP & ASN</span>
-            <span className="result-network-value">{results.ip || '117.250.111.178'} {results.asn ? `• ${results.asn}` : ''}</span>
+            <span className="result-network-label">{t.ipAddress} & {t.asn}</span>
+            <span className="result-network-value">{results.ip || 'Protected'} {results.asn ? `• ${results.asn}` : ''}</span>
           </div>
         </div>
       </div>
@@ -151,11 +151,11 @@ export default function ResultDashboard({
             </div>
             <div className="metric-labels">
               <span className="metric-name">{t.download}</span>
-              <span className="metric-sub">Average Throughput</span>
+              <span className="metric-sub">{t.speed}</span>
             </div>
             {results.downloadPeak > 0 && (
               <span className="metric-peak-badge">
-                Peak: {downloadPeakFormatted} {unit}
+                {t.speed}: {downloadPeakFormatted} {unit}
               </span>
             )}
           </div>
@@ -173,11 +173,11 @@ export default function ResultDashboard({
             </div>
             <div className="metric-labels">
               <span className="metric-name">{t.upload}</span>
-              <span className="metric-sub">Average Throughput</span>
+              <span className="metric-sub">{t.speed}</span>
             </div>
             {results.uploadPeak > 0 && (
               <span className="metric-peak-badge">
-                Peak: {uploadPeakFormatted} {unit}
+                {t.speed}: {uploadPeakFormatted} {unit}
               </span>
             )}
           </div>
@@ -194,7 +194,7 @@ export default function ResultDashboard({
         <div className="glass-card mini-metric-card">
           <div className="mini-header">
             <Activity size={16} className="text-purple" />
-            <span>{t.ping} (LATENCY)</span>
+            <span>{t.ping}</span>
           </div>
           <div className="mini-value-wrap">
             <span className="mini-value text-purple">{results.ping || 0}</span>
@@ -213,7 +213,7 @@ export default function ResultDashboard({
             <span className="mini-value text-amber">{results.jitter || 0}</span>
             <span className="mini-unit">ms</span>
           </div>
-          <span className="mini-subtext">Variance: ±{((results.jitter || 1) * 0.8).toFixed(1)}ms</span>
+          <span className="mini-subtext">±{((results.jitter || 1) * 0.8).toFixed(1)}ms</span>
         </div>
 
         {/* Packet Loss */}
@@ -225,7 +225,7 @@ export default function ResultDashboard({
           <div className="mini-value-wrap">
             <span className="mini-value text-emerald">{results.packetLoss || 0}%</span>
           </div>
-          <span className="mini-subtext">0 dropped frames</span>
+          <span className="mini-subtext">{t.online}</span>
         </div>
 
         {/* Bufferbloat / Data Consumed */}
@@ -237,7 +237,7 @@ export default function ResultDashboard({
           <div className="mini-value-wrap">
             <span className="mini-value-text">{totalDataFormatted}</span>
           </div>
-          <span className="mini-subtext">Duration: {results.durationTotal || 10}s</span>
+          <span className="mini-subtext">{results.durationTotal || 10}s</span>
         </div>
       </div>
 
@@ -247,7 +247,7 @@ export default function ResultDashboard({
           <Download size={18} className="text-cyan" />
           <div>
             <span className="export-title">{t.downloadResult}</span>
-            <span className="export-subtitle">Save certified benchmark report</span>
+            <span className="export-subtitle">{t.testHistorySubtitle}</span>
           </div>
         </div>
 

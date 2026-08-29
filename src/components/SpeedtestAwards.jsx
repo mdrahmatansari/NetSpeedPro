@@ -14,6 +14,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 import Breadcrumbs from './Breadcrumbs';
+import { getTranslations } from '../translations/i18n';
 import { SPEEDTEST_AWARDS_DATA } from '../data/awardsData';
 
 const ICON_MAP = {
@@ -26,15 +27,17 @@ const ICON_MAP = {
 
 export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
   const [openFaqIdx, setOpenFaqIdx] = useState(0);
+  const t = getTranslations(lang);
 
   return (
     <div className="container page-container">
       <Breadcrumbs 
         items={[
-          { label: 'Tools', path: '/speedtest-performance-directory' },
-          { label: 'Speedtest Awards™', path: '/speedtest-awards' }
+          { label: t.tools, path: '/speedtest-performance-directory' },
+          { label: t.speedtestAwardsTitle, path: '/speedtest-awards' }
         ]} 
         onNavigate={onNavigate} 
+        lang={lang}
       />
 
       {/* Hero Card */}
@@ -42,18 +45,18 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
         <div className="hero-badge-row">
           <div className="awards-badge-pill">
             <Trophy size={15} className="text-amber" />
-            <span>OFFICIAL ANNUAL BENCHMARK HONORS {SPEEDTEST_AWARDS_DATA.currentYear}</span>
+            <span>{t.awardsPill}</span>
           </div>
-          <span className="demo-data-pill verified-badge-pill">OFFICIAL BENCHMARK WINNERS</span>
+          <span className="demo-data-pill verified-badge-pill">{t.telemetryVerified}</span>
         </div>
-        <h1 className="awards-main-title">Speedtest Awards™</h1>
+        <h1 className="awards-main-title">{t.speedtestAwardsTitle}</h1>
         <p className="awards-main-lead">
-          {SPEEDTEST_AWARDS_DATA.programOverview}
+          {t.awardsMainLead || SPEEDTEST_AWARDS_DATA.programOverview}
         </p>
 
         <div className="awards-eligibility-callout">
           <Info size={16} className="text-cyan" />
-          <span><strong>Eligibility Standard:</strong> {SPEEDTEST_AWARDS_DATA.eligibilityThreshold}</span>
+          <span><strong>{t.eligibilityStandard || "Eligibility Standard:"}</strong> {SPEEDTEST_AWARDS_DATA.eligibilityThreshold}</span>
         </div>
       </div>
 
@@ -61,7 +64,7 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
       <section className="awards-section">
         <h2 className="awards-section-title">
           <Award size={20} className="text-cyan" />
-          <span>{SPEEDTEST_AWARDS_DATA.currentYear} Award Categories & Winners</span>
+          <span>{SPEEDTEST_AWARDS_DATA.currentYear} {t.awardCategoriesWinners || "Award Categories & Winners"}</span>
         </h2>
 
         <div className="award-categories-grid">
@@ -75,7 +78,7 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
                   </div>
                   <div className="award-cat-title-wrap">
                     <h3 className="award-cat-name">{cat.title}</h3>
-                    <span className="award-year-tag">{SPEEDTEST_AWARDS_DATA.currentYear} Winner Class</span>
+                    <span className="award-year-tag">{SPEEDTEST_AWARDS_DATA.currentYear} {t.winnerClass || "Winner Class"}</span>
                   </div>
                 </div>
 
@@ -83,7 +86,7 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
 
                 {/* Winners Table inside Card */}
                 <div className="award-winners-list">
-                  <span className="winners-sub-label">VERIFIED WINNERS:</span>
+                  <span className="winners-sub-label">✔ {t.verifiedWinners || "VERIFIED WINNERS"}:</span>
                   {cat.winners2026.map((w, idx) => (
                     <div key={idx} className="winner-row">
                       <div className="winner-region-col">
@@ -92,7 +95,7 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
                       </div>
                       <div className="winner-score-col">
                         <span className="winner-score">{w.score}</span>
-                        <span className="winner-runner">Runner-up: {w.runnerUp}</span>
+                        <span className="winner-runner">{t.runnerUp || "Runner-up:"} {w.runnerUp}</span>
                       </div>
                     </div>
                   ))}
@@ -108,25 +111,25 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
         <div className="glass-card historical-archive-card">
           <div className="archive-header">
             <Calendar size={20} className="text-purple" />
-            <h2 className="archive-title">Historical Speedtest Awards™ Archive</h2>
+            <h2 className="archive-title">{t.awardsArchive || "Speedtest Awards™ Archive"}</h2>
           </div>
 
           <div className="archive-years-grid">
             {SPEEDTEST_AWARDS_DATA.historicalWinners.map(hw => (
               <div key={hw.year} className="archive-year-box">
-                <div className="archive-year-badge">{hw.year} Awards</div>
+                <div className="archive-year-badge">{hw.year} {t.awardsBadge || "Awards"}</div>
                 <p className="archive-year-summary">{hw.summary}</p>
                 <div className="archive-winners-detail">
                   <div className="arch-item">
-                    <span className="arch-label">Top Fixed:</span>
+                    <span className="arch-label">{t.topFixed || "Top Fixed Network"}:</span>
                     <strong className="arch-val">{hw.topFixed}</strong>
                   </div>
                   <div className="arch-item">
-                    <span className="arch-label">Top Mobile 5G:</span>
+                    <span className="arch-label">{t.topMobile || "Top Mobile Network"}:</span>
                     <strong className="arch-val">{hw.topMobile}</strong>
                   </div>
                   <div className="arch-item">
-                    <span className="arch-label">Top Gaming:</span>
+                    <span className="arch-label">{t.topGaming || "Best for Gaming"}:</span>
                     <strong className="arch-val">{hw.topGaming}</strong>
                   </div>
                 </div>
@@ -141,7 +144,7 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
         <div className="glass-card awards-faq-card">
           <div className="faq-card-header">
             <HelpCircle size={20} className="text-cyan" />
-            <h3 className="faq-title">Frequently Asked Questions About Awards</h3>
+            <h3 className="faq-title">{t.awardsFaqTitle || "Frequently Asked Questions About the Awards"}</h3>
           </div>
 
           <div className="awards-faq-list">

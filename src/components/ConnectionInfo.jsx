@@ -12,7 +12,7 @@ import {
   RefreshCw,
   CheckCircle2
 } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function ConnectionInfo({ 
   ipInfo, 
@@ -21,14 +21,14 @@ export default function ConnectionInfo({
   onRefresh, 
   isLocating = false 
 }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   // Browser & Device detection via UserAgent
   const getClientEnvironment = () => {
     const ua = navigator.userAgent;
-    let browser = 'Unknown Browser';
-    let os = 'Unknown OS';
-    let device = 'Desktop Device';
+    let browser = t.modernBrowser || 'Modern Browser';
+    let os = t.operatingSystem || 'Operating System';
+    let device = t.desktopDevice || 'Desktop PC';
 
     // Browser
     if (ua.includes('Firefox')) browser = 'Mozilla Firefox';
@@ -45,8 +45,8 @@ export default function ConnectionInfo({
     else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS (Apple)';
 
     // Device
-    if (/Mobile|Android|iP(hone|od)/i.test(ua)) device = 'Smartphone / Mobile';
-    else if (/Tablet|iPad/i.test(ua)) device = 'Tablet Device';
+    if (/Mobile|Android|iP(hone|od)/i.test(ua)) device = t.smartphoneMobile || 'Smartphone / Mobile';
+    else if (/Tablet|iPad/i.test(ua)) device = t.tabletDevice || 'Tablet';
 
     return { browser, os, device };
   };
@@ -55,10 +55,10 @@ export default function ConnectionInfo({
 
   // Format accurate location display
   const getLocationDisplay = () => {
-    if (!ipInfo) return 'Detecting Real Location...';
+    if (!ipInfo) return t.detectingLocation;
     const city = ipInfo.city || '';
     const region = ipInfo.region || '';
-    const country = ipInfo.country || 'India';
+    const country = ipInfo.country || (t.countryIndia || 'India');
     
     if (city && region && city !== region) {
       return `${city}, ${region}, ${country}`;
@@ -73,33 +73,33 @@ export default function ConnectionInfo({
     {
       icon: Globe,
       label: t.ipAddress,
-      value: ipInfo?.ip || 'Detecting Real IP...',
+      value: ipInfo?.ip || t.detectingIp,
       sub: `${ipInfo?.version || 'IPv4'}${ipInfo?.postal ? ` • PIN ${ipInfo.postal}` : ''}`
     },
     {
       icon: Wifi,
       label: t.isp,
-      value: ipInfo?.isp || 'Broadband ISP',
+      value: ipInfo?.isp || (t.broadbandIsp || 'Broadband ISP'),
       sub: ipInfo?.asn || 'AS-AUTO'
     },
     {
       icon: MapPin,
       label: t.location,
       value: getLocationDisplay(),
-      sub: `${ipInfo?.countryFlag || '🇮🇳'} ${ipInfo?.isGpsPrecise ? 'Exact GPS Verified' : (ipInfo?.region ? `${ipInfo.region} • Live Network Geo` : 'Live Network Geo')}`,
+      sub: `${ipInfo?.countryFlag || '🇮🇳'} ${ipInfo?.isGpsPrecise ? t.exactGpsVerified : (ipInfo?.region ? `${ipInfo.region} • ${t.liveNetworkGeo}` : t.liveNetworkGeo)}`,
       highlight: true
     },
     {
       icon: Clock,
-      label: 'Time Zone',
+      label: t.timeZone,
       value: ipInfo?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-      sub: 'Local System Clock'
+      sub: t.localSystemClock
     },
     {
       icon: Monitor,
       label: t.browser,
       value: clientEnv.browser,
-      sub: 'HTML5 Modern Client'
+      sub: t.html5ModernClient || 'HTML5 Modern Client'
     },
     {
       icon: Cpu,
@@ -116,7 +116,7 @@ export default function ConnectionInfo({
           <Layers className="text-cyan" size={20} />
           <div>
             <h3 className="connection-title">{t.connectionInfo}</h3>
-            <span className="connection-subtitle">Live real-time client telemetry</span>
+            <span className="connection-subtitle">{t.telemetryVerified}</span>
           </div>
         </div>
 
@@ -126,10 +126,10 @@ export default function ConnectionInfo({
               className={`btn-secondary gps-detect-btn ${ipInfo?.isGpsPrecise ? 'gps-active' : ''}`}
               onClick={onDetectGps}
               disabled={isLocating}
-              title="Detect Exact GPS Coordinates"
+              title={t.detectGps}
             >
               <Crosshair size={13} className={isLocating ? 'spin' : ''} />
-              <span>{ipInfo?.isGpsPrecise ? 'GPS Active' : 'Exact GPS'}</span>
+              <span>{ipInfo?.isGpsPrecise ? t.exactGpsVerified : t.detectGps}</span>
             </button>
           )}
 
@@ -138,9 +138,9 @@ export default function ConnectionInfo({
               className="btn-icon refresh-geo-btn"
               onClick={onRefresh}
               disabled={isLocating}
-              title="Refresh Real Location & IP"
+              title={t.refreshLocation}
             >
-              <RefreshCw size={13} className={isLocating ? 'spin' : ''} />
+              <RefreshCw size={14} className={isLocating ? 'spin' : ''} />
             </button>
           )}
         </div>
@@ -167,7 +167,7 @@ export default function ConnectionInfo({
       <div className="connection-note">
         <Info size={14} className="text-cyan" />
         <span>
-          Real-time network coordinates and ISP Autonomous System routing detected directly from your live connection.
+          {t.connectionNote || "Real-time network coordinates and ISP Autonomous System routing detected directly from your live connection."}
         </span>
       </div>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Server, Search, MapPin, X, Check } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function ServerModal({ 
   isOpen, 
@@ -12,12 +12,12 @@ export default function ServerModal({
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeRegion, setActiveRegion] = useState('all');
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   if (!isOpen) return null;
 
   const regions = [
-    { id: 'all', label: 'All Locations' },
+    { id: 'all', label: t.allRegions || 'All Locations' },
     { id: 'IN', label: 'India' },
     { id: 'asia', label: 'Asia Pacific' },
     { id: 'europe', label: 'Europe' },
@@ -55,9 +55,9 @@ export default function ServerModal({
         <div className="modal-header">
           <div className="modal-title">
             <Server size={22} className="text-cyan" />
-            <span>Select Speed Test Server</span>
+            <span>{t.serverModalTitle}</span>
           </div>
-          <button className="btn-icon" onClick={onClose} aria-label="Close modal">
+          <button className="btn-icon" onClick={onClose} aria-label={t.close}>
             <X size={18} />
           </button>
         </div>
@@ -68,7 +68,7 @@ export default function ServerModal({
             <Search size={16} className="search-icon" />
             <input 
               type="text"
-              placeholder="Search by city, country, or provider..."
+              placeholder={t.searchServerPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="server-search-input"
@@ -92,7 +92,7 @@ export default function ServerModal({
         <div className="server-list">
           {filteredServers.length === 0 ? (
             <div className="empty-servers">
-              <span>No servers found matching "{searchQuery}"</span>
+              <span>{t.searchServerPlaceholder}</span>
             </div>
           ) : (
             filteredServers.map((s) => {
@@ -110,14 +110,14 @@ export default function ServerModal({
                     <div className="server-item-info">
                       <div className="server-item-title-row">
                         <span className="server-item-name">{s.city}, {s.country}</span>
-                        {s.isDefault && <span className="badge badge-cyan default-badge">Primary</span>}
+                        {s.isDefault && <span className="badge badge-cyan default-badge">{t.autoServer}</span>}
                       </div>
                       <span className="server-item-sponsor">{s.sponsor}</span>
                     </div>
                   </div>
 
                   <div className="server-item-right">
-                    <span className="badge badge-emerald online-badge">Online</span>
+                    <span className="badge badge-emerald online-badge">{t.online}</span>
                     {isSelected && (
                       <div className="selected-check">
                         <Check size={16} />
@@ -133,7 +133,7 @@ export default function ServerModal({
         {/* Modal Footer */}
         <div className="server-modal-footer">
           <span className="server-footer-text">
-            Servers are hosted on high-bandwidth edge backbones. Choosing a server geographically closest to you provides the most accurate broadband line measurements.
+            {t.serverModalFootnote || "Servers are hosted on high-bandwidth edge backbones. Choosing a server geographically closest to you provides the most accurate broadband line measurements."}
           </span>
         </div>
       </div>

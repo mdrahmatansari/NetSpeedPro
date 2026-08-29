@@ -10,6 +10,7 @@ import {
   Layers
 } from 'lucide-react';
 import Breadcrumbs from './Breadcrumbs';
+import { getTranslations } from '../translations/i18n';
 import { GLOSSARY_TERMS, GLOSSARY_CATEGORIES } from '../data/glossaryData';
 
 const ALPHABETS = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
@@ -20,6 +21,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [expandedId, setExpandedId] = useState(GLOSSARY_TERMS[0]?.id || null);
   const [copiedId, setCopiedId] = useState(null);
+  const t = getTranslations(lang);
 
   // Filter terms by search, alphabet, and category
   const filteredTerms = useMemo(() => {
@@ -55,21 +57,22 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
     <div className="container page-container">
       <Breadcrumbs 
         items={[
-          { label: 'Learn', path: '/key-terms' },
-          { label: 'Key Terms & Glossary', path: '/key-terms' }
+          { label: t.learn, path: '/key-terms' },
+          { label: t.keyTermsTitle, path: '/key-terms' }
         ]} 
         onNavigate={onNavigate} 
+        lang={lang}
       />
 
       <div className="glass-card glossary-hero-card">
         <div className="glossary-header-content">
           <div className="glossary-badge-pill">
             <BookOpen size={15} className="text-cyan" />
-            <span>NETWORKING & SPEED TEST ENCYCLOPEDIA</span>
+            <span>{t.glossaryPill}</span>
           </div>
-          <h1 className="glossary-title">Key Internet & Network Terms</h1>
+          <h1 className="glossary-title">{t.keyTermsTitle}</h1>
           <p className="glossary-lead">
-            A comprehensive, plain-English reference guide to 100+ vital internet, broadband, Wi-Fi, 5G, and speed benchmarking concepts.
+            {t.keyTermsSubtitle}
           </p>
 
           {/* Search Bar */}
@@ -77,7 +80,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
             <Search size={18} className="glossary-search-ico" />
             <input 
               type="text"
-              placeholder="Search 100+ terms (e.g. Bufferbloat, Wi-Fi 7, Jitter, Cat6, MTU)..."
+              placeholder={t.glossarySearchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="glossary-search-input"
@@ -105,7 +108,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
                 onClick={() => setSelectedCategory(cat)}
               >
                 {cat === 'All' && <Layers size={13} />}
-                <span>{cat}</span>
+                <span>{cat === 'All' ? (t.allTerms || 'All') : cat}</span>
               </button>
             ))}
           </div>
@@ -133,11 +136,15 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
       {/* Results Status Bar */}
       <div className="glossary-status-bar">
         <span className="glossary-count-text">
-          Showing <strong>{filteredTerms.length}</strong> of <strong>{GLOSSARY_TERMS.length}</strong> Terms
+          {t.showingTerms ? (
+            t.showingTerms.replace('{count}', filteredTerms.length).replace('{total}', GLOSSARY_TERMS.length)
+          ) : (
+            <>Showing <strong>{filteredTerms.length}</strong> of <strong>{GLOSSARY_TERMS.length}</strong> Terms</>
+          )}
         </span>
         {(selectedLetter !== 'All' || selectedCategory !== 'All' || searchQuery) && (
           <button className="glossary-reset-link" onClick={handleResetFilters}>
-            Reset All Filters
+            {t.resetDefaults || "Reset All Filters"}
           </button>
         )}
       </div>
@@ -147,10 +154,10 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
         {filteredTerms.length === 0 ? (
           <div className="glass-card glossary-empty-state">
             <BookOpen size={48} className="text-muted" />
-            <h3>No matching network terms found</h3>
-            <p>Try searching for a different keyword or resetting your filters.</p>
+            <h3>{t.noTermsFound || "No matching network terms found"}</h3>
+            <p>{t.trySearchingDifferent || "Try searching for a different keyword or resetting your category filters."}</p>
             <button className="btn-secondary" onClick={handleResetFilters}>
-              Reset Filters
+              {t.resetDefaults || "Reset Filters"}
             </button>
           </div>
         ) : (
@@ -185,7 +192,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
                     <div className="glossary-section">
                       <h4 className="section-label">
                         <Sparkles size={14} className="text-cyan" />
-                        <span>Technical Breakdown</span>
+                        <span>{t.detailedExplanation || "Technical Breakdown"}</span>
                       </h4>
                       <p className="section-text">{item.detailedExplanation}</p>
                     </div>
@@ -193,7 +200,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
                     {/* Why It Matters Callout */}
                     <div className="glossary-callout-why">
                       <div className="callout-why-header">
-                        <span className="why-tag">💡 WHY IT MATTERS</span>
+                        <span className="why-tag">💡 {t.whyItMatters || "WHY IT MATTERS"}</span>
                       </div>
                       <p className="why-text">{item.whyItMatters}</p>
                     </div>
@@ -201,7 +208,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
                     {/* Real World Example */}
                     {item.realWorldExample && (
                       <div className="glossary-example-box">
-                        <span className="example-tag">⚡ REAL-WORLD EXAMPLE:</span>
+                        <span className="example-tag">⚡ {t.realWorldExample || "REAL-WORLD EXAMPLE"}:</span>
                         <p className="example-text">{item.realWorldExample}</p>
                       </div>
                     )}
@@ -209,7 +216,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
                     {/* Related Terms Chips & Copy */}
                     <div className="glossary-card-footer">
                       <div className="related-terms-wrap">
-                        <span className="related-label">Related:</span>
+                        <span className="related-label">{t.relatedTerms || "Related"}:</span>
                         <div className="related-chips">
                           {item.relatedTerms?.map((rt, idx) => (
                             <span 
@@ -230,7 +237,7 @@ export default function KeyTerms({ onNavigate, lang = 'en' }) {
                         title="Copy direct link to this term"
                       >
                         {copiedId === item.id ? <Check size={14} className="text-emerald" /> : <Share2 size={14} />}
-                        <span>{copiedId === item.id ? 'Copied!' : 'Share Term'}</span>
+                        <span>{copiedId === item.id ? (t.copied || 'Copied!') : (t.shareResult || 'Share Term')}</span>
                       </button>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Activity, ShieldCheck, Phone, Mail, ExternalLink } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 function LinkedInIcon({ size = 13, className = '' }) {
   return (
@@ -18,7 +18,7 @@ function LinkedInIcon({ size = 13, className = '' }) {
 }
 
 export default function Footer({ onNavClick, lang = 'en' }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   return (
     <footer className="footer-wrapper">
@@ -33,7 +33,7 @@ export default function Footer({ onNavClick, lang = 'en' }) {
           </div>
           <p className="footer-tagline">{t.tagline}</p>
           <p className="footer-desc">
-            Professional high-speed broadband and latency diagnostic suite powered by real browser-based network streaming telemetry.
+            {t.footerDesc}
           </p>
           {/* Professional Founder & Architect Card */}
           <div className="footer-founder-box">
@@ -45,7 +45,7 @@ export default function Footer({ onNavClick, lang = 'en' }) {
                 </svg>
               </div>
               <div className="founder-details">
-                <span className="founder-label">FOUNDER & LEAD ARCHITECT</span>
+                <span className="founder-label">{t.founderTitle}</span>
                 <span className="founder-fullname">MD RAHMAT ANSARI</span>
               </div>
             </div>
@@ -67,24 +67,24 @@ export default function Footer({ onNavClick, lang = 'en' }) {
         {/* Navigation Links */}
         <div className="footer-links-group">
           <div className="footer-links-col">
-            <span className="footer-col-title">LEARN</span>
-            <button className="footer-link" onClick={() => onNavClick('key-terms', '/key-terms')}>Key Terms & Glossary</button>
-            <button className="footer-link" onClick={() => onNavClick('guides', '/guides')}>Guides & Tutorials</button>
+            <span className="footer-col-title">{t.learn}</span>
+            <button className="footer-link" onClick={() => onNavClick('key-terms', '/key-terms')}>{t.keyTermsTitle}</button>
+            <button className="footer-link" onClick={() => onNavClick('guides', '/guides')}>{t.guidesMainTitle}</button>
             <button className="footer-link" onClick={() => onNavClick('speedtest', '/')}>{t.navSpeedTest}</button>
             <button className="footer-link" onClick={() => onNavClick('history', '/history')}>{t.navHistory}</button>
           </div>
 
           <div className="footer-links-col">
-            <span className="footer-col-title">TOOLS & INDEX</span>
-            <button className="footer-link" onClick={() => onNavClick('performance-directory', '/speedtest-performance-directory')}>Performance Directory</button>
-            <button className="footer-link" onClick={() => onNavClick('global-index', '/speedtest-global-index')}>Global Index™</button>
-            <button className="footer-link" onClick={() => onNavClick('speedtest-awards', '/speedtest-awards')}>Speedtest Awards™</button>
+            <span className="footer-col-title">{t.tools}</span>
+            <button className="footer-link" onClick={() => onNavClick('performance-directory', '/speedtest-performance-directory')}>{t.performanceDirectoryTitle}</button>
+            <button className="footer-link" onClick={() => onNavClick('global-index', '/speedtest-global-index')}>{t.globalIndexMainTitle}</button>
+            <button className="footer-link" onClick={() => onNavClick('speedtest-awards', '/speedtest-awards')}>{t.speedtestAwardsTitle}</button>
             <button className="footer-link" onClick={() => onNavClick('diagnostics', '/diagnostics')}>{t.navDiagnostics}</button>
             <button className="footer-link" onClick={() => onNavClick('compare', '/compare')}>{t.navCompare}</button>
           </div>
 
           <div className="footer-links-col">
-            <span className="footer-col-title">SUPPORT & LEGAL</span>
+            <span className="footer-col-title">{t.support}</span>
             <button className="footer-link" onClick={() => onNavClick('faq', '/faq')}>{t.navFAQ}</button>
             <button className="footer-link" onClick={() => onNavClick('servers', '/servers')}>{t.navServers}</button>
             <button className="footer-link" onClick={() => onNavClick('about', '/about')}>{t.navAbout}</button>
@@ -93,7 +93,7 @@ export default function Footer({ onNavClick, lang = 'en' }) {
           </div>
 
           <div className="footer-links-col">
-            <span className="footer-col-title">CONTACT</span>
+            <span className="footer-col-title">{t.contact}</span>
             <a
               href="https://www.linkedin.com/in/mdrahmat/"
               target="_blank"
@@ -102,7 +102,7 @@ export default function Footer({ onNavClick, lang = 'en' }) {
               title="MD Rahmat Ansari LinkedIn Profile"
             >
               <LinkedInIcon size={13} />
-              <span>LinkedIn Profile</span>
+              <span>{t.linkedinProfile || "LinkedIn Profile"}</span>
             </a>
             <a href="tel:+919877807391" className="footer-link footer-contact-direct" title="Direct Phone">
               <Phone size={13} />
@@ -121,12 +121,12 @@ export default function Footer({ onNavClick, lang = 'en' }) {
         <div className="container footer-bottom-inner">
           <div className="footer-copyright-wrap">
             <span className="footer-copyright">
-              © {new Date().getFullYear()} NETSPEEDPRO Technologies. All rights reserved.
+              {t.footerCopyright || `© ${new Date().getFullYear()} NETSPEEDPRO. All rights reserved. Designed & Developed by MD Rahmat Ansari.`}
             </span>
           </div>
           <div className="footer-security-pill">
             <ShieldCheck size={14} className="text-emerald" />
-            <span>Secure 256-bit Encrypted Telemetry</span>
+            <span>{t.telemetryVerified}</span>
           </div>
         </div>
       </div>

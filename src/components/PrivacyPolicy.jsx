@@ -1,9 +1,9 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function PrivacyPolicy({ lang = 'en' }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   return (
     <div className="glass-card legal-card">
@@ -11,51 +11,41 @@ export default function PrivacyPolicy({ lang = 'en' }) {
         <ShieldCheck className="text-cyan" size={24} />
         <div>
           <h3 className="legal-title">{t.privacyTitle}</h3>
-          <span className="legal-subtitle">Effective Date: January 2026 | Version 1.0</span>
+          <span className="legal-subtitle">{t.privacySubtitle || "Effective Date: January 2026 | Version 1.0"}</span>
         </div>
       </div>
 
       <div className="legal-body">
         <section className="legal-section">
-          <h4>1. Our Privacy Commitment</h4>
-          <p>
-            At NETSPEEDPRO, we believe speed testing should be fast, accurate, and respect your digital privacy. We do not sell your personal IP information, track your web browsing history, or share telemetry data with third-party data brokers.
-          </p>
+          <h4>{t.privacyCommitmentTitle || "1. Our Privacy Commitment"}</h4>
+          <p>{t.privacyCommitmentText || "At NETSPEEDPRO, we believe speed testing should be fast, accurate, and respect your digital privacy. We do not sell your personal IP information, track your web browsing history, or share telemetry data with third-party data brokers."}</p>
         </section>
 
         <section className="legal-section">
-          <h4>2. Information Processed During Tests</h4>
-          <p>
-            When you initiate a speed test, the following temporary technical telemetry is processed solely to calculate accurate network throughput and routing latency:
-          </p>
+          <h4>{t.privacyProcessedTitle || "2. Information Processed During Tests"}</h4>
+          <p>{t.privacyProcessedText || "When you initiate a speed test, the following temporary technical telemetry is processed solely to calculate accurate network throughput and routing latency:"}</p>
           <ul>
-            <li><strong>Public IP Address & Autonomous System Number (ASN)</strong>: Used to determine your ISP name and select the lowest latency test server.</li>
-            <li><strong>Data Throughput Metrics</strong>: Bytes transferred, elapsed microseconds, and round-trip ping timestamps.</li>
-            <li><strong>Browser User-Agent</strong>: Used to optimize multi-stream worker configurations.</li>
+            <li>{t.privacyProcessedItem1 || "Public IP Address & Autonomous System Number (ASN): Used to determine your ISP name and select the lowest latency test server."}</li>
+            <li>{t.privacyProcessedItem2 || "Data Throughput Metrics: Bytes transferred, elapsed microseconds, and round-trip ping timestamps."}</li>
+            <li>{t.privacyProcessedItem3 || "Browser User-Agent: Used to optimize multi-stream worker configurations."}</li>
           </ul>
         </section>
 
         <section className="legal-section">
-          <h4>3. Local Storage of Test History</h4>
-          <p>
-            Your speed test records (speeds, ping, ISP, date) are stored exclusively in your browser's local <code>localStorage</code> cache. You have 100% control to export, disable, or delete your entire test history at any time with a single click.
-          </p>
+          <h4>{t.privacyStorageTitle || "3. Local Storage of Test History"}</h4>
+          <p>{t.privacyStorageText || "Your speed test records (speeds, ping, ISP, date) are stored exclusively in your browser's local localStorage cache. You have 100% control to export, disable, or delete your entire test history at any time with a single click."}</p>
         </section>
 
         <section className="legal-section">
-          <h4>4. Security & Encryption</h4>
-          <p>
-            All test data transmissions utilize standard HTTPS/TLS encryption to prevent eavesdropping and data packet tampering in transit.
-          </p>
+          <h4>{t.privacySecurityTitle || "4. Security & Encryption"}</h4>
+          <p>{t.privacySecurityText || "All test data transmissions utilize standard HTTPS/TLS encryption to prevent eavesdropping and data packet tampering in transit."}</p>
         </section>
 
         <section className="legal-section">
-          <h4>5. Contact & Privacy Inquiries</h4>
-          <p>
-            If you have any questions or data privacy inquiries regarding NETSPEEDPRO, please contact:
-          </p>
+          <h4>{t.privacyContactTitle || "5. Contact & Privacy Inquiries"}</h4>
+          <p>{t.privacyContactText || "If you have any questions or data privacy inquiries regarding NETSPEEDPRO, please contact:"}</p>
           <p style={{ marginTop: '6px' }}>
-            <strong>Lead Architect & Founder:</strong> MD RAHMAT ANSARI<br />
+            <strong>{t.founderTitle || "Lead Architect & Founder"}:</strong> MD RAHMAT ANSARI<br />
             <strong>Phone / Mobile:</strong> <a href="tel:+919877807391" style={{ color: 'var(--accent-cyan)' }}>+91 9877807391</a><br />
             <strong>Email:</strong> <a href="mailto:rahmatansari4171@gmail.com" style={{ color: 'var(--accent-cyan)' }}>rahmatansari4171@gmail.com</a>
           </p>

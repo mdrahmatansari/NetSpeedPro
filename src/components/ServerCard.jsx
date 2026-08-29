@@ -1,9 +1,9 @@
 import React from 'react';
 import { Server, MapPin, Activity, ChevronRight, Wifi, Sparkles } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function ServerCard({ server, ipInfo, onOpenModal, lang = 'en', ping = 0 }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
   const companyName = ipInfo?.companyName || ipInfo?.isp || 'High-Speed Broadband';
 
   return (
@@ -17,7 +17,7 @@ export default function ServerCard({ server, ipInfo, onOpenModal, lang = 'en', p
           <span className="server-card-label">{t.server}</span>
           <span className="badge badge-cyan server-auto-badge">
             <Sparkles size={11} />
-            <span>Auto Selected</span>
+            <span>{t.autoServer}</span>
           </span>
         </div>
         <h4 className="server-name">{server?.name || 'Patna Server'}</h4>
@@ -26,7 +26,7 @@ export default function ServerCard({ server, ipInfo, onOpenModal, lang = 'en', p
         {/* Connected Network Company Info */}
         <div className="server-network-company">
           <Wifi size={13} className="text-cyan" />
-          <span>Network: <strong>{companyName}</strong></span>
+          <span>{t.connection}: <strong>{companyName}</strong></span>
         </div>
       </div>
 

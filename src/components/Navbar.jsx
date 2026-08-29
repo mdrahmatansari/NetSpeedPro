@@ -22,7 +22,7 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
-import { translations, LANGUAGES } from '../translations/i18n';
+import { getTranslations, LANGUAGES } from '../translations/i18n';
 import CountryFlag from './CountryFlag';
 
 export default function Navbar({
@@ -43,7 +43,7 @@ export default function Navbar({
   
   const langMenuRef = useRef(null);
   const menuDropdownRef = useRef(null);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   const currentLangObj = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
 
@@ -70,79 +70,79 @@ export default function Navbar({
   // Comprehensive Menu Structure (LEARN, TOOLS, SUPPORT)
   const menuSections = [
     {
-      title: 'LEARN',
-      tag: 'EDUCATION',
+      title: t.navLearn,
+      tag: t.learnTag,
       accent: 'cyan',
       items: [
         {
           id: 'key-terms',
           path: '/key-terms',
-          label: 'Key Terms & Glossary',
-          desc: '100+ networking terms, bandwidth & speed concepts',
+          label: t.keyTermsTitle,
+          desc: t.keyTermsDesc,
           icon: BookOpen,
-          badge: '100+ Terms'
+          badge: t.keyTermsBadge
         },
         {
           id: 'guides',
           path: '/guides',
-          label: 'Guides & Masterclasses',
-          desc: '19 step-by-step Wi-Fi, ping, router & 5G tutorials',
+          label: t.guidesTitle,
+          desc: t.guidesDesc,
           icon: Compass,
-          badge: '19 Guides'
+          badge: t.guidesBadge
         }
       ]
     },
     {
-      title: 'TOOLS',
-      tag: 'TELEMETRY',
+      title: t.navTools,
+      tag: t.telemetryTag,
       accent: 'blue',
       items: [
         {
           id: 'performance-directory',
           path: '/speedtest-performance-directory',
-          label: 'Performance Directory',
-          desc: 'Global ISP latency, consistency & speed metrics',
+          label: t.directoryTitle,
+          desc: t.directoryDesc,
           icon: BarChart2,
-          badge: 'Directory'
+          badge: t.directoryBadge
         },
         {
           id: 'global-index',
           path: '/speedtest-global-index',
-          label: 'Global Index™',
-          desc: 'Fixed broadband & 5G rankings across 50+ nations',
+          label: t.globalIndexTitle,
+          desc: t.globalIndexDesc,
           icon: Globe,
-          badge: '50+ Nations'
+          badge: t.globalIndexBadge
         },
         {
           id: 'speedtest-awards',
           path: '/speedtest-awards',
-          label: 'Speedtest Awards™',
-          desc: 'Official honors for fastest & most reliable networks',
+          label: t.awardsTitle,
+          desc: t.awardsDesc,
           icon: Trophy,
-          badge: '2026'
+          badge: t.awardsBadge
         }
       ]
     },
     {
-      title: 'SUPPORT',
-      tag: 'HELP & INFO',
+      title: t.navSupport,
+      tag: t.governanceTag,
       accent: 'purple',
       items: [
         {
           id: 'faq',
           path: '/faq',
-          label: 'FAQ & Help Center',
-          desc: 'Speed test methodology & troubleshooting answers',
+          label: t.navFAQ,
+          desc: t.faqDesc,
           icon: HelpCircle,
-          badge: 'Help'
+          badge: t.faqBadge
         },
         {
           id: 'about',
           path: '/about',
-          label: 'About NETSPEEDPRO',
-          desc: 'Company background, leadership & infrastructure',
+          label: t.navAbout,
+          desc: t.aboutDesc,
           icon: Info,
-          badge: 'About'
+          badge: t.aboutBadge
         }
       ]
     }
@@ -267,11 +267,11 @@ export default function Navbar({
               }}
               aria-expanded={menuDropdownOpen}
               aria-haspopup="true"
-              aria-label="Toggle Menu Navigation"
-              title="Explore Menu: Learn, Tools, Support"
+              aria-label={t.navMenu || "Menu"}
+              title={t.navMenu || "Menu"}
             >
               <MenuIcon size={16} />
-              <span>Menu</span>
+              <span>{t.navMenu}</span>
               <ChevronDown size={14} className={`chevron-icon ${menuDropdownOpen ? 'rotate' : ''}`} />
             </button>
 
@@ -289,12 +289,12 @@ export default function Navbar({
                   <div className="menu-header-left">
                     <div className="menu-header-badge">
                       <Sparkles size={13} className="text-cyan" />
-                      <span>NETSPEEDPRO PLATFORM</span>
+                      <span>{t.brand}</span>
                     </div>
-                    <span className="menu-header-sub">Network Telemetry, Knowledge Hub & Directory</span>
+                    <span className="menu-header-sub">{t.heroBadge}</span>
                   </div>
                   <div className="menu-header-right">
-                    <span className="menu-esc-chip">ESC to close</span>
+                    <span className="menu-esc-chip">{t.escToClose || "ESC to close"}</span>
                   </div>
                 </div>
 
@@ -343,14 +343,14 @@ export default function Navbar({
                 <div className="menu-dropdown-footer">
                   <div className="menu-footer-left">
                     <Activity size={14} className="text-emerald" />
-                    <span>Real-time Gigabit Speed Testing & Latency Telemetry Engine</span>
+                    <span>{t.tagline}</span>
                   </div>
                   <button 
                     type="button" 
                     className="menu-footer-action-btn"
                     onClick={() => handleNavClick('speedtest', '/')}
                   >
-                    <span>Run Speed Test</span>
+                    <span>{t.startTest}</span>
                     <ArrowRight size={13} />
                   </button>
                 </div>
@@ -385,8 +385,8 @@ export default function Navbar({
             {langMenuOpen && (
               <div className="custom-lang-dropdown glass-card">
                 <div className="dropdown-header-row">
-                  <span className="dropdown-header-title">Select Language ({LANGUAGES.length})</span>
-                  <span className="dropdown-header-badge">{LANGUAGES.length} Available</span>
+                  <span className="dropdown-header-title">{t.currentLanguage} ({LANGUAGES.length})</span>
+                  <span className="dropdown-header-badge">{LANGUAGES.length} {t.all}</span>
                 </div>
 
                 {/* Search Bar */}
@@ -394,7 +394,7 @@ export default function Navbar({
                   <Search size={13} className="lang-search-ico" />
                   <input
                     type="text"
-                    placeholder="Search language..."
+                    placeholder={t.searchLanguages || "Search languages..."}
                     value={langSearch}
                     onChange={(e) => setLangSearch(e.target.value)}
                     className="lang-search-input"
@@ -407,7 +407,7 @@ export default function Navbar({
 
                 <div className="dropdown-list">
                   {filteredLanguages.length === 0 ? (
-                    <div className="lang-no-match">No language found</div>
+                    <div className="lang-no-match">{t.noLanguageFound || "No language found"}</div>
                   ) : (
                     filteredLanguages.map((l) => (
                       <button
@@ -435,7 +435,7 @@ export default function Navbar({
             type="button"
             className="btn-icon theme-toggle-btn"
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            title={t.themeToggle}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -477,7 +477,7 @@ export default function Navbar({
                 onClick={toggleTheme}
               >
                 {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                <span>{theme === 'dark' ? t.light : t.dark}</span>
               </button>
 
               <button
@@ -552,7 +552,7 @@ export default function Navbar({
             {/* Mobile Language Bar */}
             <div className="mobile-lang-bar">
               <div className="mobile-lang-header">
-                <span className="mobile-lang-title">Choose Language ({LANGUAGES.length}):</span>
+                <span className="mobile-lang-title">{t.currentLanguage} ({LANGUAGES.length}):</span>
                 <span className="mobile-lang-current">
                   <CountryFlag country={currentLangObj.country} fallback={currentLangObj.flag} size="small" />
                   <span>{currentLangObj.native}</span>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { BarChart2, Tv, Gamepad2, Video, CloudUpload, CheckCircle, AlertCircle } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'en' }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   const userDownload = parseFloat(latestResult?.download) || 120;
   const userUpload = parseFloat(latestResult?.upload) || 45;
@@ -27,32 +27,32 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
 
   const useCases = [
     {
-      title: '4K / 8K Ultra HD Video',
+      title: t.activityStreaming,
       icon: Tv,
-      req: '25+ Mbps Download',
+      req: t.reqStreaming || '25+ Mbps Download',
       status: userDownload >= 25 ? 'ready' : 'limited',
-      desc: userDownload >= 25 ? 'Smooth bufferless 4K HDR playback on multiple screens.' : 'Sufficient for 1080p, may buffer on 4K HDR.'
+      desc: t.streamingDesc
     },
     {
-      title: 'Competitive Esports Gaming',
+      title: t.activityGaming,
       icon: Gamepad2,
-      req: '< 35ms Latency & Low Jitter',
+      req: t.reqGaming || '< 35ms Latency & Low Jitter',
       status: userPing <= 35 ? 'ready' : 'limited',
-      desc: userPing <= 35 ? 'Ultra-low latency for instant hit-registration and responsiveness.' : 'Acceptable for casual gaming; slight lag in competitive FPS.'
+      desc: t.gamingDesc
     },
     {
-      title: 'HD Multi-Party Video Calls',
+      title: t.activityZoom,
       icon: Video,
-      req: '5+ Mbps Upload & Download',
+      req: t.reqZoom || '5+ Mbps Upload & Download',
       status: userUpload >= 5 && userDownload >= 10 ? 'ready' : 'limited',
-      desc: 'Crystal-clear 1080p video conferences on Zoom, Teams & Google Meet.'
+      desc: t.zoomDesc
     },
     {
-      title: 'Cloud Backup & File Transfer',
+      title: t.activityDownloads,
       icon: CloudUpload,
-      req: '25+ Mbps Upload',
+      req: t.reqDownloads || '25+ Mbps Upload',
       status: userUpload >= 25 ? 'ready' : 'limited',
-      desc: userUpload >= 25 ? 'Fast uploads of large RAW video files and bulk cloud syncing.' : 'Standard cloud backup speed.'
+      desc: t.downloadsDesc
     }
   ];
 
@@ -63,13 +63,13 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
           <BarChart2 className="text-cyan" size={24} />
           <div>
             <h3 className="compare-title">{t.compareTitle}</h3>
-            <span className="compare-subtitle">Performance benchmarks against global broadband indices</span>
+            <span className="compare-subtitle">{t.compareSubtitle}</span>
           </div>
         </div>
 
         <div className="percentile-pill">
           <span className="percentile-number">{percentile}%</span>
-          <span className="percentile-text">Faster than {percentile}% of tested networks</span>
+          <span className="percentile-text">{t.percentileText ? t.percentileText.replace('{percent}', percentile) : `Faster than ${percentile}% of tested networks`}</span>
         </div>
       </div>
 
@@ -78,8 +78,8 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
         {/* Download Comparison */}
         <div className="bar-group">
           <div className="bar-labels">
-            <span className="bar-title">Download Throughput Comparison</span>
-            <span className="bar-val-user text-cyan">Your Speed: {userDownload.toFixed(1)} {unit}</span>
+            <span className="bar-title">{t.download} {t.speed}</span>
+            <span className="bar-val-user text-cyan">{t.yourSpeed}: {userDownload.toFixed(1)} {unit}</span>
           </div>
           <div className="bar-track">
             <div 
@@ -91,10 +91,10 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
             <div 
               className="benchmark-marker" 
               style={{ left: `${Math.min(95, (globalAvgDownload / 300) * 100)}%` }}
-              title="Global Average (~92.5 Mbps)"
+              title={`${t.avgSpeed} (~92.5 Mbps)`}
             >
               <div className="marker-line" />
-              <span className="marker-label">Global Avg (92.5)</span>
+              <span className="marker-label">{t.avgSpeed} (92.5)</span>
             </div>
           </div>
         </div>
@@ -102,8 +102,8 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
         {/* Upload Comparison */}
         <div className="bar-group">
           <div className="bar-labels">
-            <span className="bar-title">Upload Throughput Comparison</span>
-            <span className="bar-val-user text-emerald">Your Speed: {userUpload.toFixed(1)} {unit}</span>
+            <span className="bar-title">{t.upload} {t.speed}</span>
+            <span className="bar-val-user text-emerald">{t.yourSpeed}: {userUpload.toFixed(1)} {unit}</span>
           </div>
           <div className="bar-track">
             <div 
@@ -115,10 +115,10 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
             <div 
               className="benchmark-marker" 
               style={{ left: `${Math.min(95, (globalAvgUpload / 150) * 100)}%` }}
-              title="Global Average (~41.2 Mbps)"
+              title={`${t.avgSpeed} (~41.2 Mbps)`}
             >
               <div className="marker-line" />
-              <span className="marker-label">Global Avg (41.2)</span>
+              <span className="marker-label">{t.avgSpeed} (41.2)</span>
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
                 </div>
                 <span className={`badge ${isReady ? 'badge-emerald' : 'badge-amber'}`}>
                   {isReady ? <CheckCircle size={12} /> : <AlertCircle size={12} />}
-                  {isReady ? 'Ready' : 'Fair'}
+                  {isReady ? t.excellent : t.fair}
                 </span>
               </div>
               <h5 className="use-case-title">{uc.title}</h5>

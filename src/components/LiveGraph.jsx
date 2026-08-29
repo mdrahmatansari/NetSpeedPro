@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 export default function LiveGraph({ 
   downloadSamples = [], 
@@ -9,7 +9,7 @@ export default function LiveGraph({
   lang = 'en' 
 }) {
   const canvasRef = useRef(null);
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -181,7 +181,7 @@ export default function LiveGraph({
       <div className="graph-header">
         <div className="graph-title-group">
           <span className="graph-title">{t.liveGraph}</span>
-          <span className="graph-subtitle">Time vs Bandwidth Throughput ({unit})</span>
+          <span className="graph-subtitle">{t.liveGraphSub} ({unit})</span>
         </div>
 
         {/* Legend */}

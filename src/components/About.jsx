@@ -1,5 +1,6 @@
+import React from 'react';
 import { Info, Shield, Zap, Server, Award, User, Phone, Mail, ExternalLink } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { getTranslations } from '../translations/i18n';
 
 function LinkedInIcon({ size = 14, className = '' }) {
   return (
@@ -17,7 +18,7 @@ function LinkedInIcon({ size = 14, className = '' }) {
 }
 
 export default function About({ lang = 'en' }) {
-  const t = translations[lang] || translations.en;
+  const t = getTranslations(lang);
 
   return (
     <div className="glass-card about-card">
@@ -25,13 +26,13 @@ export default function About({ lang = 'en' }) {
         <Info className="text-cyan" size={24} />
         <div>
           <h3 className="about-title">{t.aboutTitle}</h3>
-          <span className="about-subtitle">Transparent engineering and network measurement standards</span>
+          <span className="about-subtitle">{t.aboutSubtitle}</span>
         </div>
       </div>
 
       <div className="about-body">
         <p className="about-lead">
-          <strong>NETSPEEDPRO</strong> is a high-precision, browser-based internet speed and broadband diagnostics platform designed to measure raw network capacity, latency responsiveness, jitter variance, and line stability without requiring third-party plugins or desktop software.
+          {t.aboutLead}
         </p>
 
         {/* Founder Attribution & Contact Card */}
@@ -40,7 +41,7 @@ export default function About({ lang = 'en' }) {
             <User size={24} />
           </div>
           <div className="founder-info">
-            <span className="founder-badge">✦ FOUNDER & LEAD ARCHITECT</span>
+            <span className="founder-badge">✦ {t.founderTitle}</span>
             <div className="founder-name-wrap">
               <h4 className="founder-name">MD RAHMAT ANSARI</h4>
               <span className="founder-verified-ico" title="Verified Creator & Architect">
@@ -50,7 +51,7 @@ export default function About({ lang = 'en' }) {
               </span>
             </div>
             <p className="founder-desc">
-              Dedicated to building transparent, carrier-grade, and privacy-first network telemetry tools for users worldwide.
+              {t.founderDesc}
             </p>
 
             {/* Direct Contact & Social Links */}
@@ -63,7 +64,7 @@ export default function About({ lang = 'en' }) {
                 title="Connect with MD Rahmat Ansari on LinkedIn"
               >
                 <LinkedInIcon size={14} className="contact-icon linkedin-icon" />
-                <span>LinkedIn Profile</span>
+                <span>{t.linkedinProfile || "LinkedIn Profile"}</span>
                 <ExternalLink size={11} className="external-ico" />
               </a>
               <a href="tel:+919877807391" className="founder-contact-item" title="Call MD Rahmat Ansari">
@@ -83,9 +84,9 @@ export default function About({ lang = 'en' }) {
             <div className="about-feat-icon">
               <Zap size={20} />
             </div>
-            <h5>Multi-Stream Architecture</h5>
+            <h5>{t.multiStreamArch}</h5>
             <p>
-              By launching multiple concurrent streaming workers, NETSPEEDPRO completely saturates modern fiber and broadband pipes up to multi-gigabit throughput.
+              {t.multiStreamArchDesc}
             </p>
           </div>
 
@@ -93,9 +94,9 @@ export default function About({ lang = 'en' }) {
             <div className="about-feat-icon">
               <Server size={20} />
             </div>
-            <h5>Sub-Millisecond Telemetry</h5>
+            <h5>{t.subMilliTelemetry || t.subMsTelemetry}</h5>
             <p>
-              Using the HTML5 Performance API (<code>performance.now()</code>), ping and jitter samples are tracked with microsecond accuracy.
+              {t.subMilliTelemetryDesc}
             </p>
           </div>
 
@@ -103,9 +104,9 @@ export default function About({ lang = 'en' }) {
             <div className="about-feat-icon">
               <Shield size={20} />
             </div>
-            <h5>Privacy-First Local Storage</h5>
+            <h5>{t.privacyFirstTitle || t.privacyStorage}</h5>
             <p>
-              Your speed test records remain stored securely in your browser's local sandbox and are never sold or shared with advertisers.
+              {t.privacyFirstDesc || t.privacyDesc}
             </p>
           </div>
 
@@ -113,9 +114,9 @@ export default function About({ lang = 'en' }) {
             <div className="about-feat-icon">
               <Award size={20} />
             </div>
-            <h5>Transparent Accuracy</h5>
+            <h5>{t.carrierGradeTitle || t.transparentAccuracy}</h5>
             <p>
-              Results reflect 100% genuine real-world network data directly measured from your device.
+              {t.carrierGradeDesc || t.termsDesc}
             </p>
           </div>
         </div>
