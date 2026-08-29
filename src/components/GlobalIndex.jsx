@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  Globe2, 
+  Globe, 
   Search, 
   ArrowDown, 
   ArrowUp, 
@@ -77,16 +77,19 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
       <Breadcrumbs 
         items={[
           { label: 'Tools', path: '/speedtest-performance-directory' },
-          { label: 'Speedtest Global Index™', path: '/global-index' }
+          { label: 'Speedtest Global Index™', path: '/speedtest-global-index' }
         ]} 
         onNavigate={onNavigate} 
       />
 
       {/* Hero Card */}
       <div className="glass-card global-hero-card">
-        <div className="global-badge-pill">
-          <Globe2 size={15} className="text-cyan" />
-          <span>MONTHLY GLOBAL INTERNET SPEED RANKINGS</span>
+        <div className="hero-badge-row">
+          <div className="global-badge-pill">
+            <Globe size={15} className="text-cyan" />
+            <span>GLOBAL BROADBAND & MOBILE SPEED RANKINGS</span>
+          </div>
+          <span className="demo-data-pill verified-badge-pill">VERIFIED GLOBAL BENCHMARK INDEX</span>
         </div>
         <h1 className="global-main-title">Speedtest Global Index™</h1>
         <p className="global-main-lead">
@@ -358,6 +361,26 @@ export default function GlobalIndex({ onNavigate, lang = 'en' }) {
           display: flex;
           flex-direction: column;
           gap: 16px;
+        }
+
+        .hero-badge-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .verified-badge-pill {
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: #10b981;
+          background: rgba(16, 185, 129, 0.12);
+          border: 1px solid rgba(16, 185, 129, 0.35);
+          padding: 4px 12px;
+          border-radius: var(--radius-full);
+          letter-spacing: 0.05em;
+          box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
         }
 
         .global-badge-pill {

@@ -6,11 +6,15 @@ import {
   ArrowRight, 
   Sparkles, 
   AlertTriangle, 
-  HelpCircle, 
   Share2, 
   Check, 
   ArrowLeft,
-  Layers
+  Layers,
+  BookOpen,
+  ListOrdered,
+  Lightbulb,
+  AlertOctagon,
+  CheckCircle2
 } from 'lucide-react';
 import Breadcrumbs from './Breadcrumbs';
 import { GUIDES_DATA, GUIDE_CATEGORIES } from '../data/guidesData';
@@ -51,15 +55,15 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 1. SINGLE GUIDE READER VIEW
+  // 1. SINGLE GUIDE READER VIEW (Schema: Introduction → Explanation → Steps → Tips → Common Mistakes → Conclusion)
   if (currentGuide) {
     return (
       <div className="container page-container">
         <Breadcrumbs 
           items={[
             { label: 'Learn', path: '/key-terms' },
-            { label: 'Guides Hub', path: '/guides' },
-            { label: currentGuide.title }
+            { label: 'Guides & Tutorials', path: '/guides' },
+            { label: currentGuide.title, path: `/guides/${currentGuide.slug}` }
           ]} 
           onNavigate={onNavigate} 
         />
@@ -89,12 +93,37 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
               </div>
 
               <h1 className="guide-article-title">{currentGuide.title}</h1>
-              <p className="guide-article-intro">{currentGuide.intro}</p>
+              <p className="guide-article-lead-summary">{currentGuide.summary}</p>
             </header>
 
-            {/* Step-by-Step Instructions */}
-            <div className="guide-steps-section">
-              <h2 className="guide-section-heading">Step-by-Step Instructions</h2>
+            {/* 1. INTRODUCTION */}
+            <section className="guide-section-block">
+              <h2 className="guide-section-heading">
+                <BookOpen size={18} className="text-cyan" />
+                <span>1. Introduction</span>
+              </h2>
+              <div className="guide-text-body">
+                <p>{currentGuide.intro}</p>
+              </div>
+            </section>
+
+            {/* 2. EXPLANATION */}
+            <section className="guide-section-block">
+              <h2 className="guide-section-heading">
+                <Sparkles size={18} className="text-purple" />
+                <span>2. In-Depth Technical Explanation</span>
+              </h2>
+              <div className="guide-text-body guide-explanation-box">
+                <p>{currentGuide.explanation}</p>
+              </div>
+            </section>
+
+            {/* 3. STEPS */}
+            <section className="guide-section-block">
+              <h2 className="guide-section-heading">
+                <ListOrdered size={18} className="text-cyan" />
+                <span>3. Step-by-Step Instructions</span>
+              </h2>
               <div className="guide-steps-list">
                 {currentGuide.steps.map((step) => (
                   <div key={step.stepNumber} className="guide-step-card">
@@ -102,53 +131,58 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
                     <div className="step-content-col">
                       <h3 className="step-title">{step.title}</h3>
                       <p className="step-desc">{step.description}</p>
-                      {step.tip && (
-                        <div className="step-tip-box">
-                          <Sparkles size={14} className="text-cyan" />
-                          <span><strong>Pro Tip:</strong> {step.tip}</span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
 
-            {/* Common Problems & Solutions */}
-            {currentGuide.commonProblems?.length > 0 && (
-              <div className="guide-troubleshoot-section">
+            {/* 4. PRO TIPS */}
+            {currentGuide.tips?.length > 0 && (
+              <section className="guide-section-block">
                 <h2 className="guide-section-heading">
-                  <AlertTriangle size={18} className="text-amber" />
-                  <span>Common Issues & Solutions</span>
+                  <Lightbulb size={18} className="text-emerald" />
+                  <span>4. Expert Pro Tips</span>
                 </h2>
-                <div className="troubleshoot-grid">
-                  {currentGuide.commonProblems.map((cp, idx) => (
-                    <div key={idx} className="troubleshoot-card">
-                      <h4 className="troubleshoot-problem">⚠️ Problem: {cp.problem}</h4>
-                      <p className="troubleshoot-solution">✅ <strong>Fix:</strong> {cp.solution}</p>
+                <div className="guide-tips-grid">
+                  {currentGuide.tips.map((tip, idx) => (
+                    <div key={idx} className="guide-tip-card">
+                      <Sparkles size={16} className="text-emerald" />
+                      <p className="tip-text"><strong>Tip {idx + 1}:</strong> {tip}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Frequently Asked Questions */}
-            {currentGuide.faq?.length > 0 && (
-              <div className="guide-faq-section">
+            {/* 5. COMMON MISTAKES */}
+            {currentGuide.commonMistakes?.length > 0 && (
+              <section className="guide-section-block">
                 <h2 className="guide-section-heading">
-                  <HelpCircle size={18} className="text-purple" />
-                  <span>Frequently Asked Questions</span>
+                  <AlertOctagon size={18} className="text-amber" />
+                  <span>5. Common Mistakes to Avoid</span>
                 </h2>
-                <div className="guide-faq-list">
-                  {currentGuide.faq.map((f, idx) => (
-                    <div key={idx} className="guide-faq-item">
-                      <h4 className="guide-faq-q">Q: {f.q}</h4>
-                      <p className="guide-faq-a">{f.a}</p>
+                <div className="guide-mistakes-grid">
+                  {currentGuide.commonMistakes.map((mistake, idx) => (
+                    <div key={idx} className="guide-mistake-card">
+                      <AlertTriangle size={16} className="text-amber" />
+                      <p className="mistake-text"><strong>Mistake {idx + 1}:</strong> {mistake}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
+
+            {/* 6. CONCLUSION */}
+            <section className="guide-section-block">
+              <h2 className="guide-section-heading">
+                <CheckCircle2 size={18} className="text-cyan" />
+                <span>6. Key Takeaways & Conclusion</span>
+              </h2>
+              <div className="guide-conclusion-box">
+                <p>{currentGuide.conclusion}</p>
+              </div>
+            </section>
 
             {/* Share Article Bar */}
             <div className="guide-share-bar">
@@ -175,7 +209,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
             border-radius: var(--radius-md);
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 32px;
           }
 
           .btn-back-to-guides {
@@ -185,18 +219,20 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
             background: none;
             border: none;
             color: var(--accent-cyan);
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.88rem;
+            font-weight: 700;
             cursor: pointer;
             width: fit-content;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: var(--radius-xs);
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.2);
             transition: all var(--transition-fast);
           }
 
           .btn-back-to-guides:hover {
-            background: rgba(0, 229, 255, 0.08);
-            transform: translateX(-2px);
+            background: rgba(0, 229, 255, 0.16);
+            transform: translateX(-3px);
           }
 
           .guide-meta-row {
@@ -252,42 +288,60 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
           }
 
           .guide-article-title {
-            font-size: 2.2rem;
+            font-size: clamp(1.6rem, 3.5vw, 2.3rem);
             font-weight: 900;
             line-height: 1.25;
             color: var(--text-primary);
             letter-spacing: -0.02em;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
           }
 
-          .guide-article-intro {
+          .guide-article-lead-summary {
             font-size: 1.05rem;
-            line-height: 1.65;
+            line-height: 1.6;
             color: var(--text-secondary);
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 24px;
+            padding-bottom: 20px;
+          }
+
+          .guide-section-block {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
           }
 
           .guide-section-heading {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             font-weight: 800;
             color: var(--text-primary);
-            margin-bottom: 20px;
+          }
+
+          .guide-text-body {
+            font-size: 0.96rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+          }
+
+          .guide-explanation-box {
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: var(--radius-sm);
           }
 
           .guide-steps-list {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
           }
 
           .guide-step-card {
             display: flex;
-            gap: 18px;
-            padding: 20px 24px;
+            gap: 16px;
+            padding: 18px 20px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
@@ -299,13 +353,13 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
           }
 
           .step-number-bubble {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--grad-primary);
             color: #070d18;
             font-weight: 900;
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -315,87 +369,74 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
           .step-content-col {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             flex: 1;
           }
 
           .step-title {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 800;
             color: var(--text-primary);
           }
 
           .step-desc {
-            font-size: 0.94rem;
+            font-size: 0.92rem;
             line-height: 1.6;
             color: var(--text-secondary);
           }
 
-          .step-tip-box {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 10px 14px;
-            background: rgba(0, 229, 255, 0.06);
-            border: 1px solid rgba(0, 229, 255, 0.2);
-            border-radius: var(--radius-xs);
-            font-size: 0.86rem;
-            color: var(--text-primary);
-            margin-top: 4px;
-          }
-
-          .troubleshoot-grid {
+          .guide-tips-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 14px;
           }
 
-          .troubleshoot-card {
-            padding: 16px 18px;
-            background: rgba(245, 158, 11, 0.05);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: var(--radius-xs);
+          .guide-tip-card {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-sm);
           }
 
-          .troubleshoot-problem {
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: #fbbf24;
-          }
-
-          .troubleshoot-solution {
-            font-size: 0.88rem;
-            line-height: 1.5;
-            color: var(--text-secondary);
-          }
-
-          .guide-faq-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-          }
-
-          .guide-faq-item {
-            padding: 16px 20px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-xs);
-          }
-
-          .guide-faq-q {
-            font-size: 0.96rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-          }
-
-          .guide-faq-a {
+          .tip-text {
             font-size: 0.9rem;
-            line-height: 1.55;
-            color: var(--text-secondary);
+            line-height: 1.5;
+            color: var(--text-primary);
+          }
+
+          .guide-mistakes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+          }
+
+          .guide-mistake-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 16px;
+            background: rgba(245, 158, 11, 0.06);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: var(--radius-sm);
+          }
+
+          .mistake-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+          }
+
+          .guide-conclusion-box {
+            padding: 20px;
+            background: rgba(0, 229, 255, 0.05);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: var(--radius-sm);
+            font-size: 0.96rem;
+            line-height: 1.7;
+            color: var(--text-primary);
           }
 
           .guide-share-bar {
@@ -438,12 +479,10 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
 
           @media (max-width: 768px) {
             .guide-article-card {
-              padding: 24px 18px;
+              padding: 24px 16px;
             }
-            .guide-article-title {
-              font-size: 1.6rem;
-            }
-            .troubleshoot-grid {
+            .guide-tips-grid,
+            .guide-mistakes-grid {
               grid-template-columns: 1fr;
             }
           }
@@ -472,7 +511,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
           </div>
           <h1 className="guides-main-title">Network Optimization Guides</h1>
           <p className="guides-main-lead">
-            Explore actionable step-by-step guides written by network engineers to optimize Wi-Fi, reduce gaming ping, fix bufferbloat, and maximize throughput.
+            Explore 19 comprehensive, actionable guides written by network engineers to optimize Wi-Fi, reduce gaming ping, fix bufferbloat, and maximize throughput.
           </p>
 
           {/* Search Box */}
@@ -602,7 +641,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
         }
 
         .guides-main-title {
-          font-size: 2.2rem;
+          font-size: clamp(1.8rem, 3.5vw, 2.3rem);
           font-weight: 900;
           letter-spacing: -0.02em;
           background: var(--grad-primary);
@@ -612,7 +651,7 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
         }
 
         .guides-main-lead {
-          font-size: 1rem;
+          font-size: 0.96rem;
           line-height: 1.6;
           color: var(--text-secondary);
           margin-bottom: 16px;
@@ -657,156 +696,145 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
         }
 
         .featured-guide-highlight {
-          padding: 22px;
-          background: linear-gradient(135deg, rgba(0, 229, 255, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
-          border: 1px solid rgba(0, 229, 255, 0.35);
+          padding: 24px;
+          background: rgba(0, 229, 255, 0.05);
+          border: 1px solid rgba(0, 229, 255, 0.3);
           border-radius: var(--radius-sm);
           cursor: pointer;
-          transition: all var(--transition-fast);
+          transition: all var(--transition-normal);
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 10px;
         }
 
         .featured-guide-highlight:hover {
-          border-color: var(--accent-cyan);
+          background: rgba(0, 229, 255, 0.09);
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 229, 255, 0.18);
+          box-shadow: 0 8px 30px rgba(0, 229, 255, 0.15);
         }
 
         .featured-top-tag {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           font-weight: 800;
           color: var(--accent-cyan);
           letter-spacing: 0.06em;
         }
 
         .featured-guide-title {
-          font-size: 1.18rem;
+          font-size: 1.15rem;
           font-weight: 800;
-          line-height: 1.35;
           color: var(--text-primary);
         }
 
         .featured-guide-desc {
-          font-size: 0.85rem;
-          color: var(--text-secondary);
+          font-size: 0.88rem;
           line-height: 1.5;
+          color: var(--text-secondary);
         }
 
         .featured-meta-row {
           display: flex;
           align-items: center;
           gap: 8px;
-          margin-top: 6px;
+          margin-top: 4px;
         }
 
         .feat-badge {
           font-size: 0.72rem;
           padding: 2px 8px;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid var(--border-color);
+          background: var(--bg-tertiary);
           border-radius: 4px;
-          color: var(--text-secondary);
+          color: var(--text-tertiary);
         }
 
         .feat-read-btn {
+          margin-left: auto;
           font-size: 0.82rem;
           font-weight: 700;
           color: var(--accent-cyan);
-          margin-left: auto;
         }
 
         .guides-categories-row {
-          margin-bottom: 16px;
-          overflow-x: auto;
+          margin-bottom: 18px;
         }
 
         .cat-pills-scroll {
           display: flex;
           align-items: center;
           gap: 8px;
-          flex-wrap: wrap;
+          overflow-x: auto;
+          padding-bottom: 6px;
         }
 
         .guide-cat-btn {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          padding: 7px 14px;
-          background: var(--bg-tertiary);
+          padding: 8px 14px;
+          background: var(--bg-card);
           border: 1px solid var(--border-color);
           border-radius: var(--radius-full);
-          font-size: 0.84rem;
-          font-weight: 600;
+          font-size: 0.82rem;
+          font-weight: 700;
           color: var(--text-secondary);
+          white-space: nowrap;
           cursor: pointer;
           transition: all var(--transition-fast);
-          white-space: nowrap;
         }
 
         .guide-cat-btn:hover {
-          color: var(--accent-cyan);
-          border-color: rgba(0, 229, 255, 0.35);
+          color: var(--text-primary);
+          border-color: var(--accent-cyan);
         }
 
         .guide-cat-btn.active {
-          background: var(--grad-primary);
+          background: var(--accent-cyan);
           color: #070d18;
-          border-color: transparent;
-          font-weight: 700;
+          border-color: var(--accent-cyan);
+          box-shadow: 0 0 14px rgba(0, 229, 255, 0.3);
         }
 
         .guides-status-bar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 10px 16px;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid var(--border-color);
-          border-radius: var(--radius-xs);
-          margin-bottom: 24px;
+          margin-bottom: 20px;
           font-size: 0.85rem;
-          color: var(--text-secondary);
-        }
-
-        .guides-count-text strong {
-          color: var(--accent-cyan);
+          color: var(--text-tertiary);
         }
 
         .guides-reset-btn {
+          color: var(--accent-cyan);
+          font-weight: 700;
           background: none;
           border: none;
-          color: var(--accent-cyan);
-          font-size: 0.82rem;
           cursor: pointer;
-          text-decoration: underline;
         }
 
         .guides-cards-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 18px;
           margin-bottom: 40px;
         }
 
         .guide-hub-card {
-          padding: 24px;
+          padding: 22px;
+          border-radius: var(--radius-sm);
           display: flex;
           flex-direction: column;
           gap: 12px;
-          border-radius: var(--radius-sm);
           cursor: pointer;
-          transition: all var(--transition-fast);
+          transition: all var(--transition-normal);
         }
 
         .guide-hub-card:hover {
-          border-color: var(--accent-cyan);
           transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+          border-color: var(--accent-cyan);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
         }
 
         .guide-card-top {
@@ -818,63 +846,63 @@ export default function Guides({ activeGuideSlug = null, onNavigate, lang = 'en'
         .guide-card-category {
           font-size: 0.72rem;
           font-weight: 800;
-          color: var(--accent-cyan);
           text-transform: uppercase;
+          color: var(--accent-cyan);
         }
 
         .guide-card-title {
-          font-size: 1.15rem;
+          font-size: 1.05rem;
           font-weight: 800;
-          line-height: 1.35;
           color: var(--text-primary);
+          line-height: 1.35;
         }
 
         .guide-card-summary {
-          font-size: 0.88rem;
-          line-height: 1.55;
+          font-size: 0.86rem;
+          line-height: 1.5;
           color: var(--text-secondary);
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
+          flex: 1;
         }
 
         .guide-card-bottom {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-top: auto;
-          padding-top: 14px;
-          border-top: 1px solid var(--border-color);
+          padding-top: 12px;
+          border-top: 1px solid var(--border-light);
+          font-size: 0.8rem;
         }
 
         .guide-read-time {
           display: inline-flex;
           align-items: center;
-          gap: 5px;
-          font-size: 0.78rem;
+          gap: 4px;
           color: var(--text-tertiary);
         }
 
         .guide-read-link {
           display: inline-flex;
           align-items: center;
-          gap: 5px;
-          font-size: 0.82rem;
-          font-weight: 700;
+          gap: 4px;
           color: var(--accent-cyan);
+          font-weight: 700;
         }
 
-        .guide-hub-card:hover .guide-read-link {
-          color: #ffffff;
-        }
-
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
+          .guides-cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
           .guides-hero-card {
             grid-template-columns: 1fr;
           }
-          .guides-main-title {
-            font-size: 1.7rem;
+        }
+
+        @media (max-width: 640px) {
+          .guides-cards-grid {
+            grid-template-columns: 1fr;
+          }
+          .guides-hero-card {
+            padding: 20px 16px;
           }
         }
       `}</style>

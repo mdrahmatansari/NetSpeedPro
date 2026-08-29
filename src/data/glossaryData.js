@@ -13,6 +13,63 @@ export const GLOSSARY_CATEGORIES = [
 ];
 
 export const GLOSSARY_TERMS = [
+  // Numbers & Frequencies
+  {
+    id: 'frequency-2-4ghz',
+    term: '2.4 GHz Band',
+    category: 'Wi-Fi & Wireless',
+    letter: '2',
+    simpleDef: 'A standard Wi-Fi frequency band known for long physical range and high wall penetration, but lower maximum speeds.',
+    detailedExplanation: 'The 2.4 GHz spectrum spans 2.400 to 2.4835 GHz and is divided into 11–14 channels. Because lower radio frequencies travel farther through concrete, wood, and drywall, 2.4 GHz is ideal for extended home coverage. However, it offers narrow channel widths (20/40 MHz) and experiences heavy interference from microwaves, Bluetooth devices, and baby monitors.',
+    whyItMatters: 'Essential for connecting smart home IoT devices (bulbs, plugs, doorbells) that require long-distance reach rather than multi-gigabit throughput.',
+    realWorldExample: 'A smart security camera installed in the backyard garage connects reliably on the 2.4 GHz band because 5 GHz signals cannot penetrate three exterior walls.',
+    relatedTerms: ['5 GHz Band', '6 GHz Band', 'Wi-Fi 6', 'Signal Strength']
+  },
+  {
+    id: 'frequency-5ghz',
+    term: '5 GHz Band',
+    category: 'Wi-Fi & Wireless',
+    letter: '5',
+    simpleDef: 'A high-speed Wi-Fi frequency band that delivers significantly faster data transfer with shorter physical broadcast range.',
+    detailedExplanation: 'The 5 GHz spectrum operates between 5.150 and 5.850 GHz, offering 24+ non-overlapping channels and support for wider 80 MHz and 160 MHz channel bonding. It delivers speeds exceeding 1 Gbps on Wi-Fi 6/7, but its shorter wavelength is more easily absorbed by dense physical obstacles like brick and stone.',
+    whyItMatters: 'The primary band for gaming laptops, 4K streaming TVs, and smartphones located within 15–30 feet of the wireless router.',
+    realWorldExample: 'Switching your PlayStation 5 from 2.4 GHz to 5 GHz increases speed test download rates from 45 Mbps to 480 Mbps.',
+    relatedTerms: ['2.4 GHz Band', '6 GHz Band', 'Channel Bonding', 'Wi-Fi 6']
+  },
+  {
+    id: 'frequency-6ghz',
+    term: '6 GHz Band',
+    category: 'Wi-Fi & Wireless',
+    letter: '6',
+    simpleDef: 'The newest, pristine Wi-Fi spectrum reserved exclusively for Wi-Fi 6E and Wi-Fi 7 devices with zero legacy interference.',
+    detailedExplanation: 'Spanning from 5.925 to 7.125 GHz (providing 1,200 MHz of clean spectrum), the 6 GHz band provides up to seven ultra-wide 160 MHz channels or three massive 320 MHz channels. Because older Wi-Fi 4/5 devices cannot transmit on 6 GHz, the airwaves are completely free of legacy contention and radio congestion.',
+    whyItMatters: 'Enables genuine multi-gigabit wireless speeds (2+ Gbps) and sub-2ms wireless latency for VR headsets, 8K video streaming, and esports gaming.',
+    realWorldExample: 'A Wi-Fi 6E laptop downloading a 50 GB game over 6 GHz at 1,850 Mbps without suffering any interference from neighboring apartment networks.',
+    relatedTerms: ['Wi-Fi 6E', 'Wi-Fi 7', '5 GHz Band', 'Channel Bonding']
+  },
+  {
+    id: 'cellular-4g',
+    term: '4G LTE (Fourth Generation)',
+    category: 'Mobile & 5G',
+    letter: '4',
+    simpleDef: 'The fourth-generation cellular wireless standard delivering mobile broadband speeds typically ranging from 20 to 100 Mbps.',
+    detailedExplanation: '4G LTE (Long-Term Evolution) uses all-IP packet-switched architecture and Orthogonal Frequency-Division Multiple Access (OFDMA) to provide high-speed mobile internet with average latencies of 30–60 ms. LTE-Advanced (LTE-A) introduced Carrier Aggregation to reach peak burst speeds up to 300+ Mbps.',
+    whyItMatters: 'Provides reliable baseline mobile internet coverage across rural, highway, and urban areas worldwide.',
+    realWorldExample: 'Streaming a 1080p YouTube video on your smartphone while commuting on a suburban train via 4G LTE.',
+    relatedTerms: ['5G Network', 'Carrier Aggregation', 'Latency', 'Signal Strength']
+  },
+  {
+    id: 'cellular-5g',
+    term: '5G Network (Fifth Generation)',
+    category: 'Mobile & 5G',
+    letter: '5',
+    simpleDef: 'The 5th generation mobile cellular standard designed for multi-gigabit peak data rates, ultra-low latency, and massive device density.',
+    detailedExplanation: '5G operates across low-band (sub-1 GHz for coverage), mid-band (C-band/sub-6 GHz for speed and range balance), and high-band mmWave (24–40 GHz for 1–4 Gbps stadium bursts). 5G Standalone (SA) architecture introduces network slicing and slashes mobile latency to 10–18 ms.',
+    whyItMatters: 'Enables cloud gaming on mobile devices, autonomous vehicle telemetry, and high-speed Fixed Wireless Access (FWA) home broadband.',
+    realWorldExample: 'Using a 5G home router (Fixed Wireless Access) to get 350 Mbps download speed in an area without underground fiber lines.',
+    relatedTerms: ['4G LTE', 'Carrier Aggregation', 'Frequency', 'Latency']
+  },
+
   // A
   {
     id: 'access-point',
@@ -45,7 +102,7 @@ export const GLOSSARY_TERMS = [
     detailedExplanation: 'Most residential cable (DOCSIS) and DSL internet plans are asymmetric (e.g., 300 Mbps download but only 20 Mbps upload). This allocation matches typical consumer habits (downloading media, browsing web) but can create severe bottlenecks when backing up large files, livestreaming, or hosting video conferences.',
     whyItMatters: 'When upload bandwidth is saturated on asymmetric lines, download speeds collapse due to delayed TCP ACK packets.',
     realWorldExample: 'A 200 Mbps Cable connection that slows down to a crawl whenever someone uploads a 4K YouTube video.',
-    relatedTerms: ['Symmetric Connection', 'DOCSIS', 'FTTH', 'Upload Speed']
+    relatedTerms: ['Symmetric Connection', 'FTTH', 'Upload Speed', 'Broadband']
   },
   {
     id: 'attenuation',
@@ -56,7 +113,7 @@ export const GLOSSARY_TERMS = [
     detailedExplanation: 'Measured in decibels (dB), attenuation occurs due to physical cable resistance, dielectric absorption, fiber bending, distance from cell towers, or physical obstacles like concrete walls and metallic shielding.',
     whyItMatters: 'Excessive attenuation leads to packet retransmissions, high latency spikes, and complete connection dropouts.',
     realWorldExample: 'Running an unshielded Cat5e cable beyond 100 meters, causing connection speeds to drop from 1000 Mbps to 100 Mbps.',
-    relatedTerms: ['Decibel (dB)', 'Cat6 Cable', 'Fiber Optic', 'Path Loss']
+    relatedTerms: ['Signal Strength', 'Cat6 Ethernet', 'Fiber Optic', 'Decibel (dBm)']
   },
 
   // B
@@ -65,11 +122,11 @@ export const GLOSSARY_TERMS = [
     term: 'Bandwidth',
     category: 'Speed & Bandwidth',
     letter: 'B',
-    simpleDef: 'The maximum data transfer capacity of a network line or internet connection in a given time period.',
-    detailedExplanation: 'Bandwidth is commonly measured in Megabits per second (Mbps) or Gigabits per second (Gbps). Think of bandwidth as the width of a highway: a 4-lane highway can carry more cars simultaneously than a 1-lane road, but it does not make individual cars drive faster (that is latency).',
-    whyItMatters: 'Higher bandwidth allows multiple household members to stream 4K movies, download files, and game online simultaneously without congestion.',
-    realWorldExample: 'A 1 Gbps fiber connection allowing 10 family members to stream ultra-HD video simultaneously without buffering.',
-    relatedTerms: ['Throughput', 'Mbps', 'Gbps', 'Latency']
+    simpleDef: 'The maximum theoretical data transfer capacity of a network line or internet connection in a given time period.',
+    detailedExplanation: 'Bandwidth is measured in Megabits per second (Mbps) or Gigabits per second (Gbps). Think of bandwidth as the width of a highway: a 4-lane highway can carry more vehicles simultaneously than a single-lane road, but it does not make individual cars drive faster (speed/latency).',
+    whyItMatters: 'Higher bandwidth allows multiple household members to stream 4K movies, download games, and join video calls simultaneously without buffering.',
+    realWorldExample: 'A 1 Gbps fiber connection allowing 10 family members to stream ultra-HD video simultaneously without any reduction in quality.',
+    relatedTerms: ['Throughput', 'Mbps', 'Gbps', 'Latency', 'Internet Speed']
   },
   {
     id: 'beamforming',
@@ -80,29 +137,18 @@ export const GLOSSARY_TERMS = [
     detailedExplanation: 'By using multiple antennas and adjusting signal phase timing, modern routers create constructive signal interference targeted directly at client devices. This dramatically boosts signal-to-noise ratio (SNR), increases throughput, and extends effective range.',
     whyItMatters: 'Provides faster speeds and fewer dead zones in rooms located far from the main wireless router.',
     realWorldExample: 'Your phone receiving a strong 5 GHz Wi-Fi signal in the backyard because the router concentrates its transmission beam towards you.',
-    relatedTerms: ['MU-MIMO', 'Wi-Fi 6', 'Antenna Gain', '5 GHz']
-  },
-  {
-    id: 'bgp-routing',
-    term: 'BGP (Border Gateway Protocol)',
-    category: 'Protocols & Networking',
-    letter: 'B',
-    simpleDef: 'The standardized routing protocol that acts as the postal system of the global internet, routing traffic between Autonomous Systems (ISPs).',
-    detailedExplanation: 'BGP manages how packets travel across the global mesh of internet service providers, tier-1 carriers, and enterprise networks. It chooses the most efficient and policy-compliant path among hundreds of thousands of autonomous systems (AS).',
-    whyItMatters: 'Suboptimal BGP routing creates high international ping and packet detours; BGP configuration errors can take entire global platforms offline.',
-    realWorldExample: 'Traffic between London and New York routing across subsea transatlantic fiber cables via BGP path selection.',
-    relatedTerms: ['Autonomous System (ASN)', 'Latency', 'Routing Table', 'Peering']
+    relatedTerms: ['Wi-Fi 6', '5 GHz Band', 'Signal Strength', 'Access Point']
   },
   {
     id: 'bufferbloat',
     term: 'Bufferbloat',
     category: 'Latency & Quality',
     letter: 'B',
-    simpleDef: 'High latency and lag caused by excessive packet buffering in routers during heavy upload or download traffic.',
-    detailedExplanation: 'When network buffers in modems and routers become excessively large, packets sit in queues waiting to be transmitted rather than being dropped or paced. This causes ping times to skyrocket from 15ms to 500ms+ the instant someone starts uploading a file or downloading a game.',
+    simpleDef: 'High latency and lag caused by excessive packet buffering in modems and routers during heavy upload or download traffic.',
+    detailedExplanation: 'When network buffers in consumer routers become excessively large, packets sit in queues waiting to be transmitted rather than being paced or dropped. This causes ping times to skyrocket from 15 ms to 500+ ms the instant someone starts uploading a file or downloading a game.',
     whyItMatters: 'The primary reason gamers experience sudden uncontrollable teleporting lag whenever someone else in the house uses the internet.',
-    realWorldExample: 'Ping jumping from 20ms to 450ms in Valorant when your brother begins downloading a game update.',
-    relatedTerms: ['Smart Queue Management (SQM)', 'Jitter', 'QoS', 'Loaded Ping']
+    realWorldExample: 'Ping jumping from 20 ms to 450 ms in competitive gaming when a family member begins downloading a console update.',
+    relatedTerms: ['Latency', 'Jitter', 'QoS', 'Smart Queue Management (SQM)']
   },
   {
     id: 'byte-vs-bit',
@@ -111,33 +157,22 @@ export const GLOSSARY_TERMS = [
     letter: 'B',
     simpleDef: 'Bits (b) measure network transmission speed; Bytes (B) measure file storage size. 1 Byte equals 8 Bits.',
     detailedExplanation: 'Internet service providers sell speed in Megabits per second (Mbps), while web browsers and download managers report download rates in Megabytes per second (MB/s). To convert Mbps to MB/s, divide by 8.',
-    whyItMatters: 'Eliminates confusion when a 100 Mbps internet connection downloads files at 12.5 MB/s.',
-    realWorldExample: 'A 1000 Mbps (1 Gbps) fiber line downloading a 10 Gigabyte (GB) game in approximately 80 seconds (125 MB/s).',
+    whyItMatters: 'Eliminates confusion when a 100 Mbps internet plan downloads files at a maximum rate of 12.5 MB/s.',
+    realWorldExample: 'A 1,000 Mbps (1 Gbps) fiber line downloading a 10 Gigabyte (GB) video in approximately 80 seconds (125 MB/s).',
     relatedTerms: ['Mbps', 'Gbps', 'Bandwidth', 'Throughput']
   },
 
   // C
   {
-    id: 'carrier-aggregation',
-    term: 'Carrier Aggregation (LTE-A / 5G CA)',
-    category: 'Mobile & 5G',
-    letter: 'C',
-    simpleDef: 'A cellular technology that combines multiple frequency bands into a single high-bandwidth connection.',
-    detailedExplanation: 'Carrier Aggregation combines non-contiguous spectrum channels (e.g., combining 700 MHz for range with 3500 MHz for speed) into a unified virtual data pipe, multiplying peak throughput and boosting average speeds in congested urban cells.',
-    whyItMatters: 'Enables smartphones to achieve 500+ Mbps on 4G LTE-Advanced and 1+ Gbps on 5G Standalone networks.',
-    realWorldExample: 'A 5G smartphone combining n28 (700 MHz) and n78 (3.5 GHz) to deliver seamless multi-hundred megabit download speeds indoors.',
-    relatedTerms: ['5G Standalone (SA)', 'Sub-6 GHz', 'mmWave', 'MIMO']
-  },
-  {
     id: 'cat6-ethernet',
-    term: 'Cat6 / Cat6a Ethernet',
+    term: 'Cat6 / Cat6a Ethernet Cable',
     category: 'Hardware & Cables',
     letter: 'C',
-    simpleDef: 'Standardized twisted-pair copper network cables rated for up to 10 Gbps speeds.',
+    simpleDef: 'Standardized twisted-pair copper network cables rated for up to 10 Gbps speeds with low electrical crosstalk.',
     detailedExplanation: 'Category 6 (Cat6) operates at 250 MHz and supports 10 Gbps up to 55 meters (100 meters for 1 Gbps). Category 6a (Augmented) operates at 500 MHz and supports full 10 Gbps speeds across the entire 100-meter maximum Ethernet length with superior crosstalk rejection.',
     whyItMatters: 'The gold standard for residential and commercial LAN cabling, future-proofing multi-gigabit connections.',
-    realWorldExample: 'Hardwiring a gaming PC to a 2.5 Gbps router port with Cat6a cable to guarantee 0.5ms local latency.',
-    relatedTerms: ['Ethernet', 'RJ45', 'Cat8 Cable', 'LAN']
+    realWorldExample: 'Hardwiring a gaming PC to a 2.5 Gbps router port with Cat6a cable to guarantee 0.5ms local latency and 0% packet loss.',
+    relatedTerms: ['Ethernet', 'Router', 'Modem', 'Bandwidth']
   },
   {
     id: 'cdn',
@@ -145,67 +180,56 @@ export const GLOSSARY_TERMS = [
     category: 'Protocols & Networking',
     letter: 'C',
     simpleDef: 'A geographically distributed group of edge servers that cache content close to end users for ultra-fast delivery.',
-    detailedExplanation: 'Instead of fetching video, images, or web assets from an origin server thousands of miles away, CDNs (like Cloudflare, Akamai, Fastly, AWS CloudFront) deliver cached files from local edge data centers located in the user’s own city.',
+    detailedExplanation: 'Instead of fetching video, images, or web assets from an origin server thousands of miles away, CDNs (like Cloudflare, Akamai, Fastly, AWS CloudFront) deliver cached files from local edge data centers located in the user’s own city or region.',
     whyItMatters: 'Reduces web page load times from several seconds to milliseconds and prevents origin server crashes during traffic spikes.',
-    realWorldExample: 'Watching a Netflix 4K stream delivered directly from an Open Connect caching appliance hosted inside your local ISP data center.',
-    relatedTerms: ['Edge Computing', 'Latency', 'DNS', 'Caching']
-  },
-  {
-    id: 'channel-bonding',
-    term: 'Channel Bonding (20/40/80/160/320 MHz)',
-    category: 'Wi-Fi & Wireless',
-    letter: 'C',
-    simpleDef: 'Combining adjacent radio frequency channels to double or quadruple Wi-Fi bandwidth throughput.',
-    detailedExplanation: 'Standard Wi-Fi channels are 20 MHz wide. Bonding two creates 40 MHz, four creates 80 MHz, eight creates 160 MHz (Wi-Fi 6/6E), and sixteen creates 320 MHz (Wi-Fi 7). Wider channels provide massive maximum speeds but are more susceptible to radio interference.',
-    whyItMatters: 'Enables real-world wireless throughput exceeding 2.4 Gbps on modern Wi-Fi 6E/7 client devices.',
-    realWorldExample: 'Switching your 5 GHz router to a 160 MHz channel width to double local file transfer speeds to your NAS.',
-    relatedTerms: ['Wi-Fi 7', '5 GHz', '6 GHz', 'DFS Channels']
+    realWorldExample: 'Watching a Netflix 4K stream delivered directly from an Open Connect caching server hosted inside your local ISP data center.',
+    relatedTerms: ['Server', 'Data Center', 'Latency', 'DNS']
   },
 
   // D
   {
-    id: 'decibel-dbm',
-    term: 'dBm (Signal Strength)',
-    category: 'Wi-Fi & Wireless',
-    letter: 'D',
-    simpleDef: 'A logarithmic unit measuring absolute wireless and cellular radio signal power referenced to 1 milliwatt.',
-    detailedExplanation: 'Wi-Fi signal strength is measured in negative dBm values. -30 dBm is maximum power (sitting next to router), -50 dBm to -65 dBm is excellent, -75 dBm is weak, and -85 dBm or lower results in frequent disconnections and packet drops.',
-    whyItMatters: 'Allows network engineers to accurately measure Wi-Fi coverage and identify signal dead zones in buildings.',
-    realWorldExample: 'A laptop showing 5 bars of Wi-Fi at -55 dBm, dropping to 1 bar and buffering at -82 dBm in the basement.',
-    relatedTerms: ['RSSI', 'Attenuation', 'Access Point', 'Wi-Fi 6']
-  },
-  {
-    id: 'dhcp',
-    term: 'DHCP (Dynamic Host Configuration Protocol)',
+    id: 'data-center',
+    term: 'Data Center',
     category: 'Protocols & Networking',
     letter: 'D',
-    simpleDef: 'A network protocol that automatically assigns IP addresses and network configuration to devices when they join a network.',
-    detailedExplanation: 'When your phone connects to Wi-Fi, the DHCP server (built into your router) assigns it a unique local IP address (e.g., 192.168.1.45), subnet mask, default gateway, and DNS server addresses within milliseconds.',
-    whyItMatters: 'Without DHCP, you would have to manually type a unique static IP address, subnet, and DNS on every device you connect.',
-    realWorldExample: 'Connecting to airport Wi-Fi and immediately receiving an IP address without manual setup.',
-    relatedTerms: ['IP Address', 'Default Gateway', 'DNS', 'Router']
+    simpleDef: 'A dedicated physical facility housing thousands of enterprise servers, storage arrays, and network infrastructure.',
+    detailedExplanation: 'Data centers feature redundant industrial power feeds, backup diesel generators, chilled-water cooling systems, high-speed fiber cross-connects, and multi-tier physical security. Cloud providers (AWS, Azure, Google Cloud) operate global hyper-scale data centers powering modern web applications.',
+    whyItMatters: 'The physical backbone where cloud servers, multiplayer gaming hosts, streaming platforms, and speed test nodes reside.',
+    realWorldExample: 'Speed test results show 4 ms ping because your connection routes directly to an IX (Internet Exchange) data center in your metropolitan city.',
+    relatedTerms: ['Server', 'ISP', 'Latency', 'DNS']
+  },
+  {
+    id: 'decibel-dbm',
+    term: 'Decibel (dBm) / Signal Strength',
+    category: 'Wi-Fi & Wireless',
+    letter: 'D',
+    simpleDef: 'A logarithmic unit measuring wireless and cellular radio signal power referenced to 1 milliwatt.',
+    detailedExplanation: 'Wi-Fi signal strength is measured in negative dBm values. -30 dBm is maximum power (sitting right next to router), -50 dBm to -65 dBm is excellent, -75 dBm is weak, and -85 dBm or lower results in frequent packet drops and disconnects.',
+    whyItMatters: 'Allows users and network engineers to pinpoint Wi-Fi dead spots and optimize router/access point placement.',
+    realWorldExample: 'A laptop showing full signal at -52 dBm in the living room, but dropping to -84 dBm in the basement causing video calls to disconnect.',
+    relatedTerms: ['Signal Strength', 'Network Quality', 'Wi-Fi', 'Frequency']
   },
   {
     id: 'dns',
     term: 'DNS (Domain Name System)',
     category: 'Protocols & Networking',
     letter: 'D',
-    simpleDef: 'The phonebook of the internet that translates human-friendly domain names (e.g. google.com) into numerical IP addresses (142.250.190.46).',
+    simpleDef: 'The phonebook of the internet that translates human-friendly domain names (google.com) into numerical IP addresses (142.250.190.46).',
     detailedExplanation: 'When you type a URL, your browser queries a recursive DNS resolver. If the address is not cached, the resolver queries root servers, TLD servers, and authoritative nameservers to obtain the server’s real IP address.',
-    whyItMatters: 'Fast DNS servers (like Cloudflare 1.1.1.1 or Google 8.8.8.8) reduce lookup times from 80ms to 5ms, making web browsing feel instantaneous.',
-    realWorldExample: 'Changing your router DNS from your ISP to 1.1.1.1, making web pages start loading instantly.',
-    relatedTerms: ['DNS Over HTTPS (DoH)', 'IP Address', 'Latency', 'TTL']
+    whyItMatters: 'Fast, secure DNS resolvers (like Cloudflare 1.1.1.1 or Google 8.8.8.8) reduce lookup times from 80 ms to 4 ms, making web browsing feel instantaneous.',
+    realWorldExample: 'Changing your router DNS to 1.1.1.1 slashes initial domain resolution latency across all household devices.',
+    relatedTerms: ['IP Address', 'Public IP', 'Server', 'HTTPS']
   },
   {
     id: 'download-speed',
     term: 'Download Speed',
     category: 'Speed & Bandwidth',
     letter: 'D',
-    simpleDef: 'The rate at which data is transferred from the internet to your local device, measured in Megabits per second (Mbps).',
-    detailedExplanation: 'Download speed determines how fast web pages load, how smoothly video streams without buffering, and how quickly large application files or games download to your system.',
-    whyItMatters: 'The primary metric most consumers look for when purchasing residential internet plans.',
+    simpleDef: 'The rate at which data is transferred from remote internet servers to your local device, measured in Mbps or Gbps.',
+    detailedExplanation: 'Download speed determines how fast web pages load, how smoothly 4K/8K video streams without buffering, and how quickly large application files, games, and OS updates download to your system.',
+    whyItMatters: 'The primary headline metric advertised by ISPs for residential internet subscriptions.',
     realWorldExample: 'A 300 Mbps download connection downloading a 5 GB movie in approximately 2 minutes and 15 seconds.',
-    relatedTerms: ['Upload Speed', 'Throughput', 'Bandwidth', 'Mbps']
+    relatedTerms: ['Upload Speed', 'Internet Speed', 'Throughput', 'Mbps', 'Gbps']
   },
 
   // E & F
@@ -214,112 +238,331 @@ export const GLOSSARY_TERMS = [
     term: 'Ethernet (IEEE 802.3)',
     category: 'Hardware & Cables',
     letter: 'E',
-    simpleDef: 'The universal wired networking technology used to connect computers, routers, and switches in local area networks (LANs).',
-    detailedExplanation: 'Ethernet uses physical twisted-pair copper cables or fiber optic cables to transmit data frames using CSMA/CD protocols. Modern Ethernet supports 1 Gbps, 2.5 Gbps, 5 Gbps, 10 Gbps, 25 Gbps, 40 Gbps, and 100 Gbps speeds.',
-    whyItMatters: 'Always delivers lower latency, zero radio interference, and 100% consistent throughput compared to Wi-Fi.',
-    realWorldExample: 'Plugging an Ethernet cable into your gaming console to achieve a steady 12ms ping with 0% packet loss.',
-    relatedTerms: ['Cat6 Cable', 'RJ45', 'LAN', 'Switch']
+    simpleDef: 'The universal wired networking standard used to connect computers, routers, and switches with maximum reliability.',
+    detailedExplanation: 'Ethernet uses physical twisted-pair copper cables (Cat5e, Cat6, Cat6a, Cat8) or optical fiber to transmit data frames. Modern consumer Ethernet supports 1 Gbps, 2.5 Gbps, and 10 Gbps line speeds with zero radio interference and deterministic microsecond latency.',
+    whyItMatters: 'Always delivers lower latency, zero packet loss, and 100% consistent throughput compared to wireless Wi-Fi.',
+    realWorldExample: 'Plugging an Ethernet cable into your gaming PC to achieve a steady 12 ms ping with 0% packet loss.',
+    relatedTerms: ['Cat6 Ethernet', 'Router', 'Wi-Fi', 'Latency']
   },
   {
     id: 'fiber-optic-ftth',
-    term: 'FTTH (Fiber to the Home)',
+    term: 'Fiber Optic / FTTH (Fiber to the Home)',
     category: 'Broadband & Fiber',
     letter: 'F',
-    simpleDef: 'An internet connection delivered via pure optical glass strands directly into your residential home or apartment.',
-    detailedExplanation: 'Fiber-optic cables transmit digital data encoded as light pulses (photons) through microscopic strands of silica glass. Fiber offers near-infinite theoretical bandwidth, virtually zero signal degradation over long distances, and complete immunity to electrical interference.',
-    whyItMatters: 'The fastest, most reliable broadband technology in existence, consistently delivering symmetrical gigabit speeds with single-digit latency.',
-    realWorldExample: 'A 1000 Mbps symmetrical fiber line providing 950 Mbps download and 950 Mbps upload with 3ms ping.',
-    relatedTerms: ['GPON / XGS-PON', 'ONT', 'Symmetric Connection', 'Attenuation']
+    simpleDef: 'An internet connection delivered via pure optical glass strands transmitting data as pulses of light.',
+    detailedExplanation: 'Fiber-optic cables transmit digital data encoded as light photons through microscopic strands of silica glass. Fiber offers near-infinite theoretical bandwidth, virtually zero signal degradation over long distances, and complete immunity to electrical/electromagnetic interference.',
+    whyItMatters: 'The fastest, most reliable broadband technology in existence, consistently delivering symmetrical gigabit download and upload speeds with single-digit latency.',
+    realWorldExample: 'A 1,000 Mbps symmetrical fiber line providing 950 Mbps download, 950 Mbps upload, and 2 ms ping.',
+    relatedTerms: ['Broadband', 'Download Speed', 'Upload Speed', 'Latency']
+  },
+  {
+    id: 'frequency',
+    term: 'Frequency (Radio Spectrum)',
+    category: 'Wi-Fi & Wireless',
+    letter: 'F',
+    simpleDef: 'The rate of electromagnetic radio wave oscillations per second, measured in Megahertz (MHz) or Gigahertz (GHz).',
+    detailedExplanation: 'In networking, frequency determines the physical characteristics of wireless signals: lower frequencies (like 2.4 GHz, 700 MHz) travel farther and penetrate walls easily, while higher frequencies (5 GHz, 6 GHz, 28 GHz mmWave) carry vastly more data per second over shorter distances.',
+    whyItMatters: 'Governs the trade-off between coverage distance and maximum wireless speed on Wi-Fi and 5G.',
+    realWorldExample: 'Your router operates on dual frequencies: 2.4 GHz for whole-home range and 5 GHz for maximum speed close to the router.',
+    relatedTerms: ['2.4 GHz Band', '5 GHz Band', '6 GHz Band', 'Signal Strength']
   },
 
-  // J, L, M, P, Q, S, U, W
+  // G, H, I
+  {
+    id: 'gbps',
+    term: 'Gbps (Gigabits per Second)',
+    category: 'Speed & Bandwidth',
+    letter: 'G',
+    simpleDef: 'A measurement unit for ultra-high-speed network data transfer, equal to 1,000 Megabits per second (Mbps).',
+    detailedExplanation: '1 Gbps equals 1,000,000,000 bits per second. In practical file storage terms, 1 Gbps allows data transfer rates up to 125 Megabytes per second (MB/s). Multi-gigabit plans offer 2.5 Gbps, 5 Gbps, and 10 Gbps throughput.',
+    whyItMatters: 'The modern standard for next-generation fiber-optic broadband and enterprise data center backbones.',
+    realWorldExample: 'Downloading a massive 100 GB game title in under 14 minutes on a 1 Gbps fiber internet plan.',
+    relatedTerms: ['Mbps', 'Bandwidth', 'Throughput', 'Internet Speed']
+  },
+  {
+    id: 'http-https',
+    term: 'HTTP / HTTPS (Hypertext Transfer Protocol Secure)',
+    category: 'Protocols & Networking',
+    letter: 'H',
+    simpleDef: 'The underlying protocol used by the World Wide Web to transfer data between web browsers and web servers.',
+    detailedExplanation: 'HTTPS is the secure version of HTTP. It encrypts all communications using Transport Layer Security (TLS 1.3), guaranteeing data privacy, server authentication, and message integrity so sensitive credentials and speed test payloads cannot be intercepted or modified.',
+    whyItMatters: 'Protects user privacy, ensures secure online transactions, and enables modern high-performance web features like HTTP/3 and WebSockets.',
+    realWorldExample: 'The padlock icon in your browser address bar verifying that your connection to NETSPEEDPRO is fully encrypted via TLS.',
+    relatedTerms: ['TCP', 'UDP', 'Server', 'VPN']
+  },
+  {
+    id: 'internet-speed',
+    term: 'Internet Speed',
+    category: 'Speed & Bandwidth',
+    letter: 'I',
+    simpleDef: 'The composite measure of how fast and responsive your internet connection is, defined by bandwidth, throughput, and latency.',
+    detailedExplanation: 'Internet speed is not just one number. It is a combination of three key pillars: Download Throughput (data received), Upload Bandwidth (data transmitted), and Latency/Ping (reaction delay in milliseconds). A truly fast connection requires both high throughput and low, stable latency.',
+    whyItMatters: 'Directly impacts the responsiveness of web browsing, video streaming quality, voice call clarity, and online gaming smoothness.',
+    realWorldExample: 'A 500 Mbps connection with 10 ms ping loading complex modern web apps and streaming 4K HDR video effortlessly.',
+    relatedTerms: ['Download Speed', 'Upload Speed', 'Ping', 'Latency', 'Bandwidth']
+  },
+  {
+    id: 'ip-address',
+    term: 'IP Address (Internet Protocol Address)',
+    category: 'Protocols & Networking',
+    letter: 'I',
+    simpleDef: 'A unique numerical identifier assigned to every device connected to a computer network or the internet.',
+    detailedExplanation: 'IP addresses allow devices to locate and communicate with each other. IPv4 addresses consist of four numbers separated by dots (e.g. 192.168.1.1). IPv6 addresses use 128-bit hexadecimal notation (e.g. 2001:0db8:85a3::8a2e:0370:7334) to provide trillions of unique addresses for the modern internet.',
+    whyItMatters: 'Essential for routing data packets from web servers and game hosts to your specific device.',
+    realWorldExample: 'Your router assigning a local IP of 192.168.1.15 to your laptop so data packets reach the right screen.',
+    relatedTerms: ['Public IP', 'Private IP', 'DNS', 'Router']
+  },
+  {
+    id: 'isp',
+    term: 'ISP (Internet Service Provider)',
+    category: 'Broadband & Fiber',
+    letter: 'I',
+    simpleDef: 'The telecommunications company that provides you with access to the global internet infrastructure.',
+    detailedExplanation: 'ISPs operate fiber networks, cable lines, cellular towers, and regional routing gateways that connect residential and commercial customers to Tier-1 global internet exchange backbones (e.g. Jio, Airtel, Comcast, Verizon, AT&T, Singtel).',
+    whyItMatters: 'Your ISP determines your available bandwidth tiers, routing paths, data caps, customer support, and monthly subscription cost.',
+    realWorldExample: 'Subscribing to Airtel Xstream or Verizon Fios to get fiber-optic internet installed in your home.',
+    relatedTerms: ['Broadband', 'Fiber Optic', 'Router', 'Modem']
+  },
+
+  // J, L, M
   {
     id: 'jitter',
     term: 'Jitter (Latency Variation)',
     category: 'Latency & Quality',
     letter: 'J',
-    simpleDef: 'The variance or instability in ping latency over time, measured in milliseconds (ms).',
-    detailedExplanation: 'If your ping is 20ms on one packet, 85ms on the next, and 15ms after that, your connection has high jitter. Jitter is caused by network congestion, bufferbloat, routing route flapping, and Wi-Fi interference.',
-    whyItMatters: 'High jitter causes choppy robotic voice calls, stuttering Discord audio, and rubberbanding in online multiplayer games even if average ping seems acceptable.',
-    realWorldExample: 'A zoom call where your voice glitches and cuts out because packet arrival timing fluctuates by 60ms.',
-    relatedTerms: ['Ping', 'Latency', 'Packet Loss', 'Bufferbloat']
+    simpleDef: 'The variation or instability in ping latency timing over time, measured in milliseconds (ms).',
+    detailedExplanation: 'If your ping is 15 ms on one packet, 90 ms on the next, and 20 ms after that, your connection suffers from high jitter. Jitter is caused by network congestion, bufferbloat, route flapping, and wireless interference. Stable connections have jitter below 3 ms.',
+    whyItMatters: 'High jitter causes choppy, robotic voice calls on Zoom/Discord, frame stuttering in video conferences, and rubberbanding in online multiplayer games.',
+    realWorldExample: 'A Zoom video meeting where the audio breaks up and stutters because packet arrival intervals vary wildly.',
+    relatedTerms: ['Ping', 'Latency', 'Packet Loss', 'Bufferbloat', 'Network Quality']
   },
   {
     id: 'latency',
     term: 'Latency (Ping / Round Trip Time)',
     category: 'Latency & Quality',
     letter: 'L',
-    simpleDef: 'The time delay it takes for a data packet to travel from your device to a remote server and back, measured in milliseconds (ms).',
-    detailedExplanation: 'Latency is governed by physical distance, speed of light in optical glass (~200,000 km/s), router processing hops, and network queuing. Low latency (<20ms) is essential for real-time responsiveness.',
-    whyItMatters: 'Determines how snappy web pages feel and whether you hit your shots first in competitive esports games.',
-    realWorldExample: 'Pressing a button in an online game and having your character react in 15 milliseconds on a low-latency connection.',
-    relatedTerms: ['Ping', 'Jitter', 'Bufferbloat', 'Packet Loss']
+    simpleDef: 'The time delay in milliseconds (ms) for a data packet to travel from your device to a remote server and return.',
+    detailedExplanation: 'Latency is governed by the physical speed of light in optical glass (~200,000 km/s), distance between endpoints, router hops, and queue buffering. Low latency (<20 ms) feels instantaneous, while high latency (>150 ms) produces perceptible lag.',
+    whyItMatters: 'Crucial for real-time applications where every millisecond counts: competitive gaming, VoIP voice calls, and live trading.',
+    realWorldExample: 'Clicking a link and having the web page immediately begin rendering in 12 milliseconds.',
+    relatedTerms: ['Ping', 'Jitter', 'Packet Loss', 'Bufferbloat']
   },
+  {
+    id: 'mbps',
+    term: 'Mbps (Megabits per Second)',
+    category: 'Speed & Bandwidth',
+    letter: 'M',
+    simpleDef: 'The standard unit of measurement for internet bandwidth and speed, equal to 1,000,000 bits per second.',
+    detailedExplanation: 'Megabits per second (Mbps) measures transmission speed. It takes 8 Megabits (Mb) to equal 1 Megabyte (MB) of file storage. For example, a 100 Mbps internet connection transfers data at a rate of 12.5 MB/s.',
+    whyItMatters: 'The universal benchmark metric used by ISPs, speed test tools, and streaming services to rate connection capabilities.',
+    realWorldExample: 'Netflix recommending 25 Mbps download speed for streaming 4K Ultra HD video smoothly.',
+    relatedTerms: ['Gbps', 'Download Speed', 'Upload Speed', 'Bandwidth']
+  },
+  {
+    id: 'modem',
+    term: 'Modem (Modulator / Demodulator)',
+    category: 'Hardware & Cables',
+    letter: 'M',
+    simpleDef: 'The hardware device that converts incoming analog signals from your ISP into digital data your home network can read.',
+    detailedExplanation: 'Modems interface with physical ISP delivery mediums: coaxial cable (DOCSIS modem), fiber optics (ONT - Optical Network Terminal), or DSL phone lines. The modem passes decoded digital Ethernet traffic to your router.',
+    whyItMatters: 'The bridge between your ISP’s external infrastructure and your home’s local area network.',
+    realWorldExample: 'An optical fiber ONT modem converting light pulses from the street cable into standard RJ45 Ethernet data.',
+    relatedTerms: ['Router', 'ISP', 'Ethernet', 'Fiber Optic']
+  },
+
+  // N
+  {
+    id: 'network-congestion',
+    term: 'Network Congestion',
+    category: 'Latency & Quality',
+    letter: 'N',
+    simpleDef: 'A state where network demand exceeds available data carrying capacity, causing slower speeds, packet loss, and lag.',
+    detailedExplanation: 'Similar to vehicular traffic jams during rush hour, network congestion happens when too many users in a neighborhood or too many devices in a home attempt to transmit data simultaneously over a shared link. Routers drop excess packets or queue them, driving up latency.',
+    whyItMatters: 'Explains why internet speeds frequently drop during evening peak hours (7:00 PM – 10:00 PM) on oversubscribed cable nodes.',
+    realWorldExample: 'Internet speeds dropping from 300 Mbps in the morning to 65 Mbps on Friday evening due to neighborhood streaming demand.',
+    relatedTerms: ['Bufferbloat', 'Bandwidth', 'Throughput', 'ISP']
+  },
+  {
+    id: 'network-quality',
+    term: 'Network Quality / Stability',
+    category: 'Latency & Quality',
+    letter: 'N',
+    simpleDef: 'The overall health and consistency of a connection, determined by low jitter, zero packet loss, and steady loaded latency.',
+    detailedExplanation: 'High bandwidth alone does not guarantee a high-quality connection. A 100 Mbps connection with 5 ms ping and 0% packet loss delivers a vastly superior user experience compared to a 1,000 Mbps connection with 150 ms ping and 5% packet loss.',
+    whyItMatters: 'Ensures uninterrupted Zoom calls, zero buffering on streams, and glitch-free online gameplay.',
+    realWorldExample: 'A connection scoring 99.5% on the NETSPEEDPRO Stability Index due to rock-solid 1.2 ms jitter.',
+    relatedTerms: ['Ping', 'Jitter', 'Packet Loss', 'Bufferbloat']
+  },
+
+  // P
   {
     id: 'packet-loss',
     term: 'Packet Loss',
     category: 'Latency & Quality',
     letter: 'P',
-    simpleDef: 'The percentage of data packets sent across a network that fail to reach their intended destination.',
-    detailedExplanation: 'Measured as a percentage (e.g. 1% or 5% packet loss), it occurs due to network congestion, faulty cables, weak Wi-Fi signal, or overloaded ISP routing nodes. TCP connections must retransmit lost packets, causing severe speed collapses.',
-    whyItMatters: 'Even 1% packet loss causes noticeable voice call glitching, video buffering, and sudden teleporting in online games.',
-    realWorldExample: 'In a shooter game, firing a shot but having it fail to register because the packet was dropped in transit.',
-    relatedTerms: ['Ping', 'Jitter', 'Latency', 'TCP']
+    simpleDef: 'The percentage of data packets that fail to reach their intended destination across a network.',
+    detailedExplanation: 'Measured as a percentage (e.g. 1% or 5%), packet loss occurs due to signal attenuation, congested router queues, faulty Ethernet cables, or bad Wi-Fi reception. TCP connections must retransmit lost packets, severely degrading download and upload speeds.',
+    whyItMatters: 'Even 1% to 2% packet loss causes noticeable audio dropouts in Discord/Teams, choppy video, and character stutter in multiplayer games.',
+    realWorldExample: 'Experiencing teleportation and missed shots in a competitive shooter because 3% of outgoing packets are dropped.',
+    relatedTerms: ['Ping', 'Latency', 'Jitter', 'TCP', 'UDP']
   },
   {
     id: 'ping',
-    term: 'Ping (Latency Test)',
+    term: 'Ping (ICMP Echo)',
     category: 'Latency & Quality',
     letter: 'P',
-    simpleDef: 'A basic network diagnostic utility that sends an ICMP packet to a server and measures round-trip time in milliseconds (ms).',
-    detailedExplanation: 'Ping measures network responsiveness. A ping of under 20ms is ideal for gaming; 20–50ms is good; 50–100ms is fair; above 150ms results in noticeable lag and delayed interaction.',
-    whyItMatters: 'The quickest way to check if an internet connection is alive and measure real-time connection responsiveness.',
-    realWorldExample: 'Running a speed test and seeing a 14ms ping to the closest regional speed test server.',
-    relatedTerms: ['Latency', 'Jitter', 'ICMP', 'Traceroute']
+    simpleDef: 'A fundamental network diagnostic test that measures the round-trip time in milliseconds (ms) for a packet to reach a host and return.',
+    detailedExplanation: 'Ping sends an ICMP Echo Request and waits for an Echo Reply. Ping values under 20 ms are excellent, 20–50 ms is good, 50–100 ms is fair, and above 150 ms results in noticeable delay.',
+    whyItMatters: 'The fastest, most direct metric for determining whether a network connection is alive and evaluating real-time responsiveness.',
+    realWorldExample: 'Running a speed test and seeing an idle ping of 8 ms to the nearest local exchange node.',
+    relatedTerms: ['Latency', 'Jitter', 'Packet Loss', 'Server']
   },
   {
-    id: 'qos',
-    term: 'QoS (Quality of Service)',
-    category: 'Latency & Quality',
-    letter: 'Q',
-    simpleDef: 'A router feature that prioritizes critical, time-sensitive network traffic (like gaming, Zoom calls, VoIP) over background downloads.',
-    detailedExplanation: 'QoS analyzes packet headers and queues. When bandwidth is scarce, QoS guarantees that high-priority packets (audio/video/gaming) jump to the front of the transmission queue while bulk file downloads wait in line.',
-    whyItMatters: 'Prevents massive 50 GB game downloads from causing your work Zoom video meeting to stutter or disconnect.',
-    realWorldExample: 'Enabling QoS on your router so your gaming console always gets 20ms ping even when someone else streams 4K video.',
-    relatedTerms: ['Smart Queue Management (SQM)', 'Bufferbloat', 'Bandwidth', 'Latency']
+    id: 'private-ip',
+    term: 'Private IP Address (LAN IP)',
+    category: 'Protocols & Networking',
+    letter: 'P',
+    simpleDef: 'An IP address reserved exclusively for internal local area network (LAN) communication behind a router.',
+    detailedExplanation: 'Defined by RFC 1918 standards (e.g. 192.168.x.x, 10.x.x.x, 172.16.x.x–172.31.x.x), private IP addresses are assigned by your router’s DHCP server to phones, laptops, and printers. They are not routable on the public global internet.',
+    whyItMatters: 'Allows dozens of home devices to securely share a single public IP address via Network Address Translation (NAT).',
+    realWorldExample: 'Your smart TV having a private IP of 192.168.1.42 to communicate with your home media server.',
+    relatedTerms: ['Public IP', 'IP Address', 'Router', 'DHCP']
   },
   {
-    id: 'smart-queue-management',
-    term: 'SQM (Smart Queue Management)',
-    category: 'Latency & Quality',
+    id: 'public-ip',
+    term: 'Public IP Address (WAN IP)',
+    category: 'Protocols & Networking',
+    letter: 'P',
+    simpleDef: 'The globally unique IP address assigned to your router by your ISP that represents your home network on the worldwide internet.',
+    detailedExplanation: 'Every website, cloud server, and remote gaming host communicates with your home network using this single public IP address. Your router uses Network Address Translation (NAT) to forward incoming packets to the correct private device.',
+    whyItMatters: 'Identifies your network location to web servers, content delivery networks, and speed test servers.',
+    realWorldExample: 'Checking NETSPEEDPRO and seeing your public IP address (e.g. 49.207.12.85) and ISP geolocation.',
+    relatedTerms: ['Private IP', 'IP Address', 'ISP', 'VPN']
+  },
+
+  // R & S
+  {
+    id: 'router',
+    term: 'Router',
+    category: 'Hardware & Cables',
+    letter: 'R',
+    simpleDef: 'The central networking hardware device that directs data traffic between your local home devices and the wider internet.',
+    detailedExplanation: 'Routers manage IP address distribution (DHCP), firewall security, Network Address Translation (NAT), Quality of Service (QoS), and wireless Wi-Fi broadcasting. They inspect packet destination headers and choose the most efficient path to route data.',
+    whyItMatters: 'The nerve center of your home network; a modern router ensures fast Wi-Fi coverage, low latency, and network security.',
+    realWorldExample: 'Upgrading to a Wi-Fi 6 tri-band router to eliminate dead zones and support 40 simultaneous household devices.',
+    relatedTerms: ['Modem', 'Access Point', 'Wi-Fi', 'Ethernet']
+  },
+  {
+    id: 'server',
+    term: 'Server',
+    category: 'Protocols & Networking',
     letter: 'S',
-    simpleDef: 'An advanced router queuing algorithm (like CAKE or FQ-CoDel) that completely eliminates bufferbloat and latency under load.',
-    detailedExplanation: 'SQM actively monitors buffer lengths and drops or marks packets before buffers fill up. It fairly distributes bandwidth among all active network streams, guaranteeing lowest possible latency even under 100% upload or download saturation.',
-    whyItMatters: 'The single most effective software solution for eliminating lag spikes and maintaining 15ms ping during heavy household downloads.',
-    realWorldExample: 'Enabling CAKE SQM on an OpenWrt or Asus router to lock gaming ping at 18ms during full gigabit torrent downloads.',
-    relatedTerms: ['Bufferbloat', 'QoS', 'Latency', 'Loaded Ping']
+    simpleDef: 'A high-performance computer or software program that provides services, data, or resources to client devices over a network.',
+    detailedExplanation: 'Servers host web pages, stream video content, manage database queries, coordinate multiplayer game lobbies, and power speed test measurement endpoints. They run in continuous 24/7 high-availability data centers.',
+    whyItMatters: 'Every speed test, web search, and cloud file transfer connects your device to a remote server.',
+    realWorldExample: 'NETSPEEDPRO connecting to a dedicated 10 Gbps edge server in Mumbai to measure your peak fiber throughput.',
+    relatedTerms: ['Data Center', 'CDN', 'HTTP / HTTPS', 'Latency']
+  },
+  {
+    id: 'signal-strength',
+    term: 'Signal Strength (RSSI)',
+    category: 'Wi-Fi & Wireless',
+    letter: 'S',
+    simpleDef: 'The relative received power level of a wireless Wi-Fi or cellular radio signal, measured in negative dBm.',
+    detailedExplanation: 'Received Signal Strength Indicator (RSSI) measures how strongly your device receives radio waves from the router or cell tower. -30 to -65 dBm represents strong reception, -75 dBm indicates moderate range, and below -85 dBm causes high packet loss and dropped connections.',
+    whyItMatters: 'Directly dictates maximum Wi-Fi modulation speeds (QAM) and overall connection stability.',
+    realWorldExample: 'Moving closer to the router increases signal strength from -80 dBm to -50 dBm, tripling your speed test result.',
+    relatedTerms: ['Decibel (dBm)', 'Frequency', 'Wi-Fi', 'Beamforming']
+  },
+
+  // T, U, V, W
+  {
+    id: 'tcp',
+    term: 'TCP (Transmission Control Protocol)',
+    category: 'Protocols & Networking',
+    letter: 'T',
+    simpleDef: 'A connection-oriented network protocol that guarantees reliable, ordered, and error-checked delivery of data packets.',
+    detailedExplanation: 'TCP uses a 3-way handshake (SYN, SYN-ACK, ACK) and sequence numbers to ensure every packet arrives intact. If a packet is lost in transit, TCP automatically requests a retransmission. Used for web browsing, file downloads, emails, and speed test streaming.',
+    whyItMatters: 'Ensures downloaded files and web pages are 100% complete without missing data or corruption.',
+    realWorldExample: 'Downloading a software installation file where every single byte must arrive in perfect sequence.',
+    relatedTerms: ['UDP', 'HTTP / HTTPS', 'Packet Loss', 'Throughput']
+  },
+  {
+    id: 'throughput',
+    term: 'Throughput',
+    category: 'Speed & Bandwidth',
+    letter: 'T',
+    simpleDef: 'The actual, real-world rate of successful data delivery over a network connection, taking overhead and packet loss into account.',
+    detailedExplanation: 'While bandwidth represents maximum theoretical capacity (e.g. a 500 Mbps line), throughput measures the actual data successfully transferred (e.g. 475 Mbps actual download throughput) after factoring in TCP protocol headers, Wi-Fi interference, and server congestion.',
+    whyItMatters: 'The genuine speed your applications actually experience in daily internet usage.',
+    realWorldExample: 'Running a speed test on a 1,000 Mbps line and measuring a real-world throughput of 940 Mbps over Gigabit Ethernet.',
+    relatedTerms: ['Bandwidth', 'Download Speed', 'Upload Speed', 'Internet Speed']
+  },
+  {
+    id: 'udp',
+    term: 'UDP (User Datagram Protocol)',
+    category: 'Protocols & Networking',
+    letter: 'U',
+    simpleDef: 'A lightweight, connectionless network protocol designed for speed and low latency without retransmission delays.',
+    detailedExplanation: 'Unlike TCP, UDP does not require a handshake or retransmission of lost packets ("fire and forget"). This eliminates latency overhead, making it the ideal protocol for live video streaming, VoIP voice calls, DNS lookups, and fast-paced multiplayer gaming.',
+    whyItMatters: 'Enables the lowest possible latency for real-time multiplayer games and live video feeds where losing an occasional frame is better than freezing.',
+    realWorldExample: 'In an esports game, player movements are sent via UDP so character positions update with zero delay.',
+    relatedTerms: ['TCP', 'Latency', 'Ping', 'Packet Loss']
   },
   {
     id: 'upload-speed',
     term: 'Upload Speed',
     category: 'Speed & Bandwidth',
     letter: 'U',
-    simpleDef: 'The speed at which data travels from your local device to remote servers across the internet, measured in Megabits per second (Mbps).',
-    detailedExplanation: 'Upload bandwidth is consumed when sending emails with attachments, uploading YouTube videos, backing up photos to iCloud/Google Drive, streaming your webcam during video meetings, or hosting game servers.',
+    simpleDef: 'The rate at which data is transmitted from your local device to remote servers across the internet, measured in Mbps or Gbps.',
+    detailedExplanation: 'Upload bandwidth is consumed when sending emails with attachments, uploading YouTube videos, backing up photos to cloud storage (Google Drive, iCloud), sharing your webcam during Zoom/Teams calls, and broadcasting Twitch livestreams.',
     whyItMatters: 'When upload bandwidth is saturated, your entire internet freezes because outgoing download acknowledgment (TCP ACK) packets get delayed.',
-    realWorldExample: 'Uploading a 10 GB file in under 90 seconds on a 1 Gbps symmetrical fiber connection.',
-    relatedTerms: ['Download Speed', 'Symmetric Connection', 'Throughput', 'Bandwidth']
+    realWorldExample: 'Uploading a 4K video to YouTube in under 2 minutes on a 500 Mbps upload fiber connection.',
+    relatedTerms: ['Download Speed', 'Internet Speed', 'Throughput', 'Mbps', 'Fiber Optic']
+  },
+  {
+    id: 'vpn',
+    term: 'VPN (Virtual Private Network)',
+    category: 'Security & Privacy',
+    letter: 'V',
+    simpleDef: 'A secure encrypted tunnel between your device and a remote VPN server that shields your IP address and online activity.',
+    detailedExplanation: 'A VPN encrypts all incoming and outgoing internet traffic using strong cryptography (AES-256 or ChaCha20). Web servers see the VPN server’s public IP rather than your real home IP address. VPNs add slight latency overhead due to encryption and geographic detour routing.',
+    whyItMatters: 'Protects privacy on untrusted public Wi-Fi networks, prevents ISP tracking, and enables secure remote access to enterprise networks.',
+    realWorldExample: 'Connecting to a VPN at an airport coffee shop to ensure nobody on the public Wi-Fi can snoop on your login passwords.',
+    relatedTerms: ['Public IP', 'HTTP / HTTPS', 'Latency', 'ISP']
+  },
+  {
+    id: 'wi-fi',
+    term: 'Wi-Fi (IEEE 802.11)',
+    category: 'Wi-Fi & Wireless',
+    letter: 'W',
+    simpleDef: 'The universal wireless networking technology that uses radio waves to provide high-speed local network and internet access.',
+    detailedExplanation: 'Wi-Fi allows smartphones, laptops, TVs, and smart home appliances to communicate without physical cables. Operating across 2.4 GHz, 5 GHz, and 6 GHz frequencies, modern Wi-Fi generations (Wi-Fi 6, 6E, 7) deliver multi-gigabit throughput and low latency.',
+    whyItMatters: 'The primary way billions of consumer devices connect to the internet in homes, offices, and public spaces daily.',
+    realWorldExample: 'Connecting your smartphone to your home Wi-Fi network to browse the web wirelessly at 400 Mbps.',
+    relatedTerms: ['2.4 GHz Band', '5 GHz Band', 'Wi-Fi 6', 'Wi-Fi 7', 'Router']
   },
   {
     id: 'wi-fi-6',
     term: 'Wi-Fi 6 (802.11ax)',
     category: 'Wi-Fi & Wireless',
     letter: 'W',
-    simpleDef: 'The 6th generation Wi-Fi standard operating on 2.4 GHz and 5 GHz, designed for high device density, lower latency, and speeds up to 9.6 Gbps.',
-    detailedExplanation: 'Introduced OFDMA, 1024-QAM modulation, bidirectional 8x8 MU-MIMO, Target Wake Time (TWT) for battery saving, and mandatory WPA3 security. Delivers up to 4x capacity in crowded environments.',
-    whyItMatters: 'The current industry standard for modern home routers, laptops, and smartphones.',
+    simpleDef: 'The 6th generation Wi-Fi standard operating on 2.4 GHz and 5 GHz, engineered for high device density and speeds up to 9.6 Gbps.',
+    detailedExplanation: 'Introduced OFDMA (dividing channels for simultaneous multi-device transmission), 1024-QAM modulation, bidirectional 8x8 MU-MIMO, Target Wake Time (TWT) for battery saving, and mandatory WPA3 security.',
+    whyItMatters: 'The current industry standard for modern home routers, laptops, and smartphones, delivering up to 4x capacity in crowded homes.',
     realWorldExample: 'Streaming, gaming, and downloading across 30 household devices simultaneously on a Wi-Fi 6 router without network slowdowns.',
-    relatedTerms: ['Wi-Fi 6E', 'Wi-Fi 7', 'OFDMA', 'MU-MIMO']
+    relatedTerms: ['Wi-Fi 6E', 'Wi-Fi 7', '5 GHz Band', 'Router']
+  },
+  {
+    id: 'wi-fi-6e',
+    term: 'Wi-Fi 6E (6 GHz Extended)',
+    category: 'Wi-Fi & Wireless',
+    letter: 'W',
+    simpleDef: 'An extension of Wi-Fi 6 that unlocks access to the pristine, ultra-wide 6 GHz frequency band for zero-interference multi-gigabit speeds.',
+    detailedExplanation: 'Wi-Fi 6E takes the capabilities of Wi-Fi 6 and expands them into the 6 GHz spectrum (5.925–7.125 GHz). Offering up to seven continuous 160 MHz channels, Wi-Fi 6E eliminates congestion from legacy Wi-Fi 4/5 devices and delivers real-world throughput exceeding 1.8 Gbps with sub-3ms latency.',
+    whyItMatters: 'The first major spectrum expansion for Wi-Fi in over a decade, providing clean airwaves for heavy bandwidth applications.',
+    realWorldExample: 'A Wi-Fi 6E desktop achieving 1,650 Mbps speed test results in an apartment building crowded with dozens of competing 5 GHz networks.',
+    relatedTerms: ['6 GHz Band', 'Wi-Fi 6', 'Wi-Fi 7', 'Channel Bonding']
   },
   {
     id: 'wi-fi-7',
@@ -327,9 +570,9 @@ export const GLOSSARY_TERMS = [
     category: 'Wi-Fi & Wireless',
     letter: 'W',
     simpleDef: 'The newest flagship Wi-Fi generation featuring massive 320 MHz channels, 4096-QAM, and Multi-Link Operation (MLO) for speeds up to 46 Gbps.',
-    detailedExplanation: 'Introduces Multi-Link Operation (MLO), allowing client devices to transmit and receive data across multiple frequency bands (5 GHz + 6 GHz) simultaneously. This slashes wireless latency to wired Ethernet levels (<1ms) and delivers real-world multi-gigabit throughput.',
+    detailedExplanation: 'Introduces Multi-Link Operation (MLO), allowing client devices to transmit and receive data across multiple frequency bands (5 GHz + 6 GHz) simultaneously. This slashes wireless latency to wired Ethernet levels (<1 ms) and delivers real-world multi-gigabit throughput.',
     whyItMatters: 'The ultimate wireless standard, making Wi-Fi as fast and deterministic as physical wired Ethernet cables.',
-    realWorldExample: 'A Wi-Fi 7 laptop connecting to 5 GHz and 6 GHz simultaneously to stream 8K VR with 0.8ms wireless latency.',
-    relatedTerms: ['Wi-Fi 6E', 'Channel Bonding', 'Beamforming', '6 GHz']
+    realWorldExample: 'A Wi-Fi 7 laptop connecting to 5 GHz and 6 GHz simultaneously to stream 8K VR with 0.8 ms wireless latency.',
+    relatedTerms: ['Wi-Fi 6E', '6 GHz Band', 'Channel Bonding', 'Ethernet']
   }
 ];

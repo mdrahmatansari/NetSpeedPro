@@ -67,24 +67,29 @@ export default function Footer({ onNavClick, lang = 'en' }) {
         {/* Navigation Links */}
         <div className="footer-links-group">
           <div className="footer-links-col">
-            <span className="footer-col-title">NAVIGATION</span>
-            <button className="footer-link" onClick={() => onNavClick('speedtest')}>{t.navSpeedTest}</button>
-            <button className="footer-link" onClick={() => onNavClick('history')}>{t.navHistory}</button>
-            <button className="footer-link" onClick={() => onNavClick('diagnostics')}>{t.navDiagnostics}</button>
-            <button className="footer-link" onClick={() => onNavClick('compare')}>{t.navCompare}</button>
+            <span className="footer-col-title">LEARN</span>
+            <button className="footer-link" onClick={() => onNavClick('key-terms', '/key-terms')}>Key Terms & Glossary</button>
+            <button className="footer-link" onClick={() => onNavClick('guides', '/guides')}>Guides & Tutorials</button>
+            <button className="footer-link" onClick={() => onNavClick('speedtest', '/')}>{t.navSpeedTest}</button>
+            <button className="footer-link" onClick={() => onNavClick('history', '/history')}>{t.navHistory}</button>
           </div>
 
           <div className="footer-links-col">
-            <span className="footer-col-title">RESOURCES</span>
-            <button className="footer-link" onClick={() => onNavClick('servers')}>{t.navServers}</button>
-            <button className="footer-link" onClick={() => onNavClick('faq')}>{t.navFAQ}</button>
-            <button className="footer-link" onClick={() => onNavClick('about')}>{t.navAbout}</button>
+            <span className="footer-col-title">TOOLS & INDEX</span>
+            <button className="footer-link" onClick={() => onNavClick('performance-directory', '/speedtest-performance-directory')}>Performance Directory</button>
+            <button className="footer-link" onClick={() => onNavClick('global-index', '/speedtest-global-index')}>Global Index™</button>
+            <button className="footer-link" onClick={() => onNavClick('speedtest-awards', '/speedtest-awards')}>Speedtest Awards™</button>
+            <button className="footer-link" onClick={() => onNavClick('diagnostics', '/diagnostics')}>{t.navDiagnostics}</button>
+            <button className="footer-link" onClick={() => onNavClick('compare', '/compare')}>{t.navCompare}</button>
           </div>
 
           <div className="footer-links-col">
-            <span className="footer-col-title">LEGAL</span>
-            <button className="footer-link" onClick={() => onNavClick('privacy')}>{t.privacyTitle}</button>
-            <button className="footer-link" onClick={() => onNavClick('terms')}>{t.termsTitle}</button>
+            <span className="footer-col-title">SUPPORT & LEGAL</span>
+            <button className="footer-link" onClick={() => onNavClick('faq', '/faq')}>{t.navFAQ}</button>
+            <button className="footer-link" onClick={() => onNavClick('servers', '/servers')}>{t.navServers}</button>
+            <button className="footer-link" onClick={() => onNavClick('about', '/about')}>{t.navAbout}</button>
+            <button className="footer-link" onClick={() => onNavClick('privacy', '/privacy')}>{t.privacyTitle}</button>
+            <button className="footer-link" onClick={() => onNavClick('terms', '/terms')}>{t.termsTitle}</button>
           </div>
 
           <div className="footer-links-col">

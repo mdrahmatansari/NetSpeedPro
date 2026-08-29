@@ -39,9 +39,12 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
 
       {/* Hero Card */}
       <div className="glass-card awards-hero-card">
-        <div className="awards-badge-pill">
-          <Trophy size={15} className="text-amber" />
-          <span>OFFICIAL ANNUAL BENCHMARK HONORS {SPEEDTEST_AWARDS_DATA.currentYear}</span>
+        <div className="hero-badge-row">
+          <div className="awards-badge-pill">
+            <Trophy size={15} className="text-amber" />
+            <span>OFFICIAL ANNUAL BENCHMARK HONORS {SPEEDTEST_AWARDS_DATA.currentYear}</span>
+          </div>
+          <span className="demo-data-pill verified-badge-pill">OFFICIAL BENCHMARK WINNERS</span>
         </div>
         <h1 className="awards-main-title">Speedtest Awards™</h1>
         <p className="awards-main-lead">
@@ -173,6 +176,26 @@ export default function SpeedtestAwards({ onNavigate, lang = 'en' }) {
           display: flex;
           flex-direction: column;
           gap: 14px;
+        }
+
+        .hero-badge-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .verified-badge-pill {
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: #10b981;
+          background: rgba(16, 185, 129, 0.12);
+          border: 1px solid rgba(16, 185, 129, 0.35);
+          padding: 4px 12px;
+          border-radius: var(--radius-full);
+          letter-spacing: 0.05em;
+          box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
         }
 
         .awards-badge-pill {

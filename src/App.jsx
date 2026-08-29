@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { Sparkles, Play, Square, AlertCircle, RotateCcw } from 'lucide-react';
 
@@ -18,6 +18,11 @@ import FAQ from './components/FAQ';
 import About from './components/About';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import Terms from './components/Terms';
+import KeyTerms from './components/KeyTerms';
+import Guides from './components/Guides';
+import PerformanceDirectory from './components/PerformanceDirectory';
+import GlobalIndex from './components/GlobalIndex';
+import SpeedtestAwards from './components/SpeedtestAwards';
 import Footer from './components/Footer';
 
 import { translations } from './translations/i18n';
@@ -27,14 +32,92 @@ import { exportService } from './services/exportService';
 import { geoService } from './services/geoService';
 import { serverService, DEFAULT_SERVERS } from './services/serverService';
 
+// Native SPA Route Parser
+function parseRoute(pathname) {
+  const clean = pathname ? pathname.replace(/\/+$/, '') || '/' : '/';
+  
+  if (clean === '/' || clean === '/speedtest') {
+    return { tab: 'speedtest', slug: null };
+  }
+  if (clean === '/key-terms') {
+    return { tab: 'key-terms', slug: null };
+  }
+  if (clean === '/guides') {
+    return { tab: 'guides', slug: null };
+  }
+  if (clean.startsWith('/guides/')) {
+    const slug = clean.replace('/guides/', '');
+    return { tab: 'guides', slug };
+  }
+  if (clean === '/speedtest-performance-directory' || clean === '/performance-directory') {
+    return { tab: 'performance-directory', slug: null };
+  }
+  if (clean === '/speedtest-global-index' || clean === '/global-index') {
+    return { tab: 'global-index', slug: null };
+  }
+  if (clean === '/speedtest-awards' || clean === '/awards') {
+    return { tab: 'speedtest-awards', slug: null };
+  }
+  if (clean === '/faq') {
+    return { tab: 'faq', slug: null };
+  }
+  if (clean === '/history') {
+    return { tab: 'history', slug: null };
+  }
+  if (clean === '/diagnostics') {
+    return { tab: 'diagnostics', slug: null };
+  }
+  if (clean === '/compare') {
+    return { tab: 'compare', slug: null };
+  }
+  if (clean === '/servers') {
+    return { tab: 'servers', slug: null };
+  }
+  if (clean === '/about') {
+    return { tab: 'about', slug: null };
+  }
+  if (clean === '/privacy') {
+    return { tab: 'privacy', slug: null };
+  }
+  if (clean === '/terms') {
+    return { tab: 'terms', slug: null };
+  }
+  return { tab: 'speedtest', slug: null };
+}
+
+function getPathForTab(tab, slug = null) {
+  switch (tab) {
+    case 'key-terms': return '/key-terms';
+    case 'guides': return slug ? `/guides/${slug}` : '/guides';
+    case 'performance-directory': return '/speedtest-performance-directory';
+    case 'global-index': return '/speedtest-global-index';
+    case 'speedtest-awards': return '/speedtest-awards';
+    case 'faq': return '/faq';
+    case 'history': return '/history';
+    case 'diagnostics': return '/diagnostics';
+    case 'compare': return '/compare';
+    case 'servers': return '/servers';
+    case 'about': return '/about';
+    case 'privacy': return '/privacy';
+    case 'terms': return '/terms';
+    case 'speedtest':
+    default:
+      return '/';
+  }
+}
+
 export default function App() {
   // App Settings & Preferences
   const [settings, setSettings] = useState(() => storageService.getSettings());
   const [theme, setTheme] = useState(settings.theme || 'dark');
   const [lang, setLang] = useState(settings.language || 'en');
-  const [activeTab, setActiveTab] = useState('speedtest');
 
-  // Network & Server State (Initialized with built-in high-speed servers)
+  // URL & Routing State
+  const initialRoute = parseRoute(window.location.pathname);
+  const [activeTab, setActiveTab] = useState(initialRoute.tab);
+  const [guideSlug, setGuideSlug] = useState(initialRoute.slug);
+
+  // Network & Server State
   const [ipInfo, setIpInfo] = useState(null);
   const [isLocating, setIsLocating] = useState(false);
   const [servers, setServers] = useState(DEFAULT_SERVERS);
@@ -43,7 +126,7 @@ export default function App() {
 
   // Test Lifecycle State
   const [isTesting, setIsTesting] = useState(false);
-  const [testPhase, setTestPhase] = useState('idle'); // idle | connecting | ping | download | upload | stability | complete | error
+  const [testPhase, setTestPhase] = useState('idle');
   const [currentSpeed, setCurrentSpeed] = useState(0);
   const [livePing, setLivePing] = useState(0);
   const [liveJitter, setLiveJitter] = useState(0);
@@ -66,12 +149,47 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // Synchronize Browser Back / Forward History Navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const { tab, slug } = parseRoute(window.location.pathname);
+      setActiveTab(tab);
+      setGuideSlug(slug);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Universal Navigation Dispatcher
+  const navigateTo = useCallback((target, slug = null) => {
+    let nextTab = target;
+    let nextSlug = slug;
+    let targetPath = target;
+
+    if (typeof target === 'string' && target.startsWith('/')) {
+      const parsed = parseRoute(target);
+      nextTab = parsed.tab;
+      nextSlug = parsed.slug;
+      targetPath = target;
+    } else {
+      targetPath = getPathForTab(nextTab, nextSlug);
+    }
+
+    setActiveTab(nextTab);
+    setGuideSlug(nextSlug);
+
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({ tab: nextTab, slug: nextSlug }, '', targetPath);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Initial Data Fetching: Real IP & Location + Nearest Server Auto-Selection
   useEffect(() => {
     const initData = async () => {
       let realLoc = null;
 
-      // 1. Fetch Real IP & Location
       try {
         realLoc = await geoService.getRealLocation();
         setIpInfo(realLoc);
@@ -79,7 +197,6 @@ export default function App() {
         console.warn('Real location fetch failed:', err);
       }
 
-      // 2. Fetch Server List & Auto Select Nearest Node
       try {
         const loadedServers = await serverService.fetchServers();
         const serverList = (loadedServers && loadedServers.length > 0) ? loadedServers : DEFAULT_SERVERS;
@@ -164,10 +281,10 @@ export default function App() {
     setTestResults(null);
 
     const engine = new SpeedTestEngine({
-      duration: settings.duration || 10,
-      parallelStreams: settings.parallelStreams || 4,
+      duration: settings.duration || 9,
+      parallelStreams: settings.parallelStreams || 6,
 
-      onPhaseChange: (phase, message) => {
+      onPhaseChange: (phase) => {
         setTestPhase(phase);
       },
 
@@ -207,7 +324,7 @@ export default function App() {
           setHistory(updatedHistory);
         }
 
-        // Trigger celebratory confetti if stability rating is good
+        // Trigger confetti
         try {
           confetti({
             particleCount: 75,
@@ -237,7 +354,7 @@ export default function App() {
   };
 
   const handleRetest = () => {
-    setActiveTab('speedtest');
+    navigateTo('/');
     startSpeedTest();
   };
 
@@ -258,12 +375,11 @@ export default function App() {
 
   return (
     <div className="app-layout">
-
-
-      {/* Top Navbar */}
+      {/* Top Navbar with Menu system replacing FAQ */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(t) => navigateTo(t)}
+        onNavigate={navigateTo}
         theme={theme}
         toggleTheme={toggleTheme}
         lang={lang}
@@ -273,7 +389,7 @@ export default function App() {
       />
 
       <main className="main-content">
-        {/* TAB 1: Main Speed Test UI */}
+        {/* VIEW 1: Main Speed Test UI & Homepage */}
         {activeTab === 'speedtest' && (
           <div className="container speedtest-page">
             {/* Hero Heading Section */}
@@ -327,7 +443,7 @@ export default function App() {
               </div>
             </section>
 
-            {/* Error Message Notice if any */}
+            {/* Error Message Notice */}
             {errorMessage && (
               <div className="error-alert-banner">
                 <AlertCircle size={20} />
@@ -338,7 +454,7 @@ export default function App() {
               </div>
             )}
 
-            {/* Real-time Dynamic Live Graph (Active or Completed) */}
+            {/* Real-time Dynamic Live Graph */}
             {(isTesting || downloadSamples.length > 0 || uploadSamples.length > 0) && (
               <section className="graph-section">
                 <LiveGraph
@@ -351,7 +467,7 @@ export default function App() {
               </section>
             )}
 
-            {/* Comprehensive Results Dashboard when test finishes */}
+            {/* Results Dashboard */}
             {testResults && testPhase === 'complete' && (
               <section className="results-section">
                 <ResultDashboard
@@ -417,14 +533,46 @@ export default function App() {
               />
             </section>
 
-            {/* FAQ Accordions */}
+            {/* FAQ Accordions on Homepage */}
             <section className="faq-section">
               <FAQ lang={lang} />
             </section>
           </div>
         )}
 
-        {/* TAB 2: History Full View */}
+        {/* VIEW 2: Key Terms & Glossary Page */}
+        {activeTab === 'key-terms' && (
+          <KeyTerms onNavigate={navigateTo} lang={lang} />
+        )}
+
+        {/* VIEW 3: Guides Page (Hub & Reader) */}
+        {activeTab === 'guides' && (
+          <Guides activeGuideSlug={guideSlug} onNavigate={navigateTo} lang={lang} />
+        )}
+
+        {/* VIEW 4: Speedtest Performance Directory */}
+        {activeTab === 'performance-directory' && (
+          <PerformanceDirectory onNavigate={navigateTo} lang={lang} />
+        )}
+
+        {/* VIEW 5: Speedtest Global Index™ */}
+        {activeTab === 'global-index' && (
+          <GlobalIndex onNavigate={navigateTo} lang={lang} />
+        )}
+
+        {/* VIEW 6: Speedtest Awards™ */}
+        {activeTab === 'speedtest-awards' && (
+          <SpeedtestAwards onNavigate={navigateTo} lang={lang} />
+        )}
+
+        {/* VIEW 7: Dedicated FAQ Page (/faq) */}
+        {activeTab === 'faq' && (
+          <div className="container page-container">
+            <FAQ lang={lang} />
+          </div>
+        )}
+
+        {/* VIEW 8: History Full View */}
         {activeTab === 'history' && (
           <div className="container page-container">
             <TestHistory
@@ -441,7 +589,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 3: Network Diagnostics Full View */}
+        {/* VIEW 9: Network Diagnostics Full View */}
         {activeTab === 'diagnostics' && (
           <div className="container page-container">
             <NetworkDiagnostics
@@ -451,7 +599,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 4: Speed Comparison Full View */}
+        {/* VIEW 10: Speed Comparison Full View */}
         {activeTab === 'compare' && (
           <div className="container page-container">
             <SpeedComparison
@@ -462,7 +610,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 5: Servers Full View */}
+        {/* VIEW 11: Servers Full View */}
         {activeTab === 'servers' && (
           <div className="container page-container">
             <div className="glass-card servers-page-card">
@@ -477,7 +625,7 @@ export default function App() {
                     className={`glass-panel server-node-item ${selectedServer?.id === s.id ? 'active-server' : ''}`}
                     onClick={() => {
                       setSelectedServer(s);
-                      setActiveTab('speedtest');
+                      navigateTo('/');
                     }}
                   >
                     <div className="node-item-top">
@@ -495,28 +643,21 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 6: FAQ Full View */}
-        {activeTab === 'faq' && (
-          <div className="container page-container">
-            <FAQ lang={lang} />
-          </div>
-        )}
-
-        {/* TAB 7: About Full View */}
+        {/* VIEW 12: About Full View */}
         {activeTab === 'about' && (
           <div className="container page-container">
             <About lang={lang} />
           </div>
         )}
 
-        {/* TAB 8: Privacy Full View */}
+        {/* VIEW 13: Privacy Full View */}
         {activeTab === 'privacy' && (
           <div className="container page-container">
             <PrivacyPolicy lang={lang} />
           </div>
         )}
 
-        {/* TAB 9: Terms Full View */}
+        {/* VIEW 14: Terms Full View */}
         {activeTab === 'terms' && (
           <div className="container page-container">
             <Terms lang={lang} />
@@ -554,38 +695,13 @@ export default function App() {
 
       {/* Modern Footer */}
       <Footer
-        onNavClick={(tab) => {
-          setActiveTab(tab);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+        onNavClick={(tab, path) => {
+          navigateTo(path || tab);
         }}
         lang={lang}
       />
 
       <style>{`
-        .demo-banner {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          padding: 10px 16px;
-          background: rgba(245, 158, 11, 0.18);
-          border-bottom: 1px solid rgba(245, 158, 11, 0.4);
-          color: #fbbf24;
-          font-size: 0.85rem;
-          font-weight: 600;
-          text-align: center;
-          flex-wrap: wrap;
-        }
-
-        .demo-disable-btn {
-          background: #fbbf24;
-          color: #000;
-          padding: 4px 10px;
-          border-radius: var(--radius-full);
-          font-size: 0.78rem;
-          font-weight: 700;
-        }
-
         .speedtest-page {
           display: flex;
           flex-direction: column;
@@ -808,10 +924,6 @@ export default function App() {
             flex-direction: column;
             align-items: stretch;
             padding: 14px 16px;
-          }
-          .retry-btn {
-            width: 100%;
-            justify-content: center;
           }
         }
 

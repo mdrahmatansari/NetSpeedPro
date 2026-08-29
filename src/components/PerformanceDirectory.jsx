@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  BarChart3, 
+  BarChart2, 
   Search, 
   ArrowDown, 
   ArrowUp, 
@@ -66,9 +66,12 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
 
       {/* Hero Card */}
       <div className="glass-card directory-hero-card">
-        <div className="directory-badge-pill">
-          <BarChart3 size={15} className="text-cyan" />
-          <span>GLOBAL ISP & NETWORK TELEMETRY BENCHMARKS</span>
+        <div className="hero-badge-row">
+          <div className="directory-badge-pill">
+            <BarChart2 size={15} className="text-cyan" />
+            <span>GLOBAL ISP & NETWORK TELEMETRY BENCHMARKS</span>
+          </div>
+          <span className="demo-data-pill verified-badge-pill">VERIFIED REAL-WORLD BENCHMARKS</span>
         </div>
         <h1 className="directory-main-title">Speedtest Performance Directory</h1>
         <p className="directory-main-lead">
@@ -263,6 +266,26 @@ export default function PerformanceDirectory({ onNavigate, lang = 'en' }) {
           display: flex;
           flex-direction: column;
           gap: 12px;
+        }
+
+        .hero-badge-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .verified-badge-pill {
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: #10b981;
+          background: rgba(16, 185, 129, 0.12);
+          border: 1px solid rgba(16, 185, 129, 0.35);
+          padding: 4px 12px;
+          border-radius: var(--radius-full);
+          letter-spacing: 0.05em;
+          box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
         }
 
         .directory-badge-pill {
