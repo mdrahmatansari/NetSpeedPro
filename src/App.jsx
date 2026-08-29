@@ -24,6 +24,8 @@ import { translations } from './translations/i18n';
 import { storageService } from './services/storage';
 import { SpeedTestEngine } from './services/speedTestEngine';
 import { exportService } from './services/exportService';
+import { geoService } from './services/geoService';
+import { serverService, DEFAULT_SERVERS } from './services/serverService';
 
 export default function App() {
   // App Settings & Preferences
@@ -32,10 +34,11 @@ export default function App() {
   const [lang, setLang] = useState(settings.language || 'en');
   const [activeTab, setActiveTab] = useState('speedtest');
 
-  // Network & Server State
+  // Network & Server State (Initialized with built-in high-speed servers)
   const [ipInfo, setIpInfo] = useState(null);
-  const [servers, setServers] = useState([]);
-  const [selectedServer, setSelectedServer] = useState(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const [servers, setServers] = useState(DEFAULT_SERVERS);
+  const [selectedServer, setSelectedServer] = useState(DEFAULT_SERVERS[0]);
   const [history, setHistory] = useState(() => storageService.getHistory());
 
   // Test Lifecycle State
@@ -63,52 +66,78 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  // Initial Data Fetching: IP Info & Server List
+  // Initial Data Fetching: Real IP & Location + Nearest Server Auto-Selection
   useEffect(() => {
     const initData = async () => {
+      let realLoc = null;
+
+      // 1. Fetch Real IP & Location
       try {
-        // Fetch IP Info
-        const ipRes = await fetch('/api/speedtest/ip-info');
-        if (ipRes.ok) {
-          const ipData = await ipRes.json();
-          setIpInfo(ipData);
-        }
-      } catch {
-        // Fallback default IP info
-        setIpInfo({
-          ip: '103.21.244.0',
-          version: 'IPv4',
-          isp: 'Broadband / High-Speed ISP',
-          city: 'Mumbai',
-          country: 'India',
-          countryFlag: '🇮🇳'
-        });
+        realLoc = await geoService.getRealLocation();
+        setIpInfo(realLoc);
+      } catch (err) {
+        console.warn('Real location fetch failed:', err);
       }
 
+      // 2. Fetch Server List & Auto Select Nearest Node
       try {
-        // Fetch Server List
-        const sRes = await fetch('/api/speedtest/servers');
-        if (sRes.ok) {
-          const sData = await sRes.json();
-          setServers(sData.servers || []);
-          setSelectedServer(sData.servers?.find(s => s.isDefault) || sData.servers?.[0]);
-        }
-      } catch {
-        // Fallback server
-        const fallbackServer = {
-          id: 'in-bom-1',
-          name: 'Mumbai Server',
-          city: 'Mumbai',
-          country: 'India',
-          sponsor: 'NetSpeedPro Core Node'
-        };
-        setServers([fallbackServer]);
-        setSelectedServer(fallbackServer);
+        const loadedServers = await serverService.fetchServers();
+        const serverList = (loadedServers && loadedServers.length > 0) ? loadedServers : DEFAULT_SERVERS;
+        setServers(serverList);
+
+        const nearest = serverService.findNearestServer(
+          serverList,
+          realLoc?.latitude,
+          realLoc?.longitude,
+          realLoc?.countryCode || 'IN'
+        );
+        setSelectedServer(nearest || serverList[0]);
+      } catch (err) {
+        console.warn('Server initialization error:', err);
+        setServers(DEFAULT_SERVERS);
+        setSelectedServer(DEFAULT_SERVERS[0]);
       }
     };
 
     initData();
   }, []);
+
+  // Precise GPS Location Detection Handler
+  const handleDetectGpsLocation = async () => {
+    setIsLocating(true);
+    try {
+      const gpsLocation = await geoService.getPreciseGpsLocation(ipInfo);
+      setIpInfo(gpsLocation);
+
+      if (gpsLocation?.latitude && typeof gpsLocation.latitude === 'number') {
+        const nearest = serverService.findNearestServer(
+          servers,
+          gpsLocation.latitude,
+          gpsLocation.longitude,
+          gpsLocation.countryCode
+        );
+        if (nearest) {
+          setSelectedServer(nearest);
+        }
+      }
+    } catch (e) {
+      console.warn('GPS location detection error:', e);
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
+  const handleRefreshLocation = async () => {
+    setIsLocating(true);
+    try {
+      const refreshed = await geoService.getRealLocation();
+      setIpInfo(refreshed);
+    } catch (e) {
+      console.warn('Refresh location error:', e);
+    } finally {
+      setIsLocating(false);
+    }
+  };
 
   const handleUpdateSettings = (newSettings) => {
     const updated = storageService.saveSettings(newSettings);
@@ -185,7 +214,7 @@ export default function App() {
             spread: 70,
             origin: { y: 0.6 }
           });
-        } catch {}
+        } catch { }
       },
 
       onError: (err) => {
@@ -232,7 +261,7 @@ export default function App() {
 
 
       {/* Top Navbar */}
-      <Navbar 
+      <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         theme={theme}
@@ -259,22 +288,22 @@ export default function App() {
 
             {/* Speedometer & Live Action Controls */}
             <section className="speedometer-section">
-              <Speedometer 
+              <Speedometer
                 currentSpeed={currentSpeed}
                 phase={testPhase}
                 unit={settings.unit}
                 lang={lang}
                 ping={livePing}
                 jitter={liveJitter}
-                serverName={selectedServer ? `${selectedServer.city}` : 'Auto'}
-                connectionType="Wi-Fi / Fiber"
+                serverName={selectedServer ? selectedServer.city : 'Auto Selected Node'}
+                connectionType={ipInfo?.companyName || ipInfo?.isp || 'Broadband'}
               />
 
               {/* Main Call to Action Button */}
               <div className="test-action-container">
                 {!isTesting ? (
-                  <button 
-                    className="btn-primary start-test-btn" 
+                  <button
+                    className="btn-primary start-test-btn"
                     onClick={startSpeedTest}
                     id="start-speedtest-btn"
                   >
@@ -282,8 +311,8 @@ export default function App() {
                     <span>{testPhase === 'complete' ? t.testAgain : t.startTest}</span>
                   </button>
                 ) : (
-                  <button 
-                    className="btn-danger stop-test-btn" 
+                  <button
+                    className="btn-danger stop-test-btn"
                     onClick={stopSpeedTest}
                     id="stop-speedtest-btn"
                   >
@@ -305,17 +334,14 @@ export default function App() {
                 <div className="error-text">
                   <strong>Measurement Notice:</strong> {errorMessage}
                 </div>
-                <button className="btn-secondary retry-btn" onClick={startSpeedTest}>
-                  <RotateCcw size={16} />
-                  <span>Retry Test</span>
-                </button>
+                <button className="btn-secondary" onClick={() => setErrorMessage(null)}>Dismiss</button>
               </div>
             )}
 
             {/* Real-time Dynamic Live Graph (Active or Completed) */}
             {(isTesting || downloadSamples.length > 0 || uploadSamples.length > 0) && (
               <section className="graph-section">
-                <LiveGraph 
+                <LiveGraph
                   downloadSamples={downloadSamples}
                   uploadSamples={uploadSamples}
                   phase={testPhase}
@@ -328,7 +354,7 @@ export default function App() {
             {/* Comprehensive Results Dashboard when test finishes */}
             {testResults && testPhase === 'complete' && (
               <section className="results-section">
-                <ResultDashboard 
+                <ResultDashboard
                   results={testResults}
                   unit={settings.unit}
                   lang={lang}
@@ -343,21 +369,25 @@ export default function App() {
 
             {/* Server Card & Connection Details */}
             <section className="grid-2 connection-server-grid">
-              <ServerCard 
+              <ServerCard
                 server={selectedServer}
+                ipInfo={ipInfo}
                 onOpenModal={() => setIsServerModalOpen(true)}
                 lang={lang}
                 ping={livePing}
               />
-              <ConnectionInfo 
+              <ConnectionInfo
                 ipInfo={ipInfo}
                 lang={lang}
+                onDetectGps={handleDetectGpsLocation}
+                onRefresh={handleRefreshLocation}
+                isLocating={isLocating}
               />
             </section>
 
             {/* Speed Comparison Benchmarks */}
             <section className="compare-section">
-              <SpeedComparison 
+              <SpeedComparison
                 latestResult={testResults || history[0]}
                 unit={settings.unit}
                 lang={lang}
@@ -366,7 +396,7 @@ export default function App() {
 
             {/* Network Diagnostics Card */}
             <section className="diagnostics-section">
-              <NetworkDiagnostics 
+              <NetworkDiagnostics
                 latestResult={testResults || history[0]}
                 lang={lang}
               />
@@ -374,7 +404,7 @@ export default function App() {
 
             {/* Test History Section */}
             <section className="history-section">
-              <TestHistory 
+              <TestHistory
                 history={history}
                 onDelete={handleDeleteHistory}
                 onClear={handleClearHistory}
@@ -397,7 +427,7 @@ export default function App() {
         {/* TAB 2: History Full View */}
         {activeTab === 'history' && (
           <div className="container page-container">
-            <TestHistory 
+            <TestHistory
               history={history}
               onDelete={handleDeleteHistory}
               onClear={handleClearHistory}
@@ -414,7 +444,7 @@ export default function App() {
         {/* TAB 3: Network Diagnostics Full View */}
         {activeTab === 'diagnostics' && (
           <div className="container page-container">
-            <NetworkDiagnostics 
+            <NetworkDiagnostics
               latestResult={testResults || history[0]}
               lang={lang}
             />
@@ -424,7 +454,7 @@ export default function App() {
         {/* TAB 4: Speed Comparison Full View */}
         {activeTab === 'compare' && (
           <div className="container page-container">
-            <SpeedComparison 
+            <SpeedComparison
               latestResult={testResults || history[0]}
               unit={settings.unit}
               lang={lang}
@@ -441,9 +471,9 @@ export default function App() {
                 <p>Select any node to benchmark connection latency and throughput.</p>
               </div>
               <div className="grid-3 server-cards-grid">
-                {servers.map((s) => (
-                  <div 
-                    key={s.id} 
+                {(servers && servers.length > 0 ? servers : DEFAULT_SERVERS).map((s) => (
+                  <div
+                    key={s.id}
                     className={`glass-panel server-node-item ${selectedServer?.id === s.id ? 'active-server' : ''}`}
                     onClick={() => {
                       setSelectedServer(s);
@@ -495,16 +525,16 @@ export default function App() {
       </main>
 
       {/* Global Modals */}
-      <ServerModal 
+      <ServerModal
         isOpen={isServerModalOpen}
         onClose={() => setIsServerModalOpen(false)}
-        servers={servers}
+        servers={servers && servers.length > 0 ? servers : DEFAULT_SERVERS}
         currentServer={selectedServer}
         onSelectServer={(s) => setSelectedServer(s)}
         lang={lang}
       />
 
-      <SettingsModal 
+      <SettingsModal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
         settings={settings}
@@ -514,7 +544,7 @@ export default function App() {
         setLang={setLang}
       />
 
-      <ShareModal 
+      <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
         result={shareTargetResult}
@@ -523,7 +553,7 @@ export default function App() {
       />
 
       {/* Modern Footer */}
-      <Footer 
+      <Footer
         onNavClick={(tab) => {
           setActiveTab(tab);
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -586,7 +616,7 @@ export default function App() {
         }
 
         .hero-heading {
-          font-size: 3rem;
+          font-size: clamp(1.85rem, 6vw, 3rem);
           font-weight: 900;
           letter-spacing: -0.03em;
           background: var(--grad-primary);
@@ -596,7 +626,7 @@ export default function App() {
         }
 
         .hero-subtitle {
-          font-size: 1.15rem;
+          font-size: clamp(0.92rem, 2.8vw, 1.15rem);
           color: var(--text-secondary);
           max-width: 620px;
           line-height: 1.5;
@@ -606,35 +636,75 @@ export default function App() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 24px;
+          gap: 12px;
         }
 
         .test-action-container {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 12px;
+          gap: 10px;
           width: 100%;
-          max-width: 380px;
+          max-width: 360px;
+          margin-top: 2px;
         }
 
         .start-test-btn {
           width: 100%;
-          padding: 18px 36px;
-          font-size: 1.2rem;
+          padding: 16px 36px;
+          font-size: 1.15rem;
+          font-weight: 800;
           letter-spacing: 0.06em;
+          text-transform: uppercase;
+          min-height: 54px;
+          border-radius: var(--radius-full);
+          background: linear-gradient(135deg, #00f0ff 0%, #0070f3 100%);
+          color: #000000;
+          box-shadow: 0 8px 30px rgba(0, 240, 255, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+          border: none;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .start-test-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 38px rgba(0, 240, 255, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="light"] .start-test-btn {
+          background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%);
+          color: #ffffff;
+          box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        [data-theme="light"] .start-test-btn:hover {
+          background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 50%, #4338ca 100%);
+          box-shadow: 0 12px 32px rgba(2, 132, 199, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .start-test-btn:active {
+          transform: translateY(1px);
         }
 
         .stop-test-btn {
           width: 100%;
           padding: 16px 36px;
-          font-size: 1.1rem;
+          font-size: 1.05rem;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          min-height: 54px;
+          border-radius: var(--radius-full);
+          box-shadow: 0 8px 26px rgba(239, 68, 68, 0.35);
         }
 
         .browser-test-note {
-          font-size: 0.82rem;
+          font-size: 0.8rem;
+          font-weight: 600;
           color: var(--text-tertiary);
           text-align: center;
+          letter-spacing: 0.02em;
         }
 
         .error-alert-banner {
@@ -714,17 +784,49 @@ export default function App() {
         .node-select-btn {
           margin-top: 6px;
           width: 100%;
+          min-height: 40px;
         }
 
         @media (max-width: 768px) {
-          .hero-heading {
-            font-size: 2.2rem;
+          .hero-section {
+            padding-top: 16px;
           }
-          .hero-subtitle {
-            font-size: 1rem;
+          .speedtest-page {
+            gap: 28px;
+          }
+          .page-container {
+            padding-top: 16px;
+          }
+          .servers-page-card {
+            padding: 20px 16px;
+            gap: 18px;
           }
           .server-cards-grid {
             grid-template-columns: 1fr;
+          }
+          .error-alert-banner {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 14px 16px;
+          }
+          .retry-btn {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .start-test-btn {
+            padding: 15px 22px;
+            font-size: 1.05rem;
+          }
+          .stop-test-btn {
+            padding: 14px 22px;
+            font-size: 0.98rem;
+          }
+          .hero-badge {
+            font-size: 0.76rem;
+            padding: 5px 12px;
           }
         }
       `}</style>

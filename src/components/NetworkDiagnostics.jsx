@@ -268,8 +268,8 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
           display: flex;
           align-items: center;
           gap: 14px;
-          flex: 1;
-          min-width: 260px;
+          flex: 1 1 200px;
+          min-width: 0;
         }
 
         .diag-icon-box {
@@ -288,6 +288,7 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
           display: flex;
           flex-direction: column;
           gap: 2px;
+          min-width: 0;
         }
 
         .diag-item-name-row {
@@ -301,6 +302,7 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
           font-size: 0.95rem;
           font-weight: 700;
           color: var(--text-primary);
+          word-break: break-word;
         }
 
         .diag-item-metric {
@@ -313,6 +315,7 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
         .diag-item-desc {
           font-size: 0.8rem;
           color: var(--text-secondary);
+          word-break: break-word;
         }
 
         .diag-badge {
@@ -327,6 +330,26 @@ export default function NetworkDiagnostics({ latestResult, lang = 'en' }) {
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+          .diagnostics-card {
+            padding: 18px 14px;
+          }
+          .run-diag-btn {
+            width: 100%;
+            justify-content: center;
+          }
+          .diag-item {
+            padding: 12px 14px;
+          }
+          .diag-item-left {
+            gap: 10px;
+          }
+          .diag-icon-box {
+            width: 32px;
+            height: 32px;
+          }
         }
       `}</style>
     </div>

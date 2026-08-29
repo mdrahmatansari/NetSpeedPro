@@ -216,6 +216,7 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
           display: flex;
           flex-direction: column;
           gap: 8px;
+          margin-bottom: 14px;
         }
 
         .bar-labels {
@@ -245,6 +246,7 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
           overflow: visible;
           display: flex;
           align-items: center;
+          margin-bottom: 16px;
         }
 
         .bar-fill {
@@ -290,7 +292,7 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
 
         .marker-label {
           position: absolute;
-          bottom: -22px;
+          bottom: -20px;
           font-size: 0.68rem;
           font-weight: 700;
           color: var(--text-tertiary);
@@ -364,6 +366,13 @@ export default function SpeedComparison({ latestResult, unit = 'Mbps', lang = 'e
         }
 
         @media (max-width: 600px) {
+          .speed-compare-card {
+            padding: 18px 14px;
+          }
+          .percentile-pill {
+            width: 100%;
+            justify-content: center;
+          }
           .use-cases-grid {
             grid-template-columns: 1fr;
           }

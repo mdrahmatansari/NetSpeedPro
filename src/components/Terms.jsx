@@ -36,6 +36,18 @@ export default function Terms({ lang = 'en' }) {
             While NETSPEEDPRO employs multi-stream precision algorithms, actual throughput can vary depending on Wi-Fi interference, router hardware limits, background apps, device CPU load, and transit peering between ISPs. Results are provided for informational and troubleshooting purposes.
           </p>
         </section>
+
+        <section className="legal-section">
+          <h4>4. Contact Information</h4>
+          <p>
+            For support inquiries, enterprise testing partnerships, or questions regarding these terms, reach out directly:
+          </p>
+          <p style={{ marginTop: '6px' }}>
+            <strong>Lead Architect & Founder:</strong> MD RAHMAT ANSARI<br />
+            <strong>Phone / Mobile:</strong> <a href="tel:+919877807391" style={{ color: 'var(--accent-cyan)' }}>+91 9877807391</a><br />
+            <strong>Email:</strong> <a href="mailto:rahmatansari4171@gmail.com" style={{ color: 'var(--accent-cyan)' }}>rahmatansari4171@gmail.com</a>
+          </p>
+        </section>
       </div>
 
       <style>{`
@@ -79,6 +91,23 @@ export default function Terms({ lang = 'en' }) {
           font-weight: 700;
           color: var(--text-primary);
           margin-bottom: 6px;
+        }
+
+        @media (max-width: 600px) {
+          .legal-card {
+            padding: 18px 14px;
+          }
+          .legal-header {
+            gap: 10px;
+            padding-bottom: 12px;
+          }
+          .legal-title {
+            font-size: 1.1rem;
+          }
+          .legal-body {
+            font-size: 0.85rem;
+            gap: 14px;
+          }
         }
       `}</style>
     </div>

@@ -48,6 +48,18 @@ export default function PrivacyPolicy({ lang = 'en' }) {
             All test data transmissions utilize standard HTTPS/TLS encryption to prevent eavesdropping and data packet tampering in transit.
           </p>
         </section>
+
+        <section className="legal-section">
+          <h4>5. Contact & Privacy Inquiries</h4>
+          <p>
+            If you have any questions or data privacy inquiries regarding NETSPEEDPRO, please contact:
+          </p>
+          <p style={{ marginTop: '6px' }}>
+            <strong>Lead Architect & Founder:</strong> MD RAHMAT ANSARI<br />
+            <strong>Phone / Mobile:</strong> <a href="tel:+919877807391" style={{ color: 'var(--accent-cyan)' }}>+91 9877807391</a><br />
+            <strong>Email:</strong> <a href="mailto:rahmatansari4171@gmail.com" style={{ color: 'var(--accent-cyan)' }}>rahmatansari4171@gmail.com</a>
+          </p>
+        </section>
       </div>
 
       <style>{`
@@ -99,6 +111,26 @@ export default function PrivacyPolicy({ lang = 'en' }) {
           display: flex;
           flex-direction: column;
           gap: 4px;
+        }
+
+        @media (max-width: 600px) {
+          .legal-card {
+            padding: 18px 14px;
+          }
+          .legal-header {
+            gap: 10px;
+            padding-bottom: 12px;
+          }
+          .legal-title {
+            font-size: 1.1rem;
+          }
+          .legal-body {
+            font-size: 0.85rem;
+            gap: 14px;
+          }
+          .legal-section ul {
+            margin-left: 16px;
+          }
         }
       `}</style>
     </div>

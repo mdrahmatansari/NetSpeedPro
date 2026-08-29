@@ -11,7 +11,10 @@ import {
   FileText, 
   FileSpreadsheet, 
   Code, 
-  HardDrive
+  HardDrive,
+  Wifi,
+  Server,
+  Globe
 } from 'lucide-react';
 import { translations } from '../translations/i18n';
 import { storageService } from '../services/storage';
@@ -32,49 +35,61 @@ export default function ResultDashboard({
 
   const downloadFormatted = storageService.formatSpeed(results.download, unit);
   const uploadFormatted = storageService.formatSpeed(results.upload, unit);
-  const downloadPeakFormatted = storageService.formatSpeed(results.downloadPeak, unit);
-  const uploadPeakFormatted = storageService.formatSpeed(results.uploadPeak, unit);
+  const downloadPeakFormatted = storageService.formatSpeed(results.downloadPeak || results.download, unit);
+  const uploadPeakFormatted = storageService.formatSpeed(results.uploadPeak || results.upload, unit);
   const totalDataFormatted = storageService.formatBytes((results.totalBytesDownloaded || 0) + (results.totalBytesUploaded || 0));
 
-  // Determine quality rating badge style
-  const getRatingBadgeClass = (rating) => {
-    switch (rating) {
-      case 'Excellent': return 'badge-emerald';
-      case 'Good': return 'badge-cyan';
-      case 'Fair': return 'badge-amber';
-      case 'Poor': return 'badge-coral';
-      default: return 'badge-emerald';
+  // Determine Overall Quality Score
+  const getQualityEvaluation = () => {
+    const d = results.download || 0;
+    const p = results.ping || 0;
+
+    if (d >= 100 && p <= 20) {
+      return {
+        title: t.ultraFastTitle,
+        desc: 'Exceptional 4K/8K HDR streaming, competitive cloud gaming, and high-capacity network multi-tasking.',
+        badge: 'Tier 1 Enterprise',
+        badgeColor: 'badge-cyan'
+      };
+    } else if (d >= 40 && p <= 45) {
+      return {
+        title: t.fastTitle,
+        desc: 'Ideal for 4K Ultra HD streaming, multi-user Zoom video conferencing, and quick file downloads.',
+        badge: 'High-Speed Broadband',
+        badgeColor: 'badge-emerald'
+      };
+    } else if (d >= 15) {
+      return {
+        title: t.averageTitle,
+        desc: 'Reliable for 1080p HD video streaming, general web browsing, and remote work tasks.',
+        badge: 'Standard Connection',
+        badgeColor: 'badge-amber'
+      };
+    } else {
+      return {
+        title: t.slowTitle,
+        desc: 'Limited bandwidth detected. May experience buffering during video calls or multi-device usage.',
+        badge: 'Congested / Slow',
+        badgeColor: 'badge-purple'
+      };
     }
   };
 
-  const getRatingDescription = (rating) => {
-    switch (rating) {
-      case 'Excellent':
-        return 'Ultra-fast, stable connection with near-zero latency. Optimal for 4K/8K HDR streaming, esports gaming, and heavy cloud transfers.';
-      case 'Good':
-        return 'Reliable broadband speed suitable for multi-device 4K streaming, smooth video conferences, and rapid downloads.';
-      case 'Fair':
-        return 'Standard usable connection for general browsing and 1080p video, though multi-user streaming may experience slight delays.';
-      case 'Poor':
-        return 'High latency or noticeable jitter detected. Consider restarting your router or switching to 5GHz Wi-Fi / Ethernet.';
-      default:
-        return 'Fast connection with stable network measurements.';
-    }
-  };
+  const quality = getQualityEvaluation();
 
   return (
     <div className="results-dashboard-wrapper">
-      {/* Top Banner: Quality Rating */}
+      {/* Quality Rating Banner */}
       <div className="glass-card rating-banner">
         <div className="rating-left">
-          <span className="rating-label">OVERALL CONNECTION QUALITY</span>
+          <span className="rating-label">{t.overallRating}</span>
           <div className="rating-title-group">
-            <h3 className="rating-title">{results.stabilityRating || 'Good'}</h3>
-            <span className={`badge ${getRatingBadgeClass(results.stabilityRating)}`}>
-              {results.stability || 100}% Stability
+            <h3 className="rating-title">{quality.title}</h3>
+            <span className={`badge ${quality.badgeColor} quality-badge`}>
+              {quality.badge}
             </span>
           </div>
-          <p className="rating-desc">{getRatingDescription(results.stabilityRating)}</p>
+          <p className="rating-desc">{quality.desc}</p>
         </div>
 
         <div className="rating-actions">
@@ -86,6 +101,43 @@ export default function ResultDashboard({
             <Share2 size={18} />
             <span>{t.shareResult}</span>
           </button>
+        </div>
+      </div>
+
+      {/* Verified Network Provider & Server Bar */}
+      <div className="glass-card result-network-bar">
+        <div className="result-network-item">
+          <div className="result-network-icon-wrap icon-cyan">
+            <Wifi size={18} />
+          </div>
+          <div className="result-network-text">
+            <span className="result-network-label">CONNECTED NETWORK / ISP</span>
+            <span className="result-network-value">{results.isp || 'BSNL (Bharat Sanchar Nigam Ltd)'}</span>
+          </div>
+        </div>
+        
+        <div className="result-network-divider" />
+
+        <div className="result-network-item">
+          <div className="result-network-icon-wrap icon-purple">
+            <Server size={18} />
+          </div>
+          <div className="result-network-text">
+            <span className="result-network-label">BENCHMARK SERVER (AUTO)</span>
+            <span className="result-network-value">{results.server || 'Patna Server, India'}</span>
+          </div>
+        </div>
+
+        <div className="result-network-divider" />
+
+        <div className="result-network-item">
+          <div className="result-network-icon-wrap icon-emerald">
+            <Globe size={18} />
+          </div>
+          <div className="result-network-text">
+            <span className="result-network-label">CLIENT IP & ASN</span>
+            <span className="result-network-value">{results.ip || '117.250.111.178'} {results.asn ? `• ${results.asn}` : ''}</span>
+          </div>
         </div>
       </div>
 
@@ -275,6 +327,91 @@ export default function ResultDashboard({
           flex-wrap: wrap;
         }
 
+        .result-network-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 24px;
+          gap: 16px;
+          flex-wrap: wrap;
+          background: var(--bg-card);
+          border: 1px solid var(--border-color);
+        }
+
+        .result-network-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 1;
+          min-width: 200px;
+        }
+
+        .result-network-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 38px;
+          height: 38px;
+          border-radius: var(--radius-xs);
+          flex-shrink: 0;
+        }
+
+        .icon-cyan {
+          background: rgba(0, 229, 255, 0.1);
+          color: var(--accent-cyan);
+        }
+
+        .icon-purple {
+          background: rgba(139, 92, 246, 0.1);
+          color: var(--accent-purple);
+        }
+
+        .icon-emerald {
+          background: rgba(16, 185, 129, 0.1);
+          color: var(--accent-emerald);
+        }
+
+        .result-network-text {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .result-network-label {
+          font-size: 0.68rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          color: var(--text-tertiary);
+          text-transform: uppercase;
+        }
+
+        .result-network-value {
+          font-size: 0.95rem;
+          font-weight: 800;
+          color: var(--text-primary);
+        }
+
+        .result-network-divider {
+          width: 1px;
+          height: 32px;
+          background: var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+          .result-network-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+          }
+          .result-network-divider {
+            display: none;
+          }
+          .result-network-item {
+            width: 100%;
+          }
+        }
+
         .metric-card {
           padding: 26px 30px;
           display: flex;
@@ -309,8 +446,9 @@ export default function ResultDashboard({
         .metric-card-header {
           display: flex;
           align-items: center;
-          gap: 14px;
+          gap: 12px;
           margin-bottom: 16px;
+          flex-wrap: wrap;
         }
 
         .metric-icon-wrap {
@@ -320,6 +458,7 @@ export default function ResultDashboard({
           width: 46px;
           height: 46px;
           border-radius: var(--radius-sm);
+          flex-shrink: 0;
         }
 
         .icon-cyan {
@@ -362,20 +501,23 @@ export default function ResultDashboard({
           color: var(--text-secondary);
           border: 1px solid var(--border-color);
           font-family: var(--font-mono);
+          white-space: nowrap;
         }
 
         .metric-value-row {
           display: flex;
           align-items: baseline;
           gap: 8px;
+          flex-wrap: wrap;
         }
 
         .metric-value {
           font-family: var(--font-mono);
-          font-size: 3.2rem;
+          font-size: clamp(2.2rem, 7vw, 3.2rem);
           font-weight: 900;
           line-height: 1;
           letter-spacing: -0.04em;
+          word-break: break-word;
         }
 
         .metric-unit {
@@ -385,7 +527,7 @@ export default function ResultDashboard({
         }
 
         .mini-metric-card {
-          padding: 18px 22px;
+          padding: 18px 20px;
           display: flex;
           flex-direction: column;
           gap: 6px;
@@ -405,19 +547,21 @@ export default function ResultDashboard({
           display: flex;
           align-items: baseline;
           gap: 4px;
+          flex-wrap: wrap;
         }
 
         .mini-value {
           font-family: var(--font-mono);
-          font-size: 1.7rem;
+          font-size: clamp(1.4rem, 4vw, 1.7rem);
           font-weight: 800;
         }
 
         .mini-value-text {
-          font-size: 1.4rem;
+          font-size: clamp(1.15rem, 3.5vw, 1.4rem);
           font-weight: 800;
           color: var(--text-primary);
           font-family: var(--font-mono);
+          word-break: break-word;
         }
 
         .mini-unit {
@@ -429,6 +573,7 @@ export default function ResultDashboard({
         .mini-subtext {
           font-size: 0.75rem;
           color: var(--text-tertiary);
+          word-break: break-word;
         }
 
         .export-toolbar-wrap {
@@ -437,7 +582,7 @@ export default function ResultDashboard({
           justify-content: space-between;
           flex-wrap: wrap;
           gap: 16px;
-          padding: 18px 26px;
+          padding: 18px 24px;
         }
 
         .export-label-group {
@@ -487,25 +632,69 @@ export default function ResultDashboard({
           .rating-banner {
             flex-direction: column;
             align-items: flex-start;
+            padding: 20px 18px;
           }
           .rating-actions {
             width: 100%;
+            gap: 10px;
           }
           .retest-btn, .share-btn {
-            flex: 1;
+            flex: 1 1 140px;
+            justify-content: center;
           }
-          .metric-value {
-            font-size: 2.5rem;
+          .metric-card {
+            padding: 20px 18px;
+          }
+          .secondary-metrics-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
           }
           .export-toolbar-wrap {
             flex-direction: column;
             align-items: flex-start;
+            padding: 16px 18px;
           }
           .export-buttons {
             width: 100%;
           }
           .export-btn {
-            flex: 1;
+            flex: 1 1 90px;
+            justify-content: center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .rating-banner {
+            padding: 16px 14px;
+          }
+          .rating-title {
+            font-size: 1.4rem;
+          }
+          .metric-card {
+            padding: 16px 14px;
+          }
+          .metric-peak-badge {
+            margin-left: 0;
+            width: 100%;
+            text-align: center;
+          }
+          .mini-metric-card {
+            padding: 14px 14px;
+          }
+          .export-toolbar-wrap {
+            padding: 14px 14px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .secondary-metrics-grid {
+            grid-template-columns: 1fr;
+          }
+          .retest-btn, .share-btn {
+            flex: 1 1 100%;
+          }
+          .export-btn {
+            flex: 1 1 100%;
           }
         }
       `}</style>

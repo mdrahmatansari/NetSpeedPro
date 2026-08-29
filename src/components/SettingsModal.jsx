@@ -13,7 +13,8 @@ import {
   Globe, 
   Cpu 
 } from 'lucide-react';
-import { translations } from '../translations/i18n';
+import { translations, LANGUAGES } from '../translations/i18n';
+import CountryFlag from './CountryFlag';
 
 export default function SettingsModal({ 
   isOpen, 
@@ -145,24 +146,17 @@ export default function SettingsModal({
 
 
 
-          {/* Section 7: Language Selector */}
+          {/* Section 7: Language Selector (24 Languages) */}
           <div className="setting-row lang-setting-row">
             <div className="setting-info">
               <div className="setting-label-row">
                 <Globe size={16} />
-                <span className="setting-label">Language / भाषा</span>
+                <span className="setting-label">Language / भाषा ({LANGUAGES.length} Languages)</span>
               </div>
-              <span className="setting-desc">Interface localization</span>
+              <span className="setting-desc">Select your preferred regional or global interface language</span>
             </div>
             <div className="lang-pills-grid">
-              {[
-                { code: 'en', label: 'English', flag: '🇺🇸' },
-                { code: 'hi', label: 'हिन्दी', flag: '🇮🇳' },
-                { code: 'es', label: 'Español', flag: '🇪🇸' },
-                { code: 'fr', label: 'Français', flag: '🇫🇷' },
-                { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-                { code: 'ja', label: '日本語', flag: '🇯🇵' },
-              ].map((item) => (
+              {LANGUAGES.map((item) => (
                 <button
                   key={item.code}
                   type="button"
@@ -172,8 +166,11 @@ export default function SettingsModal({
                     onUpdateSettings({ language: item.code });
                   }}
                 >
-                  <span className="lang-pill-flag">{item.flag}</span>
-                  <span>{item.label}</span>
+                  <CountryFlag country={item.country} fallback={item.flag} size="normal" />
+                  <div className="lang-pill-text-col">
+                    <span className="lang-pill-native">{item.native}</span>
+                    <span className="lang-pill-sub">{item.label}</span>
+                  </div>
                 </button>
               ))}
             </div>
@@ -280,13 +277,25 @@ export default function SettingsModal({
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 8px;
+          max-height: 220px;
+          overflow-y: auto;
+          padding-right: 4px;
+        }
+
+        .lang-pills-grid::-webkit-scrollbar {
+          width: 5px;
+        }
+
+        .lang-pills-grid::-webkit-scrollbar-thumb {
+          background: var(--border-color);
+          border-radius: 4px;
         }
 
         .lang-pill-btn {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 8px 12px;
+          padding: 8px 10px;
           border-radius: var(--radius-sm);
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
@@ -295,6 +304,7 @@ export default function SettingsModal({
           font-weight: 700;
           cursor: pointer;
           transition: all var(--transition-fast);
+          text-align: left;
         }
 
         .lang-pill-btn:hover {
@@ -311,24 +321,49 @@ export default function SettingsModal({
         }
 
         .lang-pill-flag {
-          font-size: 1rem;
+          font-size: 1.1rem;
+          flex-shrink: 0;
         }
 
-        @media (max-width: 540px) {
-          .lang-pills-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
+        .lang-pill-text-col {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.15;
+          overflow: hidden;
+        }
+
+        .lang-pill-native {
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .lang-pill-sub {
+          font-size: 0.68rem;
+          color: var(--text-tertiary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        [data-theme="light"] .lang-pill-btn.active {
+          background: rgba(2, 132, 199, 0.12);
+          border-color: #0284c7;
+          color: #0284c7;
         }
 
         .settings-select {
-          padding: 6px 12px;
-          font-size: 0.85rem;
+          padding: 8px 12px;
+          font-size: 0.88rem;
           min-width: 140px;
         }
 
         .theme-switch-btn {
-          padding: 6px 14px;
-          font-size: 0.82rem;
+          padding: 8px 16px;
+          font-size: 0.85rem;
         }
 
         /* Toggle Switch */
@@ -337,6 +372,7 @@ export default function SettingsModal({
           display: inline-block;
           width: 44px;
           height: 24px;
+          flex-shrink: 0;
         }
 
         .toggle-switch input {
@@ -388,6 +424,7 @@ export default function SettingsModal({
           font-size: 0.8rem;
           color: var(--text-secondary);
           margin-top: 16px;
+          line-height: 1.4;
         }
 
         .settings-footer {
@@ -406,6 +443,53 @@ export default function SettingsModal({
           background: rgba(255, 51, 102, 0.1);
           border-color: var(--accent-coral);
           color: var(--accent-coral);
+        }
+
+        @media (max-width: 540px) {
+          .setting-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            padding: 14px 14px;
+          }
+          .unit-pill-group {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .unit-pill {
+            flex: 1;
+            text-align: center;
+            padding: 8px 10px;
+          }
+          .settings-select {
+            width: 100%;
+          }
+          .theme-switch-btn {
+            width: 100%;
+            padding: 10px 14px;
+          }
+          .lang-pills-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+          }
+          .lang-pill-btn {
+            padding: 8px 10px;
+            font-size: 0.8rem;
+          }
+          .settings-footer {
+            justify-content: stretch;
+          }
+          .clear-all-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .lang-pills-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
     </div>

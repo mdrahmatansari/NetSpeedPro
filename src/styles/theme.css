@@ -76,16 +76,16 @@
 }
 
 /* ==========================================================================
-   LIGHT THEME — CLEAN, CRISP STUDIO GRADE
+   LIGHT THEME — ENTERPRISE APPLE / VERCEL CLEAN STUDIO GRADE
    ========================================================================== */
 [data-theme="light"] {
-  --bg-primary: #f6f8fc;
+  --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #edf2f7;
-  --bg-card: rgba(255, 255, 255, 0.92);
-  --bg-card-hover: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
   --bg-card-solid: #ffffff;
-  --bg-overlay: rgba(15, 23, 42, 0.5);
+  --bg-overlay: rgba(15, 23, 42, 0.6);
 
   --accent-cyan: #0284c7;
   --accent-cyan-hover: #0369a1;
@@ -107,25 +107,25 @@
   --grad-download: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
   --grad-upload: linear-gradient(135deg, #059669 0%, #047857 100%);
   --grad-ping: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
-  --grad-button: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%);
-  --grad-button-hover: linear-gradient(135deg, #0369a1 0%, #1d4ed8 50%, #6d28d9 100%);
+  --grad-button: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%);
+  --grad-button-hover: linear-gradient(135deg, #0369a1 0%, #1d4ed8 50%, #4338ca 100%);
   --grad-card-border: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.02) 100%);
   --grad-card-highlight: linear-gradient(90deg, transparent 0%, rgba(2, 132, 199, 0.15) 50%, transparent 100%);
 
-  --text-primary: #0b1120;
-  --text-secondary: #475569;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
   --text-tertiary: #64748b;
   --text-muted: #94a3b8;
   --text-inverse: #ffffff;
 
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-color-hover: rgba(2, 132, 199, 0.4);
-  --border-light: rgba(0, 0, 0, 0.04);
+  --border-color: #e2e8f0;
+  --border-color-hover: #0284c7;
+  --border-light: #f1f5f9;
 
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.09);
-  --shadow-cyan-glow: 0 0 25px rgba(2, 132, 199, 0.2);
-  --shadow-emerald-glow: 0 0 25px rgba(5, 150, 105, 0.2);
-  --shadow-button: 0 8px 24px rgba(2, 132, 199, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 18px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  --shadow-cyan-glow: 0 0 20px rgba(2, 132, 199, 0.2);
+  --shadow-emerald-glow: 0 0 20px rgba(5, 150, 105, 0.2);
+  --shadow-button: 0 8px 24px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }

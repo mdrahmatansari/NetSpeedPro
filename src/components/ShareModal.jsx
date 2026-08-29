@@ -210,7 +210,7 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
 
         .share-stat-val {
           font-family: var(--font-mono);
-          font-size: 1.8rem;
+          font-size: clamp(1.35rem, 4vw, 1.8rem);
           font-weight: 800;
           line-height: 1.1;
         }
@@ -227,6 +227,8 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
           justify-content: space-between;
           font-size: 0.8rem;
           color: var(--text-secondary);
+          flex-wrap: wrap;
+          gap: 6px;
         }
 
         .copy-action-row {
@@ -237,6 +239,7 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
 
         .copy-main-btn {
           flex: 1;
+          padding: 12px 18px;
         }
 
         .native-share-btn {
@@ -262,6 +265,7 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
           font-size: 0.88rem;
           font-weight: 600;
           transition: all var(--transition-fast);
+          min-height: 44px;
         }
 
         .whatsapp-btn:hover {
@@ -286,6 +290,29 @@ export default function ShareModal({ isOpen, onClose, result, unit = 'Mbps', lan
           background: rgba(24, 119, 242, 0.15);
           border-color: #1877f2;
           color: #1877f2;
+        }
+
+        @media (max-width: 480px) {
+          .share-preview-card {
+            padding: 16px 14px;
+          }
+          .copy-action-row {
+            flex-direction: column;
+          }
+          .copy-main-btn, .native-share-btn {
+            width: 100%;
+          }
+          .social-btn {
+            padding: 10px 8px;
+            font-size: 0.82rem;
+            gap: 6px;
+          }
+        }
+
+        @media (max-width: 340px) {
+          .social-share-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
     </div>

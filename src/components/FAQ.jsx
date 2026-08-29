@@ -1,123 +1,289 @@
-import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, Search } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { HelpCircle, ChevronDown, Search, PlusCircle, CheckCircle2, Sparkles, Filter, Zap, AlertTriangle, Lightbulb } from 'lucide-react';
 import { translations } from '../translations/i18n';
+import { FAQ_DATA, FAQ_CATEGORIES } from '../data/faqData';
+
+// Component that parses and highlights key terms, bullet lists, and callout badges
+function FormattedFAQAnswer({ text }) {
+  if (!text) return null;
+
+  const paragraphs = text.split('\n\n');
+
+  return (
+    <div className="faq-formatted-answer">
+      {paragraphs.map((para, pIdx) => {
+        const lines = para.split('\n').filter(l => l.trim().length > 0);
+        if (lines.length === 0) return null;
+
+        const firstLine = lines[0].trim();
+
+        // 1. Detect Callout Alert Cards (Tip, Fix, Formula, Warning, Diagnosis, Recommendation)
+        const isCallout = /^(Tip|Pro Tip|Fix|How to Fix|Diagnosis|Formula|Practical Conversion Formula|Key Takeaways?|Recommendation|Warning|Why You Must Use One):/i.test(firstLine);
+
+        if (isCallout) {
+          const match = firstLine.match(/^(Tip|Pro Tip|Fix|How to Fix|Diagnosis|Formula|Practical Conversion Formula|Key Takeaways?|Recommendation|Warning|Why You Must Use One):/i);
+          const calloutType = match ? match[1] : 'Tip';
+          const calloutBody = para.replace(/^(Tip|Pro Tip|Fix|How to Fix|Diagnosis|Formula|Practical Conversion Formula|Key Takeaways?|Recommendation|Warning|Why You Must Use One):\s*/i, '');
+
+          let icon = <Sparkles size={16} className="text-cyan" />;
+          let badgeClass = 'callout-cyan';
+
+          if (/fix|how to fix/i.test(calloutType)) {
+            icon = <Zap size={16} className="text-emerald" />;
+            badgeClass = 'callout-emerald';
+          } else if (/formula|diagnosis/i.test(calloutType)) {
+            icon = <Lightbulb size={16} className="text-purple" />;
+            badgeClass = 'callout-purple';
+          } else if (/warning/i.test(calloutType)) {
+            icon = <AlertTriangle size={16} className="text-amber" />;
+            badgeClass = 'callout-amber';
+          }
+
+          return (
+            <div key={pIdx} className={`faq-callout-box ${badgeClass}`}>
+              <div className="callout-header">
+                {icon}
+                <span className="callout-tag">{calloutType.toUpperCase()}</span>
+              </div>
+              <div className="callout-content">
+                {calloutBody.split('\n').map((cl, cIdx) => (
+                  <p key={cIdx} className="callout-line">{cl}</p>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        // 2. Detect Bullet Lists or Numbered Steps
+        const isBulletList = lines.some(l => l.trim().startsWith('•') || l.trim().startsWith('-') || /^\d+\.\s/.test(l.trim()));
+
+        if (isBulletList) {
+          return (
+            <div key={pIdx} className="faq-bullet-group">
+              {lines.map((line, lIdx) => {
+                const trimmed = line.trim();
+                const isBullet = trimmed.startsWith('•') || trimmed.startsWith('-') || /^\d+\.\s/.test(trimmed);
+
+                if (isBullet) {
+                  const content = trimmed.replace(/^[•\-]\s*/, '').replace(/^\d+\.\s*/, '');
+                  const colonIndex = content.indexOf(':');
+
+                  if (colonIndex > 0 && colonIndex < 45) {
+                    const label = content.slice(0, colonIndex);
+                    const rest = content.slice(colonIndex + 1);
+                    return (
+                      <div key={lIdx} className="faq-bullet-item">
+                        <span className="faq-bullet-dot" />
+                        <div className="faq-bullet-text">
+                          <strong className="faq-highlight-term">{label}:</strong>
+                          <span>{rest}</span>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={lIdx} className="faq-bullet-item">
+                      <span className="faq-bullet-dot" />
+                      <div className="faq-bullet-text">{content}</div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <h5 key={lIdx} className="faq-sub-heading">{trimmed}</h5>
+                );
+              })}
+            </div>
+          );
+        }
+
+        // 3. Standard Paragraph with Highlighted Importance
+        return (
+          <p key={pIdx} className="faq-standard-para">
+            {para}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function FAQ({ lang = 'en' }) {
   const [openIndex, setOpenIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [visibleCount, setVisibleCount] = useState(10);
   const t = translations[lang] || translations.en;
 
-  const faqItems = [
-    {
-      q: "What is internet speed?",
-      a: "Internet speed refers to the rate at which data travels between your connected device and the wider internet. It is commonly quantified in Megabits per second (Mbps) or Gigabits per second (Gbps), consisting of both download and upload bandwidth capacities along with latency responsiveness."
-    },
-    {
-      q: "What is download speed?",
-      a: "Download speed measures how quickly your device can pull data from remote servers. High download speed enables seamless video streaming (YouTube, Netflix 4K), rapid file downloads, instantaneous web page rendering, and smooth software updates."
-    },
-    {
-      q: "What is upload speed?",
-      a: "Upload speed measures how fast your device can send data across the web to other computers or cloud servers. Crucial for video conferencing (Zoom, Google Meet), livestreaming on Twitch, sending large email attachments, online cloud backups, and uploading YouTube videos."
-    },
-    {
-      q: "What is ping (latency)?",
-      a: "Ping (measured in milliseconds, ms) is the round-trip reaction time of your connection—how long it takes for a data packet to travel from your device to a server and return back. Lower ping is essential for smooth real-time gaming, VoIP voice calls, and interactive online experiences."
-    },
-    {
-      q: "What is jitter?",
-      a: "Jitter measures the statistical variance or fluctuation in latency over consecutive packet transmissions. High jitter causes stutter, micro-freezes, and choppy audio during live gaming and video calls, even if overall bandwidth is high. A jitter score under 5–10 ms indicates excellent stability."
-    },
-    {
-      q: "What is packet loss?",
-      a: "Packet loss occurs when units of data traveling across a network fail to reach their destination due to network congestion, faulty cabling, or weak wireless signals. 0% packet loss is the ideal target for broadband connections."
-    },
-    {
-      q: "Why does my internet speed change throughout the day?",
-      a: "Speeds fluctuate due to peak-hour neighborhood congestion, local Wi-Fi channel interference, router thermal throttling, background app downloads, operating system updates, or ISP bandwidth shaping during high-traffic windows."
-    },
-    {
-      q: "Why is Wi-Fi slower than a direct Ethernet cable?",
-      a: "Wi-Fi signals are subject to physical obstacles (walls, doors, metal appliances), distance degradation, radio frequency interference from neighboring routers, and channel congestion. Direct Ethernet cables offer dedicated, shielded full-duplex transmission without wireless interference."
-    },
-    {
-      q: "How accurate is a browser-based speed test?",
-      a: "NETSPEEDPRO measures real network transfers by saturating multiple parallel HTTP/HTTPS streams with binary chunks and timing them using high-precision performance timers. While browser security sandboxes add minimal overhead compared to low-level native sockets, browser tests reflect real-world web performance with 98%+ accuracy."
-    },
-    {
-      q: "Does running a speed test consume my data plan?",
-      a: "Yes. In order to accurately measure high-throughput bandwidth, the test transfers real data streams between your browser and test servers. A standard gigabit speed test can transfer between 40MB and 200MB+ of data depending on link speed."
-    },
-    {
-      q: "How can I improve my internet speed?",
-      a: "1) Connect via a CAT6/CAT7 Ethernet cable. 2) Switch Wi-Fi to 5GHz or 6GHz bands instead of 2.4GHz. 3) Restart your modem/router monthly. 4) Close background torrents or cloud sync software. 5) Upgrade router firmware or use a mesh Wi-Fi system."
-    },
-    {
-      q: "What is a good ping for competitive online gaming?",
-      a: "• < 20 ms: Excellent esports tier (instantaneous response)\n• 20–45 ms: Very good (smooth gameplay)\n• 45–80 ms: Average (playable for most titles)\n• > 100 ms: Noticeable lag and delay in competitive games."
-    }
-  ];
+  // Filter FAQs based on search query and category
+  const filteredFaqs = useMemo(() => {
+    return FAQ_DATA.filter(item => {
+      const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
+      const matchesQuery = !searchQuery.trim() || 
+        item.q.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        item.a.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesQuery;
+    });
+  }, [searchQuery, selectedCategory]);
 
-  const filteredFaqs = faqItems.filter(
-    item => item.q.toLowerCase().includes(searchQuery.toLowerCase()) || 
-            item.a.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Sliced list based on visibleCount pagination
+  const displayedFaqs = useMemo(() => {
+    return filteredFaqs.slice(0, visibleCount);
+  }, [filteredFaqs, visibleCount]);
+
+  const hasMore = visibleCount < filteredFaqs.length;
+
+  const handleLoadMore = () => {
+    setVisibleCount(prev => Math.min(prev + 10, filteredFaqs.length));
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setVisibleCount(10);
+    setOpenIndex(0);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setVisibleCount(10);
+    setOpenIndex(0);
+  };
 
   return (
     <div className="glass-card faq-card">
+      {/* Top Header */}
       <div className="faq-header">
         <div className="faq-title-wrap">
-          <HelpCircle className="text-cyan" size={24} />
+          <div className="faq-icon-box">
+            <HelpCircle size={24} className="text-cyan" />
+          </div>
           <div>
-            <h3 className="faq-title">{t.faqTitle}</h3>
-            <span className="faq-subtitle">Everything you need to know about internet benchmarks</span>
+            <div className="faq-title-row">
+              <h3 className="faq-title">{t.faqTitle || 'Frequently Asked Questions'}</h3>
+              <span className="faq-badge-count">115+ FAQs</span>
+            </div>
+            <span className="faq-subtitle">Comprehensive encyclopedia on speed benchmarking, latency, fiber, 5G & network optimization</span>
           </div>
         </div>
 
+        {/* Search Bar */}
         <div className="faq-search-wrap">
-          <Search size={14} className="faq-search-icon" />
+          <Search size={16} className="faq-search-icon" />
           <input 
             type="text"
-            placeholder="Search questions..."
+            placeholder="Search 115+ questions (e.g. ping, 5G, fiber)..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="faq-search-input"
           />
+          {searchQuery && (
+            <button className="faq-search-clear" onClick={() => setSearchQuery('')}>✕</button>
+          )}
         </div>
       </div>
 
-      <div className="faq-accordion-list">
-        {filteredFaqs.map((item, idx) => {
-          const isOpen = openIndex === idx;
-          return (
-            <div key={idx} className={`faq-item ${isOpen ? 'open' : ''}`}>
-              <button 
-                className="faq-question-btn" 
-                onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                aria-expanded={isOpen}
+      {/* Category Pills Filter */}
+      <div className="faq-categories-row">
+        <div className="category-scroll-wrap">
+          {FAQ_CATEGORIES.map(cat => {
+            const isSelected = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                className={`category-pill ${isSelected ? 'active' : ''}`}
+                onClick={() => handleCategoryChange(cat)}
               >
-                <span className="faq-q-number">0{idx + 1}</span>
-                <span className="faq-q-text">{item.q}</span>
-                <ChevronDown className={`faq-chevron ${isOpen ? 'rotate' : ''}`} size={18} />
+                {cat === 'All' && <Filter size={12} />}
+                <span>{cat}</span>
               </button>
-
-              {isOpen && (
-                <div className="faq-answer">
-                  <p>{item.a}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
+
+      {/* Counter Status */}
+      <div className="faq-status-bar">
+        <span className="faq-counter-text">
+          Showing <strong>{Math.min(visibleCount, filteredFaqs.length)}</strong> of <strong>{filteredFaqs.length}</strong> Questions
+        </span>
+        {selectedCategory !== 'All' && (
+          <span className="faq-active-filter-badge">
+            Category: <strong>{selectedCategory}</strong>
+          </span>
+        )}
+      </div>
+
+      {/* Accordion List */}
+      <div className="faq-accordion-list">
+        {displayedFaqs.length === 0 ? (
+          <div className="faq-empty-state">
+            <HelpCircle size={40} className="text-muted" />
+            <h4>No matching questions found</h4>
+            <p>Try searching for a different keyword like "ping", "router", "Wi-Fi" or "upload".</p>
+            <button className="btn-secondary" onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}>
+              Reset Filters
+            </button>
+          </div>
+        ) : (
+          displayedFaqs.map((item, idx) => {
+            const isOpen = openIndex === idx;
+            const itemNumber = item.id < 10 ? `0${item.id}` : `${item.id}`;
+            return (
+              <div key={item.id} className={`faq-item ${isOpen ? 'open' : ''}`}>
+                <button 
+                  className="faq-question-btn" 
+                  onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                  aria-expanded={isOpen}
+                >
+                  <div className="faq-q-left">
+                    <span className="faq-q-number">#{itemNumber}</span>
+                    <span className="faq-q-category-tag">{item.category}</span>
+                  </div>
+                  <span className="faq-q-text">{item.q}</span>
+                  <div className={`faq-chevron-wrap ${isOpen ? 'rotate' : ''}`}>
+                    <ChevronDown size={18} />
+                  </div>
+                </button>
+
+                {isOpen && (
+                  <div className="faq-answer-container">
+                    <div className="faq-answer-content">
+                      <FormattedFAQAnswer text={item.a} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Load More Button or Completed Indicator */}
+      {filteredFaqs.length > 0 && (
+        <div className="faq-pagination-footer">
+          {hasMore ? (
+            <button className="btn-load-more" onClick={handleLoadMore}>
+              <PlusCircle size={18} />
+              <span>More Questions ({filteredFaqs.length - visibleCount} remaining)</span>
+            </button>
+          ) : (
+            <div className="faq-all-loaded">
+              <CheckCircle2 size={18} className="text-emerald" />
+              <span>All {filteredFaqs.length} questions displayed</span>
+            </div>
+          )}
+        </div>
+      )}
 
       <style>{`
         .faq-card {
-          padding: 28px;
+          padding: 32px;
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 24px;
           width: 100%;
+          border-radius: var(--radius-md);
         }
 
         .faq-header {
@@ -125,112 +291,534 @@ export default function FAQ({ lang = 'en' }) {
           align-items: center;
           justify-content: space-between;
           border-bottom: 1px solid var(--border-color);
-          padding-bottom: 18px;
+          padding-bottom: 22px;
           flex-wrap: wrap;
-          gap: 16px;
+          gap: 20px;
         }
 
         .faq-title-wrap {
           display: flex;
           align-items: center;
+          gap: 16px;
+        }
+
+        .faq-icon-box {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: var(--radius-sm);
+          background: rgba(0, 240, 255, 0.1);
+          border: 1px solid rgba(0, 240, 255, 0.25);
+          flex-shrink: 0;
+        }
+
+        .faq-title-row {
+          display: flex;
+          align-items: center;
           gap: 12px;
+          flex-wrap: wrap;
         }
 
         .faq-title {
-          font-size: 1.25rem;
-          font-weight: 700;
+          font-size: 1.45rem;
+          font-weight: 900;
+          letter-spacing: -0.02em;
+          color: var(--text-primary);
+        }
+
+        .faq-badge-count {
+          font-size: 0.74rem;
+          font-weight: 800;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          background: rgba(0, 229, 255, 0.12);
+          border: 1px solid rgba(0, 229, 255, 0.3);
+          color: var(--accent-cyan);
+          padding: 3px 10px;
+          border-radius: var(--radius-full);
         }
 
         .faq-subtitle {
-          font-size: 0.82rem;
-          color: var(--text-tertiary);
+          font-size: 0.88rem;
+          color: var(--text-secondary);
+          margin-top: 2px;
+          display: block;
         }
 
         .faq-search-wrap {
           position: relative;
           display: flex;
           align-items: center;
+          min-width: 280px;
         }
 
         .faq-search-icon {
           position: absolute;
-          left: 12px;
+          left: 14px;
           color: var(--text-tertiary);
           pointer-events: none;
         }
 
         .faq-search-input {
-          padding: 8px 12px 8px 34px;
-          font-size: 0.85rem;
-          width: 220px;
+          width: 100%;
+          padding: 10px 36px 10px 38px;
+          font-size: 0.9rem;
+          background: var(--bg-card);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-full);
+          color: var(--text-primary);
+          transition: all var(--transition-fast);
+        }
+
+        .faq-search-input:focus {
+          border-color: var(--accent-cyan);
+          box-shadow: 0 0 0 3px var(--accent-cyan-glow);
+          outline: none;
+        }
+
+        .faq-search-clear {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          color: var(--text-tertiary);
+          cursor: pointer;
+          font-size: 0.8rem;
+          padding: 4px;
+        }
+
+        .faq-categories-row {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 4px;
+        }
+
+        .category-scroll-wrap {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-width: max-content;
+        }
+
+        .category-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 7px 14px;
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-full);
+          cursor: pointer;
+          transition: all var(--transition-fast);
+          white-space: nowrap;
+        }
+
+        .category-pill:hover {
+          color: var(--text-primary);
+          border-color: var(--border-color-hover);
+          transform: translateY(-1px);
+        }
+
+        .category-pill.active {
+          background: var(--accent-cyan);
+          color: #ffffff;
+          border-color: var(--accent-cyan);
+          box-shadow: 0 4px 14px var(--accent-cyan-glow);
+        }
+
+        .faq-status-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 4px;
+          font-size: 0.82rem;
+          color: var(--text-tertiary);
+        }
+
+        .faq-status-bar strong {
+          color: var(--text-primary);
+        }
+
+        .faq-active-filter-badge {
+          background: var(--bg-tertiary);
+          padding: 2px 10px;
+          border-radius: var(--radius-full);
+          font-size: 0.78rem;
+          border: 1px solid var(--border-color);
         }
 
         .faq-accordion-list {
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 12px;
         }
 
         .faq-item {
-          background: var(--bg-tertiary);
+          background: var(--bg-card);
           border: 1px solid var(--border-color);
           border-radius: var(--radius-sm);
           overflow: hidden;
-          transition: border-color var(--transition-fast);
+          transition: all var(--transition-fast);
+        }
+
+        .faq-item:hover {
+          border-color: var(--border-color-hover);
         }
 
         .faq-item.open {
           border-color: var(--accent-cyan);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
         .faq-question-btn {
           display: flex;
           align-items: center;
           width: 100%;
-          padding: 16px 20px;
+          padding: 18px 22px;
           text-align: left;
-          gap: 14px;
+          gap: 16px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          user-select: none;
+        }
+
+        .faq-q-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
         }
 
         .faq-q-number {
           font-family: var(--font-mono);
-          font-size: 0.8rem;
-          font-weight: 700;
+          font-size: 0.82rem;
+          font-weight: 800;
           color: var(--accent-cyan);
+          background: rgba(0, 229, 255, 0.08);
+          padding: 2px 8px;
+          border-radius: var(--radius-xs);
+        }
+
+        .faq-q-category-tag {
+          font-size: 0.68rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: var(--text-tertiary);
+          background: var(--bg-tertiary);
+          padding: 2px 6px;
+          border-radius: 4px;
         }
 
         .faq-q-text {
           flex: 1;
-          font-size: 0.98rem;
+          font-size: 1.02rem;
           font-weight: 700;
+          color: var(--text-primary);
+          line-height: 1.4;
+        }
+
+        .faq-chevron-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: var(--bg-tertiary);
+          color: var(--text-secondary);
+          transition: transform 0.25s ease, background-color var(--transition-fast);
+          flex-shrink: 0;
+        }
+
+        .faq-chevron-wrap.rotate {
+          transform: rotate(180deg);
+          background: var(--accent-cyan);
+          color: #ffffff;
+        }
+
+        .faq-answer-container {
+          border-top: 1px solid var(--border-light);
+          padding: 18px 24px 22px 24px;
+          background: var(--bg-tertiary);
+          animation: fadeIn 0.25s ease-out;
+        }
+
+        .faq-answer-content {
+          padding-left: 8px;
+          border-left: 3px solid var(--accent-cyan);
+        }
+
+        /* Formatted Answer Layout */
+        .faq-formatted-answer {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .faq-standard-para {
+          font-size: 0.95rem;
+          line-height: 1.7;
+          color: var(--text-secondary);
+          margin: 0;
+        }
+
+        .faq-bullet-group {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin: 4px 0;
+        }
+
+        .faq-sub-heading {
+          font-size: 0.86rem;
+          font-weight: 800;
+          color: var(--text-primary);
+          letter-spacing: 0.03em;
+          margin: 6px 0 2px 0;
+          text-transform: uppercase;
+        }
+
+        .faq-bullet-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 7px 12px;
+          background: var(--bg-card);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-xs);
+          transition: all var(--transition-fast);
+        }
+
+        .faq-bullet-item:hover {
+          border-color: var(--border-color-hover);
+          transform: translateX(2px);
+        }
+
+        .faq-bullet-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: var(--accent-cyan);
+          box-shadow: 0 0 6px var(--accent-cyan-glow);
+          margin-top: 7px;
+          flex-shrink: 0;
+        }
+
+        .faq-bullet-text {
+          font-size: 0.92rem;
+          line-height: 1.6;
+          color: var(--text-secondary);
+        }
+
+        .faq-highlight-term {
+          color: var(--accent-cyan);
+          font-weight: 800;
+          margin-right: 6px;
+        }
+
+        /* Callout Highlight Cards */
+        .faq-callout-box {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding: 12px 16px;
+          border-radius: var(--radius-sm);
+          margin-top: 4px;
+        }
+
+        .callout-cyan {
+          background: rgba(0, 240, 255, 0.06);
+          border: 1px solid rgba(0, 240, 255, 0.25);
+          box-shadow: 0 4px 16px rgba(0, 240, 255, 0.08);
+        }
+
+        .callout-emerald {
+          background: rgba(16, 185, 129, 0.06);
+          border: 1px solid rgba(16, 185, 129, 0.25);
+          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+        }
+
+        .callout-purple {
+          background: rgba(139, 92, 246, 0.06);
+          border: 1px solid rgba(139, 92, 246, 0.25);
+          box-shadow: 0 4px 16px rgba(139, 92, 246, 0.08);
+        }
+
+        .callout-amber {
+          background: rgba(245, 158, 11, 0.06);
+          border: 1px solid rgba(245, 158, 11, 0.25);
+          box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+        }
+
+        .callout-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .callout-tag {
+          font-size: 0.72rem;
+          font-weight: 900;
+          letter-spacing: 0.08em;
           color: var(--text-primary);
         }
 
-        .faq-chevron {
-          color: var(--text-tertiary);
-          transition: transform 0.25s ease;
-        }
-
-        .faq-chevron.rotate {
-          transform: rotate(180deg);
-          color: var(--accent-cyan);
-        }
-
-        .faq-answer {
-          padding: 0 20px 18px 50px;
-          font-size: 0.9rem;
+        .callout-content {
+          font-size: 0.92rem;
           line-height: 1.6;
           color: var(--text-secondary);
-          white-space: pre-line;
-          animation: fadeIn 0.2s ease-out;
         }
 
-        @media (max-width: 600px) {
-          .faq-search-input {
+        .callout-line {
+          margin: 3px 0;
+        }
+
+        .faq-pagination-footer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding-top: 12px;
+        }
+
+        .btn-load-more {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 14px 32px;
+          font-size: 1rem;
+          font-weight: 800;
+          color: #ffffff;
+          background: var(--grad-button);
+          border: none;
+          border-radius: var(--radius-full);
+          cursor: pointer;
+          box-shadow: var(--shadow-button);
+          transition: all var(--transition-fast);
+        }
+
+        .btn-load-more:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 28px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-load-more:active {
+          transform: translateY(1px);
+        }
+
+        .faq-all-loaded {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-full);
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+        }
+
+        .faq-empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 48px 24px;
+          gap: 12px;
+        }
+
+        .faq-empty-state h4 {
+          font-size: 1.15rem;
+          font-weight: 800;
+          color: var(--text-primary);
+        }
+
+        .faq-empty-state p {
+          font-size: 0.9rem;
+          color: var(--text-tertiary);
+          max-width: 400px;
+        }
+
+        [data-theme="light"] .faq-item.open {
+          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        [data-theme="light"] .faq-icon-box {
+          background: rgba(2, 132, 199, 0.08);
+          border-color: rgba(2, 132, 199, 0.25);
+        }
+
+        [data-theme="light"] .faq-q-number {
+          background: rgba(2, 132, 199, 0.08);
+          color: #0284c7;
+        }
+
+        [data-theme="light"] .faq-highlight-term {
+          color: #0284c7;
+        }
+
+        [data-theme="light"] .faq-bullet-item {
+          background: #ffffff;
+          border-color: #e2e8f0;
+        }
+
+        [data-theme="light"] .callout-cyan {
+          background: rgba(2, 132, 199, 0.07);
+          border-color: rgba(2, 132, 199, 0.3);
+        }
+
+        [data-theme="light"] .callout-emerald {
+          background: rgba(5, 150, 105, 0.07);
+          border-color: rgba(5, 150, 105, 0.3);
+        }
+
+        [data-theme="light"] .callout-purple {
+          background: rgba(124, 58, 237, 0.07);
+          border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        [data-theme="light"] .btn-load-more {
+          background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%);
+          box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
+        }
+
+        @media (max-width: 768px) {
+          .faq-card {
+            padding: 20px 16px;
+          }
+          .faq-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+          }
+          .faq-search-wrap {
             width: 100%;
           }
-          .faq-answer {
-            padding: 0 16px 16px 16px;
+          .faq-question-btn {
+            padding: 14px 16px;
+            gap: 12px;
+          }
+          .faq-q-text {
+            font-size: 0.94rem;
+          }
+          .faq-q-category-tag {
+            display: none;
+          }
+          .faq-answer-container {
+            padding: 14px 16px 18px 16px;
+          }
+          .btn-load-more {
+            width: 100%;
+            padding: 14px 20px;
           }
         }
       `}</style>

@@ -24,20 +24,22 @@ export default function ServerModal({
     { id: 'americas', label: 'Americas' }
   ];
 
-  const filteredServers = servers.filter((s) => {
-    const matchesSearch = 
-      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.sponsor.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredServers = (servers || []).filter((s) => {
+    if (!s) return false;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch = !q ||
+      (s.name || '').toLowerCase().includes(q) ||
+      (s.city || '').toLowerCase().includes(q) ||
+      (s.country || '').toLowerCase().includes(q) ||
+      (s.sponsor || '').toLowerCase().includes(q);
 
     if (!matchesSearch) return false;
 
     if (activeRegion === 'all') return true;
     if (activeRegion === 'IN') return s.countryCode === 'IN';
-    if (activeRegion === 'asia') return ['SG', 'JP', 'AE'].includes(s.countryCode);
-    if (activeRegion === 'europe') return ['DE', 'GB'].includes(s.countryCode);
-    if (activeRegion === 'americas') return ['US'].includes(s.countryCode);
+    if (activeRegion === 'asia') return ['SG', 'JP', 'AE', 'IN'].includes(s.countryCode);
+    if (activeRegion === 'europe') return ['DE', 'GB', 'FR', 'NL'].includes(s.countryCode);
+    if (activeRegion === 'americas') return ['US', 'CA', 'BR'].includes(s.countryCode);
     return true;
   });
 
@@ -170,11 +172,13 @@ export default function ServerModal({
           display: flex;
           gap: 8px;
           overflow-x: auto;
-          padding-bottom: 4px;
+          padding-bottom: 6px;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: thin;
         }
 
         .region-pill {
-          padding: 6px 14px;
+          padding: 7px 14px;
           border-radius: var(--radius-full);
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
@@ -182,6 +186,7 @@ export default function ServerModal({
           font-size: 0.8rem;
           font-weight: 600;
           white-space: nowrap;
+          cursor: pointer;
         }
 
         .region-pill.active {
@@ -194,7 +199,7 @@ export default function ServerModal({
           display: flex;
           flex-direction: column;
           gap: 8px;
-          max-height: 380px;
+          max-height: clamp(260px, 50vh, 380px);
           overflow-y: auto;
           padding-right: 4px;
         }
@@ -203,12 +208,13 @@ export default function ServerModal({
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 12px 16px;
+          padding: 12px 14px;
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
           border-radius: var(--radius-sm);
           cursor: pointer;
           transition: all var(--transition-fast);
+          gap: 10px;
         }
 
         .server-list-item:hover {
@@ -218,13 +224,15 @@ export default function ServerModal({
 
         .server-list-item.selected {
           border-color: var(--accent-cyan);
-          background: rgba(0, 240, 255, 0.08);
+          background: rgba(0, 229, 255, 0.08);
         }
 
         .server-item-left {
           display: flex;
           align-items: center;
           gap: 12px;
+          min-width: 0;
+          flex: 1;
         }
 
         .server-item-icon {
@@ -242,18 +250,21 @@ export default function ServerModal({
         .server-item-info {
           display: flex;
           flex-direction: column;
+          min-width: 0;
         }
 
         .server-item-title-row {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 6px;
+          flex-wrap: wrap;
         }
 
         .server-item-name {
-          font-size: 0.95rem;
+          font-size: 0.92rem;
           font-weight: 700;
           color: var(--text-primary);
+          word-break: break-word;
         }
 
         .default-badge {
@@ -262,14 +273,16 @@ export default function ServerModal({
         }
 
         .server-item-sponsor {
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           color: var(--text-tertiary);
+          word-break: break-word;
         }
 
         .server-item-right {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
+          flex-shrink: 0;
         }
 
         .online-badge {
@@ -280,8 +293,8 @@ export default function ServerModal({
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 24px;
-          height: 24px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           background: var(--accent-cyan);
           color: #000;
@@ -304,6 +317,19 @@ export default function ServerModal({
           font-size: 0.76rem;
           color: var(--text-tertiary);
           line-height: 1.4;
+        }
+
+        @media (max-width: 480px) {
+          .server-item-left {
+            gap: 10px;
+          }
+          .server-item-icon {
+            width: 30px;
+            height: 30px;
+          }
+          .server-search-input {
+            font-size: 0.85rem;
+          }
         }
       `}</style>
     </div>

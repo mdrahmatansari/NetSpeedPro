@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { translations } from '../translations/i18n';
 import { storageService } from '../services/storage';
 
+// High-speed benchmark scale points
 const SCALE_POINTS = [0, 5, 10, 25, 50, 100, 250, 500, 1000, 2000];
 
 export default function Speedometer({ 
@@ -22,7 +23,7 @@ export default function Speedometer({
 
   targetSpeedRef.current = currentSpeed;
 
-  // Non-linear mapping between 135° and 405° (270° sweep)
+  // Non-linear logarithmic-feel mapping between 135° and 405° (270° sweep)
   const speedToAngle = (speed) => {
     const minAngle = 135 * (Math.PI / 180);
     const maxAngle = 405 * (Math.PI / 180);
@@ -49,115 +50,189 @@ export default function Speedometer({
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
-    const dpr = window.devicePixelRatio || 1;
-    const size = 360;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    ctx.scale(dpr, dpr);
+    const updateCanvasSize = () => {
+      const parentWidth = canvas.parentElement?.clientWidth || 380;
+      const width = Math.min(380, Math.max(270, parentWidth));
+      const height = Math.round(width * 0.76); // 288px height for 380px width
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      return { width, height };
+    };
+
+    let { width, height } = updateCanvasSize();
+
+    const handleResize = () => {
+      const dims = updateCanvasSize();
+      width = dims.width;
+      height = dims.height;
+    };
+
+    window.addEventListener('resize', handleResize);
 
     const render = () => {
-      // Smooth tracking of real measured speed
-      currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * 0.25;
+      // Smooth continuous easing towards real measured speed
+      currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * 0.22;
       const speed = currentSpeedRef.current;
 
-      ctx.clearRect(0, 0, size, size);
+      ctx.clearRect(0, 0, width, height);
 
-      const centerX = size / 2;
-      const centerY = size / 2;
-      const radius = 135;
+      const centerX = width / 2;
+      const centerY = height * 0.52;
+      const scaleRatio = width / 380;
+      const radius = 132 * scaleRatio;
       const startAngle = 135 * (Math.PI / 180);
       const endAngle = 405 * (Math.PI / 180);
 
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
 
-      // 1. Base Gauge Track
+      // 1. Radial Cockpit Lens Depth Glow
+      const bgGrad = ctx.createRadialGradient(
+        centerX, centerY, radius * 0.2,
+        centerX, centerY, radius * 1.15
+      );
+      if (isLight) {
+        bgGrad.addColorStop(0, 'rgba(2, 132, 199, 0.04)');
+        bgGrad.addColorStop(0.75, 'rgba(241, 245, 249, 0.85)');
+        bgGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      } else {
+        bgGrad.addColorStop(0, 'rgba(0, 229, 255, 0.03)');
+        bgGrad.addColorStop(0.75, 'rgba(15, 23, 42, 0.45)');
+        bgGrad.addColorStop(1, 'rgba(2, 6, 23, 0)');
+      }
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius * 1.15, 0, Math.PI * 2);
+      ctx.fillStyle = bgGrad;
+      ctx.fill();
+
+      // 2. Precision Outer Dial Rim
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius + (8 * scaleRatio), startAngle, endAngle);
+      ctx.lineWidth = 1.5 * scaleRatio;
+      ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)';
+      ctx.stroke();
+
+      // 3. Base Recessed Track
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-      ctx.lineWidth = 14;
-      ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 10 * scaleRatio;
+      ctx.strokeStyle = isLight ? '#e2e8f0' : 'rgba(255, 255, 255, 0.1)';
       ctx.lineCap = 'round';
       ctx.stroke();
 
-      // 2. Tick Marks & Scale Numbers
-      SCALE_POINTS.forEach((pt, idx) => {
-        const angle = speedToAngle(pt);
-        const isMajor = idx % 2 === 0 || pt === 1000 || pt === 2000;
-        
-        const tickInner = radius - (isMajor ? 18 : 10);
-        const tickOuter = radius - 2;
-        
-        const x1 = centerX + Math.cos(angle) * tickInner;
-        const y1 = centerY + Math.sin(angle) * tickInner;
-        const x2 = centerX + Math.cos(angle) * tickOuter;
-        const y2 = centerY + Math.sin(angle) * tickOuter;
+      // 4. Precision Segmented Ticks & Numbers
+      const totalTicks = 44;
+      const angleSweep = endAngle - startAngle;
+
+      for (let i = 0; i <= totalTicks; i++) {
+        const tickAngle = startAngle + (i / totalTicks) * angleSweep;
+        const isMajorIndex = i % 4 === 0;
+
+        const tickInner = radius - ((isMajorIndex ? 13 : 6) * scaleRatio);
+        const tickOuter = radius - (2 * scaleRatio);
+
+        const x1 = centerX + Math.cos(tickAngle) * tickInner;
+        const y1 = centerY + Math.sin(tickAngle) * tickInner;
+        const x2 = centerX + Math.cos(tickAngle) * tickOuter;
+        const y2 = centerY + Math.sin(tickAngle) * tickOuter;
 
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        ctx.lineWidth = isMajor ? 2.5 : 1.2;
-        ctx.strokeStyle = isMajor 
-          ? (isLight ? '#334155' : '#cbd5e1') 
-          : (isLight ? '#94a3b8' : '#64748b');
+        ctx.lineWidth = (isMajorIndex ? 2 : 1) * scaleRatio;
+        ctx.strokeStyle = isMajorIndex 
+          ? (isLight ? '#334155' : 'rgba(255, 255, 255, 0.55)') 
+          : (isLight ? '#cbd5e1' : 'rgba(148, 163, 184, 0.25)');
         ctx.stroke();
-
-        // Scale Labels
-        if (isMajor) {
-          const textRadius = radius - 28;
-          const tx = centerX + Math.cos(angle) * textRadius;
-          const ty = centerY + Math.sin(angle) * textRadius + 4;
-
-          ctx.font = '700 11px Outfit, sans-serif';
-          ctx.fillStyle = isLight ? '#1e293b' : '#e2e8f0';
-          ctx.textAlign = 'center';
-          const label = pt >= 1000 ? `${pt / 1000}G` : `${pt}`;
-          ctx.fillText(label, tx, ty);
-        }
-      });
-
-      // 3. Active Glowing Speed Arc
-      const currentAngle = speedToAngle(speed);
-      if (currentAngle > startAngle) {
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, startAngle, currentAngle);
-        ctx.lineWidth = 14;
-        ctx.lineCap = 'round';
-
-        let arcColor = '#00f0ff';
-        if (phase === 'upload') arcColor = '#00df89';
-        else if (phase === 'ping') arcColor = '#8b5cf6';
-
-        ctx.strokeStyle = arcColor;
-        ctx.shadowColor = arcColor;
-        ctx.shadowBlur = 16;
-        ctx.stroke();
-        ctx.shadowBlur = 0; // reset
       }
 
-      // 4. Sleek Needle Pointer
-      const needleLength = radius - 15;
-      const needleX = centerX + Math.cos(currentAngle) * needleLength;
-      const needleY = centerY + Math.sin(currentAngle) * needleLength;
+      // Major Scale Numerical Labels
+      const MAJOR_LABELS = [
+        { val: 0, label: '0' },
+        { val: 10, label: '10' },
+        { val: 50, label: '50' },
+        { val: 100, label: '100' },
+        { val: 250, label: '250' },
+        { val: 500, label: '500' },
+        { val: 1000, label: '1G' },
+        { val: 2000, label: '2G' }
+      ];
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(needleX, needleY);
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = phase === 'upload' ? '#00df89' : '#00f0ff';
-      ctx.shadowColor = phase === 'upload' ? '#00df89' : '#00f0ff';
-      ctx.shadowBlur = 10;
-      ctx.stroke();
-      ctx.restore();
+      MAJOR_LABELS.forEach(({ val, label }) => {
+        const angle = speedToAngle(val);
+        const textRadius = radius - (25 * scaleRatio);
+        const tx = centerX + Math.cos(angle) * textRadius;
+        const ty = centerY + Math.sin(angle) * textRadius + (3.5 * scaleRatio);
 
-      // Needle Center Cap
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
-      ctx.fillStyle = phase === 'upload' ? '#00df89' : '#00f0ff';
-      ctx.fill();
+        const fontSize = Math.max(9, Math.round(10.5 * scaleRatio));
+        ctx.font = `700 ${fontSize}px "Outfit", "Inter", -apple-system, sans-serif`;
+        ctx.fillStyle = isLight ? '#334155' : '#94a3b8';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, tx, ty);
+      });
+
+      // 5. Active Dual-Pass Glowing Speed Arc
+      const currentAngle = speedToAngle(speed);
+      if (currentAngle > startAngle) {
+        let themeColor = isLight ? '#0284c7' : '#00f0ff';
+        let themeGlow = isLight ? 'rgba(2, 132, 199, 0.35)' : 'rgba(0, 240, 255, 0.5)';
+
+        if (phase === 'upload') {
+          themeColor = isLight ? '#059669' : '#00df89';
+          themeGlow = isLight ? 'rgba(5, 150, 105, 0.35)' : 'rgba(0, 223, 137, 0.5)';
+        } else if (phase === 'ping') {
+          themeColor = isLight ? '#7c3aed' : '#8b5cf6';
+          themeGlow = isLight ? 'rgba(124, 58, 237, 0.35)' : 'rgba(139, 92, 246, 0.5)';
+        }
+
+        // Pass A: Wide Diffused Ambient Glow
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, currentAngle);
+        ctx.lineWidth = 14 * scaleRatio;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = themeGlow;
+        ctx.shadowColor = themeColor;
+        ctx.shadowBlur = 22 * scaleRatio;
+        ctx.stroke();
+        ctx.restore();
+
+        // Pass B: Sharp Core Vibrant Arc
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, currentAngle);
+        ctx.lineWidth = 10 * scaleRatio;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = themeColor;
+        ctx.stroke();
+        ctx.restore();
+
+        // 6. Leading Luminous Orbiting Pointer Bead
+        const tipX = centerX + Math.cos(currentAngle) * radius;
+        const tipY = centerY + Math.sin(currentAngle) * radius;
+
+        // Outer atmospheric pulse halo
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(tipX, tipY, 8.5 * scaleRatio, 0, Math.PI * 2);
+        ctx.fillStyle = themeColor;
+        ctx.shadowColor = themeColor;
+        ctx.shadowBlur = 18 * scaleRatio;
+        ctx.fill();
+
+        // Inner white nucleus
+        ctx.beginPath();
+        ctx.arc(tipX, tipY, 4 * scaleRatio, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 4 * scaleRatio;
+        ctx.fill();
+        ctx.restore();
+      }
 
       animationFrameRef.current = requestAnimationFrame(render);
     };
@@ -165,6 +240,7 @@ export default function Speedometer({
     render();
 
     return () => {
+      window.removeEventListener('resize', handleResize);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -173,7 +249,7 @@ export default function Speedometer({
 
   const displaySpeedFormatted = storageService.formatSpeed(currentSpeed, unit);
 
-  // Phase badge title text
+  // Phase badge formatting
   const getPhaseBadge = () => {
     switch (phase) {
       case 'connecting': return { text: t.phaseConnecting, color: 'badge-purple' };
@@ -190,52 +266,84 @@ export default function Speedometer({
 
   return (
     <div className="speedometer-container">
-      {/* Canvas Gauge */}
+      {/* Canvas Gauge Dial */}
       <div className="canvas-wrapper">
-        <canvas ref={canvasRef} style={{ width: '360px', height: '360px' }} />
+        <canvas ref={canvasRef} className="speedometer-canvas" />
 
-        {/* Center Digital Speed Readout */}
+        {/* Center Digital Cockpit Readout */}
         <div className="speedometer-center-content">
-          <span className={`badge ${badgeInfo.color} speedometer-phase-badge`}>
+          <div className={`badge ${badgeInfo.color} speedometer-phase-badge`}>
             {phase !== 'idle' && phase !== 'complete' && <span className="live-indicator" />}
-            {badgeInfo.text}
-          </span>
+            <span>{badgeInfo.text}</span>
+          </div>
 
           <div className="speed-number-wrapper">
             <span className="speed-number">{displaySpeedFormatted}</span>
-            <span className="speed-unit">{unit}</span>
+            <span className="speed-unit-pill">{unit}</span>
           </div>
 
           <div className="speedometer-substatus">
-            {phase === 'download' && <span className="substatus-download">▼ Measuring Download</span>}
-            {phase === 'upload' && <span className="substatus-upload">▲ Measuring Upload</span>}
-            {phase === 'ping' && <span className="substatus-ping">● Probing Ping RTT</span>}
-            {phase === 'idle' && <span className="substatus-idle">Press Start to Begin</span>}
-            {phase === 'complete' && <span className="substatus-complete">✔ Test Complete</span>}
+            {phase === 'download' && <span className="substatus-download">▼ LIVE DOWNLOAD STREAM</span>}
+            {phase === 'upload' && <span className="substatus-upload">▲ LIVE UPLOAD STREAM</span>}
+            {phase === 'ping' && <span className="substatus-ping">● PROBING RTT LATENCY</span>}
+            {phase === 'idle' && <span className="substatus-idle">Ready for benchmark</span>}
+            {phase === 'complete' && <span className="substatus-complete">✔ Telemetry Verified</span>}
           </div>
         </div>
       </div>
 
       {/* Quick Live Telemetry Bar */}
       <div className="telemetry-bar">
-        <div className="telemetry-item">
-          <span className="telemetry-label">{t.ping}</span>
-          <span className="telemetry-value text-purple">{ping > 0 ? `${ping} ms` : '--'}</span>
+        {/* Metric 1: Ping */}
+        <div className="telemetry-segment">
+          <div className="segment-header">
+            <span className="segment-dot dot-purple" />
+            <span className="segment-label">{t.ping}</span>
+          </div>
+          <div className="segment-value-row">
+            <span className="segment-value text-purple">{ping > 0 ? ping : '--'}</span>
+            <span className="segment-unit">ms</span>
+          </div>
         </div>
+
         <div className="telemetry-divider" />
-        <div className="telemetry-item">
-          <span className="telemetry-label">{t.jitter}</span>
-          <span className="telemetry-value">{jitter > 0 ? `${jitter} ms` : '--'}</span>
+
+        {/* Metric 2: Jitter */}
+        <div className="telemetry-segment">
+          <div className="segment-header">
+            <span className="segment-dot dot-amber" />
+            <span className="segment-label">{t.jitter}</span>
+          </div>
+          <div className="segment-value-row">
+            <span className="segment-value text-amber">{jitter > 0 ? jitter : '--'}</span>
+            <span className="segment-unit">ms</span>
+          </div>
         </div>
+
         <div className="telemetry-divider" />
-        <div className="telemetry-item">
-          <span className="telemetry-label">{t.server}</span>
-          <span className="telemetry-value text-cyan" title={serverName}>{serverName || 'Auto'}</span>
+
+        {/* Metric 3: Server */}
+        <div className="telemetry-segment">
+          <div className="segment-header">
+            <span className="segment-dot dot-cyan" />
+            <span className="segment-label">{t.server}</span>
+          </div>
+          <div className="segment-value-row">
+            <span className="segment-value text-cyan" title={serverName}>{serverName || 'Auto'}</span>
+          </div>
         </div>
+
         <div className="telemetry-divider" />
-        <div className="telemetry-item">
-          <span className="telemetry-label">{t.connection}</span>
-          <span className="telemetry-value">{connectionType || 'Wi-Fi'}</span>
+
+        {/* Metric 4: Connection */}
+        <div className="telemetry-segment">
+          <div className="segment-header">
+            <span className="segment-dot dot-emerald" />
+            <span className="segment-label">{t.connection}</span>
+          </div>
+          <div className="segment-value-row">
+            <span className="segment-value text-emerald" title={connectionType}>{connectionType || 'Broadband'}</span>
+          </div>
         </div>
       </div>
 
@@ -247,35 +355,52 @@ export default function Speedometer({
           justify-content: center;
           position: relative;
           width: 100%;
-          max-width: 480px;
+          max-width: 540px;
           margin: 0 auto;
         }
 
         .canvas-wrapper {
           position: relative;
-          width: 360px;
-          height: 360px;
+          width: 100%;
+          max-width: 380px;
+          aspect-ratio: 380 / 288;
           display: flex;
           align-items: center;
           justify-content: center;
         }
 
+        .speedometer-canvas {
+          width: 100%;
+          height: 100%;
+          display: block;
+          filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
+        }
+
         .speedometer-center-content {
           position: absolute;
-          inset: 0;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 8px;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           text-align: center;
           pointer-events: none;
-          padding-top: 50px;
+          gap: 2px;
         }
 
         .speedometer-phase-badge {
-          margin-bottom: 6px;
-          font-size: 0.76rem;
-          padding: 4px 12px;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: clamp(0.68rem, 2vw, 0.75rem);
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 3px 12px;
+          border-radius: var(--radius-full);
         }
 
         .speed-number-wrapper {
@@ -283,99 +408,212 @@ export default function Speedometer({
           flex-direction: column;
           align-items: center;
           line-height: 1;
+          margin: 1px 0;
         }
 
         .speed-number {
           font-family: var(--font-mono);
-          font-size: 3.4rem;
+          font-size: clamp(2.6rem, 8.5vw, 3.8rem);
           font-weight: 800;
           letter-spacing: -0.04em;
           color: var(--text-primary);
+          font-feature-settings: 'tnum' on, 'lnum' on;
+          text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .speed-unit {
-          font-size: 1.1rem;
+        [data-theme="light"] .speed-number {
+          text-shadow: none;
+          color: #0f172a;
+        }
+
+        .speed-unit-pill {
+          display: inline-block;
+          font-size: clamp(0.8rem, 2.4vw, 0.92rem);
           font-weight: 800;
           color: var(--accent-cyan);
-          letter-spacing: 0.05em;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          background: rgba(0, 229, 255, 0.08);
+          border: 1px solid rgba(0, 229, 255, 0.25);
+          padding: 1px 9px;
+          border-radius: var(--radius-full);
           margin-top: 2px;
         }
 
+        [data-theme="light"] .speed-unit-pill {
+          background: rgba(2, 132, 199, 0.08);
+          border-color: rgba(2, 132, 199, 0.25);
+          color: #0284c7;
+        }
+
         .speedometer-substatus {
-          margin-top: 8px;
-          font-size: 0.82rem;
-          font-weight: 700;
+          margin-top: 4px;
+          font-size: clamp(0.68rem, 1.8vw, 0.75rem);
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
           color: var(--text-tertiary);
         }
 
-        .substatus-download { color: var(--accent-cyan); }
-        .substatus-upload { color: var(--accent-emerald); }
-        .substatus-ping { color: var(--accent-purple); }
-        .substatus-complete { color: var(--accent-emerald); font-weight: 800; }
+        .substatus-download { 
+          color: var(--accent-cyan); 
+          text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+        .substatus-upload { 
+          color: var(--accent-emerald); 
+          text-shadow: 0 0 10px rgba(0, 223, 137, 0.4);
+        }
+        .substatus-ping { 
+          color: var(--accent-purple); 
+          text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+        .substatus-complete { 
+          color: var(--accent-emerald); 
+          font-weight: 800; 
+        }
 
+        /* Luxury Segmented Telemetry Pill Bar */
         .telemetry-bar {
           display: flex;
           align-items: center;
-          justify-content: space-around;
+          justify-content: space-between;
           width: 100%;
-          background: var(--bg-card);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid var(--border-color);
+          background: linear-gradient(180deg, rgba(15, 23, 42, 0.75) 0%, rgba(8, 14, 28, 0.9) 100%);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(255, 255, 255, 0.09);
           border-radius: var(--radius-full);
-          padding: 12px 24px;
-          margin-top: 14px;
-          box-shadow: var(--shadow-sm);
+          padding: 6px 10px;
+          margin-top: 5px;
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
-        .telemetry-item {
+        .telemetry-segment {
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           gap: 2px;
+          text-align: center;
+          flex: 1;
+          min-width: 0;
+          padding: 6px 8px;
+          border-radius: var(--radius-full);
+          transition: all var(--transition-fast);
         }
 
-        .telemetry-label {
-          font-size: 0.7rem;
+        .telemetry-segment:hover {
+          background: rgba(255, 255, 255, 0.04);
+        }
+
+        .segment-header {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+
+        .segment-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+
+        .dot-purple {
+          background: var(--accent-purple);
+          box-shadow: 0 0 6px var(--accent-purple-glow);
+        }
+
+        .dot-amber {
+          background: var(--accent-amber);
+          box-shadow: 0 0 6px var(--accent-amber-glow);
+        }
+
+        .dot-cyan {
+          background: var(--accent-cyan);
+          box-shadow: 0 0 6px var(--accent-cyan-glow);
+        }
+
+        .dot-emerald {
+          background: var(--accent-emerald);
+          box-shadow: 0 0 6px var(--accent-emerald-glow);
+        }
+
+        .segment-label {
+          font-size: 0.65rem;
           font-weight: 800;
           text-transform: uppercase;
           color: var(--text-tertiary);
-          letter-spacing: 0.08em;
+          letter-spacing: 0.09em;
+          white-space: nowrap;
         }
 
-        .telemetry-value {
-          font-size: 0.95rem;
+        .segment-value-row {
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 3px;
+          max-width: 100%;
+          overflow: hidden;
+        }
+
+        .segment-value {
+          font-size: 1rem;
           font-weight: 800;
           color: var(--text-primary);
           font-family: var(--font-mono);
-          max-width: 110px;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          letter-spacing: -0.02em;
+          line-height: 1.2;
+        }
+
+        .segment-unit {
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: var(--text-tertiary);
+          text-transform: lowercase;
         }
 
         .text-purple { color: var(--accent-purple); }
+        .text-amber { color: var(--accent-amber); }
         .text-cyan { color: var(--accent-cyan); }
+        .text-emerald { color: var(--accent-emerald); }
 
         .telemetry-divider {
           width: 1px;
           height: 24px;
-          background: var(--border-color);
+          background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%);
+          flex-shrink: 0;
         }
 
-        @media (max-width: 480px) {
-          .canvas-wrapper {
-            transform: scale(0.88);
-            margin: -20px 0;
-          }
-          .speed-number {
-            font-size: 2.8rem;
-          }
+        [data-theme="light"] .telemetry-bar {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        [data-theme="light"] .telemetry-segment:hover {
+          background: rgba(2, 132, 199, 0.04);
+        }
+
+        [data-theme="light"] .telemetry-divider {
+          background: linear-gradient(180deg, transparent 0%, #cbd5e1 50%, transparent 100%);
+        }
+
+        @media (max-width: 520px) {
           .telemetry-bar {
-            padding: 10px 14px;
+            padding: 5px 6px;
           }
-          .telemetry-value {
-            font-size: 0.85rem;
+          .telemetry-segment {
+            padding: 5px 3px;
+          }
+          .segment-value {
+            font-size: 0.88rem;
+          }
+          .segment-label {
+            font-size: 0.6rem;
           }
         }
       `}</style>

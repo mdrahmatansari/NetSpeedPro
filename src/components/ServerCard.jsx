@@ -1,9 +1,10 @@
 import React from 'react';
-import { Server, MapPin, Activity, ChevronRight } from 'lucide-react';
+import { Server, MapPin, Activity, ChevronRight, Wifi, Sparkles } from 'lucide-react';
 import { translations } from '../translations/i18n';
 
-export default function ServerCard({ server, onOpenModal, lang = 'en', ping = 0 }) {
+export default function ServerCard({ server, ipInfo, onOpenModal, lang = 'en', ping = 0 }) {
   const t = translations[lang] || translations.en;
+  const companyName = ipInfo?.companyName || ipInfo?.isp || 'High-Speed Broadband';
 
   return (
     <div className="glass-card server-card">
@@ -12,15 +13,27 @@ export default function ServerCard({ server, onOpenModal, lang = 'en', ping = 0 
       </div>
 
       <div className="server-details">
-        <span className="server-card-label">{t.server}</span>
-        <h4 className="server-name">{server?.name || 'Mumbai Server'}</h4>
-        <span className="server-sponsor">{server?.sponsor || 'NetSpeedPro Edge Core Node'}</span>
+        <div className="server-label-row">
+          <span className="server-card-label">{t.server}</span>
+          <span className="badge badge-cyan server-auto-badge">
+            <Sparkles size={11} />
+            <span>Auto Selected</span>
+          </span>
+        </div>
+        <h4 className="server-name">{server?.name || 'Patna Server'}</h4>
+        <span className="server-sponsor">{server?.sponsor || 'NetSpeedPro Core Node'}</span>
+        
+        {/* Connected Network Company Info */}
+        <div className="server-network-company">
+          <Wifi size={13} className="text-cyan" />
+          <span>Network: <strong>{companyName}</strong></span>
+        </div>
       </div>
 
       <div className="server-meta">
         <div className="server-location-badge">
           <MapPin size={13} />
-          <span>{server?.city || 'Mumbai'}, {server?.country || 'India'}</span>
+          <span>{server?.city || 'Patna/Bihar'}, {server?.country || 'India'}</span>
         </div>
         {ping > 0 && (
           <span className="badge badge-purple">
@@ -64,12 +77,28 @@ export default function ServerCard({ server, onOpenModal, lang = 'en', ping = 0 
           min-width: 180px;
         }
 
+        .server-label-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 2px;
+        }
+
         .server-card-label {
           font-size: 0.7rem;
           font-weight: 800;
           color: var(--text-tertiary);
           text-transform: uppercase;
           letter-spacing: 0.06em;
+        }
+
+        .server-auto-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.68rem;
+          padding: 2px 8px;
+          border-radius: var(--radius-full);
         }
 
         .server-name {
@@ -81,6 +110,19 @@ export default function ServerCard({ server, onOpenModal, lang = 'en', ping = 0 
         .server-sponsor {
           font-size: 0.8rem;
           color: var(--text-secondary);
+        }
+
+        .server-network-company {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.78rem;
+          color: var(--text-secondary);
+          margin-top: 4px;
+        }
+
+        .server-network-company strong {
+          color: var(--accent-cyan);
         }
 
         .server-meta {
@@ -110,9 +152,21 @@ export default function ServerCard({ server, onOpenModal, lang = 'en', ping = 0 
         }
 
         @media (max-width: 640px) {
+          .server-card {
+            padding: 16px 14px;
+            gap: 12px;
+          }
+          .server-details {
+            min-width: 140px;
+          }
+          .server-meta {
+            width: 100%;
+            justify-content: flex-start;
+          }
           .change-server-btn {
             width: 100%;
             margin-left: 0;
+            padding: 10px 16px;
           }
         }
       `}</style>

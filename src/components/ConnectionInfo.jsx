@@ -7,11 +7,20 @@ import {
   MapPin, 
   Clock, 
   Info, 
-  Layers 
+  Layers,
+  Crosshair,
+  RefreshCw,
+  CheckCircle2
 } from 'lucide-react';
 import { translations } from '../translations/i18n';
 
-export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
+export default function ConnectionInfo({ 
+  ipInfo, 
+  lang = 'en', 
+  onDetectGps, 
+  onRefresh, 
+  isLocating = false 
+}) {
   const t = translations[lang] || translations.en;
 
   // Browser & Device detection via UserAgent
@@ -44,12 +53,28 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
 
   const clientEnv = getClientEnvironment();
 
+  // Format accurate location display
+  const getLocationDisplay = () => {
+    if (!ipInfo) return 'Detecting Real Location...';
+    const city = ipInfo.city || '';
+    const region = ipInfo.region || '';
+    const country = ipInfo.country || 'India';
+    
+    if (city && region && city !== region) {
+      return `${city}, ${region}, ${country}`;
+    }
+    if (city) {
+      return `${city}, ${country}`;
+    }
+    return country;
+  };
+
   const details = [
     {
       icon: Globe,
       label: t.ipAddress,
-      value: ipInfo?.ip || 'Detecting...',
-      sub: ipInfo?.version || 'IPv4'
+      value: ipInfo?.ip || 'Detecting Real IP...',
+      sub: `${ipInfo?.version || 'IPv4'}${ipInfo?.postal ? ` • PIN ${ipInfo.postal}` : ''}`
     },
     {
       icon: Wifi,
@@ -60,8 +85,9 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
     {
       icon: MapPin,
       label: t.location,
-      value: `${ipInfo?.city || 'Mumbai'}, ${ipInfo?.country || 'India'}`,
-      sub: `${ipInfo?.countryFlag || '🇮🇳'} ${ipInfo?.region || 'Maharashtra'}`
+      value: getLocationDisplay(),
+      sub: `${ipInfo?.countryFlag || '🇮🇳'} ${ipInfo?.isGpsPrecise ? 'Exact GPS Verified' : (ipInfo?.region ? `${ipInfo.region} • Live Network Geo` : 'Live Network Geo')}`,
+      highlight: true
     },
     {
       icon: Clock,
@@ -90,8 +116,33 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
           <Layers className="text-cyan" size={20} />
           <div>
             <h3 className="connection-title">{t.connectionInfo}</h3>
-            <span className="connection-subtitle">Client network and telemetry environment</span>
+            <span className="connection-subtitle">Live real-time client telemetry</span>
           </div>
+        </div>
+
+        <div className="connection-header-actions">
+          {onDetectGps && (
+            <button 
+              className={`btn-secondary gps-detect-btn ${ipInfo?.isGpsPrecise ? 'gps-active' : ''}`}
+              onClick={onDetectGps}
+              disabled={isLocating}
+              title="Detect Exact GPS Coordinates"
+            >
+              <Crosshair size={13} className={isLocating ? 'spin' : ''} />
+              <span>{ipInfo?.isGpsPrecise ? 'GPS Active' : 'Exact GPS'}</span>
+            </button>
+          )}
+
+          {onRefresh && (
+            <button 
+              className="btn-icon refresh-geo-btn"
+              onClick={onRefresh}
+              disabled={isLocating}
+              title="Refresh Real Location & IP"
+            >
+              <RefreshCw size={13} className={isLocating ? 'spin' : ''} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -99,7 +150,7 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
         {details.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <div key={idx} className="connection-item">
+            <div key={idx} className={`connection-item ${item.highlight ? 'item-highlight' : ''}`}>
               <div className="item-icon-wrap">
                 <Icon size={18} />
               </div>
@@ -116,7 +167,7 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
       <div className="connection-note">
         <Info size={14} className="text-cyan" />
         <span>
-          Browser security environments provide client-side telemetry. Certain ISP route hops and exact private DNS configs may be masked by browser sandboxing.
+          Real-time network coordinates and ISP Autonomous System routing detected directly from your live connection.
         </span>
       </div>
 
@@ -135,12 +186,52 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
           justify-content: space-between;
           border-bottom: 1px solid var(--border-color);
           padding-bottom: 16px;
+          flex-wrap: wrap;
+          gap: 12px;
         }
 
         .connection-title-wrap {
           display: flex;
           align-items: center;
           gap: 12px;
+        }
+
+        .connection-header-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .gps-detect-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          font-size: 0.78rem;
+          font-weight: 700;
+          border-radius: var(--radius-full);
+          transition: all var(--transition-fast);
+        }
+
+        .gps-active {
+          background: rgba(16, 185, 129, 0.15);
+          border-color: var(--accent-emerald);
+          color: var(--accent-emerald);
+        }
+
+        .refresh-geo-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+        }
+
+        .spin {
+          animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         .connection-title {
@@ -168,6 +259,11 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
           border-radius: var(--radius-sm);
           padding: 14px 16px;
           transition: border-color var(--transition-fast);
+        }
+
+        .connection-item.item-highlight {
+          border-color: rgba(0, 229, 255, 0.35);
+          background: linear-gradient(135deg, rgba(0, 229, 255, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
         }
 
         .connection-item:hover {
@@ -204,19 +300,18 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
           font-size: 0.95rem;
           font-weight: 700;
           color: var(--text-primary);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          word-break: break-word;
         }
 
         .item-sub {
           font-size: 0.76rem;
           color: var(--text-secondary);
+          word-break: break-word;
         }
 
         .connection-note {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           gap: 8px;
           padding: 10px 14px;
           background: rgba(0, 240, 255, 0.04);
@@ -224,6 +319,7 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
           border: 1px solid rgba(0, 240, 255, 0.15);
           font-size: 0.78rem;
           color: var(--text-secondary);
+          line-height: 1.45;
         }
 
         @media (max-width: 900px) {
@@ -233,8 +329,15 @@ export default function ConnectionInfo({ ipInfo, lang = 'en' }) {
         }
 
         @media (max-width: 600px) {
+          .connection-info-card {
+            padding: 18px 14px;
+          }
           .connection-grid {
             grid-template-columns: 1fr;
+            gap: 10px;
+          }
+          .connection-item {
+            padding: 12px 14px;
           }
         }
       `}</style>
