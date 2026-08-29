@@ -75,7 +75,8 @@ export const en = {
   navCompare: "Compare",
   navFAQ: "FAQ",
   navAbout: "About",
-  navMenu: "Menu",
+  navMenu: "More",
+  navMore: "More",
   navLearn: "LEARN",
   navTools: "TOOLS",
   navSupport: "SUPPORT",
@@ -106,8 +107,10 @@ export const en = {
   faqBadge: "115+ Q&As",
   aboutDesc: "Carrier-grade telemetry & founder architecture",
   aboutBadge: "Architecture",
-  privacyDesc: "Zero-log & browser-local telemetry privacy",
-  termsDesc: "Legal terms, usage guidelines & accuracy standards",
+  privacyDesc: "Effective Date: January 2026 | Version 1.0",
+  privacyBadge: "v1.0",
+  termsDesc: "Terms of Use and Network Testing Guidelines",
+  termsBadge: "Legal",
 
   // Hero & Test Phases
   heroBadge: "Next-Generation Network Telemetry",

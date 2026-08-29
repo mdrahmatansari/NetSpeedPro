@@ -40,6 +40,7 @@ export default function Navbar({
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [menuDropdownOpen, setMenuDropdownOpen] = useState(false);
   const [langSearch, setLangSearch] = useState('');
+  const [mobileLangSearch, setMobileLangSearch] = useState('');
   
   const langMenuRef = useRef(null);
   const menuDropdownRef = useRef(null);
@@ -57,6 +58,17 @@ export default function Navbar({
       l.region.toLowerCase().includes(q)
     );
   }, [langSearch]);
+
+  const filteredMobileLanguages = useMemo(() => {
+    if (!mobileLangSearch.trim()) return LANGUAGES;
+    const q = mobileLangSearch.toLowerCase();
+    return LANGUAGES.filter(l =>
+      l.label.toLowerCase().includes(q) ||
+      l.native.toLowerCase().includes(q) ||
+      l.code.toLowerCase().includes(q) ||
+      l.region.toLowerCase().includes(q)
+    );
+  }, [mobileLangSearch]);
 
   // Primary Desktop Top-Level Navigation Items
   const navItems = [
@@ -143,6 +155,22 @@ export default function Navbar({
           desc: t.aboutDesc,
           icon: Info,
           badge: t.aboutBadge
+        },
+        {
+          id: 'privacy',
+          path: '/privacy',
+          label: t.privacyTitle || "Privacy Policy",
+          desc: t.privacyDesc || "Effective Date: January 2026 | Version 1.0",
+          icon: ShieldCheck,
+          badge: t.privacyBadge || "v1.0"
+        },
+        {
+          id: 'terms',
+          path: '/terms',
+          label: t.termsTitle || "Terms of Service",
+          desc: t.termsDesc || "Terms of Use and Network Testing Guidelines",
+          icon: BookOpen,
+          badge: t.termsBadge || "Legal"
         }
       ]
     }
@@ -267,11 +295,11 @@ export default function Navbar({
               }}
               aria-expanded={menuDropdownOpen}
               aria-haspopup="true"
-              aria-label={t.navMenu || "Menu"}
-              title={t.navMenu || "Menu"}
+              aria-label={t.navMore || t.navMenu || "More"}
+              title={t.navMore || t.navMenu || "More"}
             >
               <MenuIcon size={16} />
-              <span>{t.navMenu}</span>
+              <span>{t.navMore || t.navMenu || "More"}</span>
               <ChevronDown size={14} className={`chevron-icon ${menuDropdownOpen ? 'rotate' : ''}`} />
             </button>
 
@@ -465,59 +493,75 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Horizontal Subnav Bar (Speed Test, History, Diagnostics, Compare, Servers, Menu) */}
+      <div className="mobile-subnav-bar">
+        <div className="container mobile-subnav-container">
+          <div className="mobile-subnav-scroll">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`mobile-subnav-pill ${isActive ? 'active' : ''}`}
+                  onClick={() => handleNavClick(item.id, item.path)}
+                  disabled={isTesting && item.id !== 'speedtest'}
+                >
+                  <Icon size={13} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+
+            <button
+              type="button"
+              className={`mobile-subnav-pill menu-pill ${mobileMenuOpen || isMenuTabActive ? 'active' : ''}`}
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen);
+                setLangMenuOpen(false);
+              }}
+              aria-expanded={mobileMenuOpen}
+            >
+              <MenuIcon size={13} />
+              <span>{t.navMore || t.navMenu || "More"}</span>
+              <ChevronDown size={11} className={`chevron-icon ${mobileMenuOpen ? 'rotate' : ''}`} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile More Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+        <div className="mobile-drawer" role="dialog" aria-modal="true" aria-label="More Navigation">
           <div className="container mobile-drawer-inner">
-            {/* Quick Mobile Action Bar (Theme & Settings) */}
-            <div className="mobile-quick-actions">
-              <button
-                type="button"
-                className="mobile-quick-btn"
-                onClick={toggleTheme}
+            {/* Header of Mobile More Drawer */}
+            <div className="mobile-drawer-header">
+              <div className="mobile-drawer-header-left">
+                <div className="menu-header-badge">
+                  <Sparkles size={13} className="text-cyan" />
+                  <span>{t.brand} {t.navMore || "More"}</span>
+                </div>
+                <span className="mobile-drawer-sub">{t.heroBadge}</span>
+              </div>
+              <button 
+                type="button" 
+                className="mobile-drawer-close-btn"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close More Menu"
               >
-                {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-                <span>{theme === 'dark' ? t.light : t.dark}</span>
-              </button>
-
-              <button
-                type="button"
-                className="mobile-quick-btn"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  openSettings();
-                }}
-              >
-                <Settings size={17} />
-                <span>{t.settings}</span>
+                <X size={18} />
               </button>
             </div>
 
-            {/* Main Navigation Links */}
-            <div className="mobile-nav-links-list">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className={`mobile-nav-link ${isActive ? 'active' : ''}`}
-                    onClick={() => handleNavClick(item.id, item.path)}
-                    disabled={isTesting && item.id !== 'speedtest'}
-                  >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Categorized Menu Sections on Mobile (LEARN, TOOLS, SUPPORT) */}
+            {/* Categorized Menu Sections (LEARN, TOOLS, SUPPORT) */}
             <div className="mobile-menu-sections-container">
               {menuSections.map((sec) => (
                 <div key={sec.title} className="mobile-menu-sec-group">
-                  <span className="mobile-menu-sec-heading">{sec.title}</span>
+                  <div className="mobile-sec-heading-row">
+                    <span className="mobile-menu-sec-heading">{sec.title}</span>
+                    <span className="mobile-menu-sec-tag">{sec.tag}</span>
+                  </div>
                   <div className="mobile-menu-sec-items">
                     {sec.items.map((item) => {
                       const Icon = item.icon;
@@ -549,28 +593,23 @@ export default function Navbar({
               ))}
             </div>
 
-            {/* Mobile Language Bar */}
-            <div className="mobile-lang-bar">
-              <div className="mobile-lang-header">
-                <span className="mobile-lang-title">{t.currentLanguage} ({LANGUAGES.length}):</span>
-                <span className="mobile-lang-current">
-                  <CountryFlag country={currentLangObj.country} fallback={currentLangObj.flag} size="small" />
-                  <span>{currentLangObj.native}</span>
-                </span>
+            {/* Bottom Footer Bar */}
+            <div className="mobile-drawer-footer">
+              <div className="menu-footer-left">
+                <Activity size={14} className="text-emerald" />
+                <span>{t.tagline}</span>
               </div>
-              <div className="mobile-lang-scroll-grid">
-                {LANGUAGES.map((l) => (
-                  <button
-                    key={l.code}
-                    type="button"
-                    className={`mobile-lang-pill ${lang === l.code ? 'active' : ''}`}
-                    onClick={() => handleLanguageSelect(l.code)}
-                  >
-                    <CountryFlag country={l.country} fallback={l.flag} size="small" />
-                    <span className="pill-text">{l.native}</span>
-                  </button>
-                ))}
-              </div>
+              <button 
+                type="button" 
+                className="menu-footer-action-btn"
+                onClick={() => {
+                  handleNavClick('speedtest', '/');
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <span>{t.startTest}</span>
+                <ArrowRight size={13} />
+              </button>
             </div>
           </div>
         </div>
@@ -1266,21 +1305,20 @@ export default function Navbar({
         }
 
         .mobile-drawer {
-          position: fixed;
-          top: 70px;
+          position: absolute;
+          top: 100%;
           left: 0;
           right: 0;
-          bottom: 0;
           width: 100%;
-          max-height: calc(100dvh - 70px);
+          max-height: calc(100dvh - 104px);
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
-          background: var(--bg-card-solid);
+          background: #0b1120;
           border-bottom: 1px solid var(--border-color);
           padding: 16px 0 60px;
           animation: slideUp 0.2s ease-out;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-          z-index: 499;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+          z-index: 9999;
           box-sizing: border-box;
         }
 
@@ -1292,77 +1330,68 @@ export default function Navbar({
           box-sizing: border-box;
         }
 
-        .mobile-quick-actions {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 8px;
+        /* Mobile More Drawer Styles */
+        .mobile-drawer-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
           padding-bottom: 12px;
           border-bottom: 1px solid var(--border-color);
           width: 100%;
           box-sizing: border-box;
         }
 
-        .mobile-quick-btn {
+        .mobile-drawer-header-left {
           display: flex;
           align-items: center;
-          justify-content: center;
           gap: 8px;
-          padding: 10px 14px;
+          flex-wrap: wrap;
+        }
+
+        .mobile-drawer-sub {
+          font-size: 0.72rem;
+          color: var(--text-tertiary);
+          font-weight: 500;
+        }
+
+        .mobile-drawer-close-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: var(--radius-xs);
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
-          border-radius: var(--radius-sm);
-          color: var(--text-primary);
-          font-size: 0.85rem;
-          font-weight: 700;
+          color: var(--text-secondary);
           cursor: pointer;
           transition: all var(--transition-fast);
         }
 
-        .mobile-quick-btn:hover {
+        .mobile-drawer-close-btn:hover {
           border-color: var(--accent-cyan);
           color: var(--accent-cyan);
         }
 
-        .mobile-nav-links-list {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .mobile-nav-link {
+        .mobile-drawer-footer {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
+          justify-content: space-between;
+          padding: 12px 14px;
+          background: rgba(0, 240, 255, 0.03);
+          border: 1px solid var(--border-color);
           border-radius: var(--radius-sm);
-          color: var(--text-secondary);
-          font-size: 0.95rem;
-          font-weight: 700;
-          text-align: start;
-          width: 100%;
-          min-height: 44px;
-          transition: all var(--transition-fast);
+          gap: 12px;
           box-sizing: border-box;
-        }
-
-        .mobile-nav-link:hover {
-          background: var(--bg-tertiary);
-          color: var(--text-primary);
-        }
-
-        .mobile-nav-link.active {
-          color: var(--accent-cyan);
-          background: rgba(0, 229, 255, 0.12);
-          border: 1px solid rgba(0, 229, 255, 0.25);
+          width: 100%;
+          margin-top: 4px;
         }
 
         /* Mobile Menu Sections */
         .mobile-menu-sections-container {
           display: flex;
           flex-direction: column;
-          gap: 14px;
+          gap: 16px;
           padding: 12px 0;
           border-top: 1px solid var(--border-color);
           width: 100%;
@@ -1377,12 +1406,26 @@ export default function Navbar({
           box-sizing: border-box;
         }
 
+        .mobile-sec-heading-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 4px;
+        }
+
         .mobile-menu-sec-heading {
-          font-size: 0.72rem;
+          font-size: 0.74rem;
           font-weight: 800;
           color: var(--accent-cyan);
           letter-spacing: 0.08em;
-          padding-left: 4px;
+          text-transform: uppercase;
+        }
+
+        .mobile-menu-sec-tag {
+          font-size: 0.62rem;
+          font-weight: 800;
+          color: var(--text-tertiary);
+          letter-spacing: 0.05em;
           text-transform: uppercase;
         }
 
@@ -1597,6 +1640,134 @@ export default function Navbar({
           border-color: #0284c7;
         }
 
+        /* Mobile Horizontal Subnav Bar */
+        .mobile-subnav-bar {
+          display: none;
+          width: 100%;
+          background: var(--bg-tertiary);
+          border-top: 1px solid var(--border-light);
+          border-bottom: 1px solid var(--border-color);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          box-sizing: border-box;
+        }
+
+        .mobile-subnav-container {
+          padding: 6px 12px;
+        }
+
+        .mobile-subnav-scroll {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          -webkit-overflow-scrolling: touch;
+          padding: 2px 0;
+          width: 100%;
+        }
+
+        .mobile-subnav-scroll::-webkit-scrollbar {
+          display: none;
+        }
+
+        .mobile-subnav-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 6px 12px;
+          border-radius: var(--radius-full);
+          background: var(--bg-card-solid);
+          border: 1px solid var(--border-color);
+          color: var(--text-secondary);
+          font-size: 0.78rem;
+          font-weight: 700;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: all var(--transition-fast);
+          flex-shrink: 0;
+          min-height: 32px;
+          box-sizing: border-box;
+        }
+
+        .mobile-subnav-pill:hover {
+          background: var(--bg-card-hover);
+          color: var(--text-primary);
+          border-color: var(--accent-cyan);
+        }
+
+        .mobile-subnav-pill.active {
+          background: var(--accent-cyan);
+          color: #000000;
+          border-color: var(--accent-cyan);
+          box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .mobile-subnav-pill.menu-pill {
+          background: rgba(0, 240, 255, 0.08);
+          border-color: rgba(0, 240, 255, 0.25);
+          color: var(--accent-cyan);
+        }
+
+        .mobile-subnav-pill.menu-pill.active {
+          background: var(--accent-cyan);
+          color: #000000;
+        }
+
+        [data-theme="light"] .mobile-subnav-bar {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+        }
+
+        [data-theme="light"] .mobile-subnav-pill {
+          background: #ffffff;
+          border-color: #cbd5e1;
+          color: #334155;
+        }
+
+        [data-theme="light"] .mobile-subnav-pill.active {
+          background: #0284c7;
+          color: #ffffff;
+          border-color: #0284c7;
+        }
+
+        [data-theme="light"] .mobile-subnav-pill.menu-pill {
+          background: rgba(2, 132, 199, 0.1);
+          color: #0284c7;
+        }
+
+        [data-theme="light"] .mobile-subnav-pill.menu-pill.active {
+          background: #0284c7;
+          color: #ffffff;
+        }
+
+        [data-theme="light"] .mobile-drawer {
+          background: #ffffff;
+          border-color: #cbd5e1;
+          box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+        }
+
+        [data-theme="light"] .mobile-drawer-header {
+          border-color: #e2e8f0;
+        }
+
+        [data-theme="light"] .mobile-drawer-close-btn {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #334155;
+        }
+
+        [data-theme="light"] .mobile-drawer-close-btn:hover {
+          background: #e2e8f0;
+          border-color: #0284c7;
+          color: #0284c7;
+        }
+
+        [data-theme="light"] .mobile-drawer-footer {
+          background: #f8fafc;
+          border-color: #e2e8f0;
+        }
+
         @media (max-width: 1080px) {
           .desktop-menu-dropdown {
             width: 580px;
@@ -1613,6 +1784,13 @@ export default function Navbar({
           }
           .mobile-menu-btn {
             display: inline-flex;
+          }
+          .mobile-subnav-bar {
+            display: block;
+          }
+          .mobile-drawer {
+            top: 100%;
+            max-height: calc(100dvh - 105px);
           }
         }
 
@@ -1643,8 +1821,8 @@ export default function Navbar({
             height: 34px;
           }
           .mobile-drawer {
-            top: 60px;
-            max-height: calc(100dvh - 60px);
+            top: 100%;
+            max-height: calc(100dvh - 100px);
           }
           .custom-lang-dropdown {
             position: fixed;
