@@ -1266,19 +1266,30 @@ export default function Navbar({
         }
 
         .mobile-drawer {
+          position: fixed;
+          top: 70px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          width: 100%;
+          max-height: calc(100dvh - 70px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
           background: var(--bg-card-solid);
           border-bottom: 1px solid var(--border-color);
-          padding: 16px 0 24px;
+          padding: 16px 0 60px;
           animation: slideUp 0.2s ease-out;
-          box-shadow: var(--shadow-md);
-          max-height: calc(100vh - 70px);
-          overflow-y: auto;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+          z-index: 499;
+          box-sizing: border-box;
         }
 
         .mobile-drawer-inner {
           display: flex;
           flex-direction: column;
           gap: 16px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-quick-actions {
@@ -1287,6 +1298,8 @@ export default function Navbar({
           gap: 8px;
           padding-bottom: 12px;
           border-bottom: 1px solid var(--border-color);
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-quick-btn {
@@ -1301,6 +1314,8 @@ export default function Navbar({
           color: var(--text-primary);
           font-size: 0.85rem;
           font-weight: 700;
+          cursor: pointer;
+          transition: all var(--transition-fast);
         }
 
         .mobile-quick-btn:hover {
@@ -1312,6 +1327,8 @@ export default function Navbar({
           display: flex;
           flex-direction: column;
           gap: 6px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-nav-link {
@@ -1323,10 +1340,11 @@ export default function Navbar({
           color: var(--text-secondary);
           font-size: 0.95rem;
           font-weight: 700;
-          text-align: left;
+          text-align: start;
           width: 100%;
           min-height: 44px;
           transition: all var(--transition-fast);
+          box-sizing: border-box;
         }
 
         .mobile-nav-link:hover {
@@ -1347,12 +1365,16 @@ export default function Navbar({
           gap: 14px;
           padding: 12px 0;
           border-top: 1px solid var(--border-color);
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-menu-sec-group {
           display: flex;
           flex-direction: column;
           gap: 6px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-menu-sec-heading {
@@ -1368,21 +1390,24 @@ export default function Navbar({
           display: flex;
           flex-direction: column;
           gap: 6px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-menu-item-btn {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           gap: 12px;
           padding: 10px 14px;
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
           border-radius: var(--radius-sm);
-          text-align: left;
+          text-align: start;
           min-height: 48px;
           cursor: pointer;
           transition: all var(--transition-fast);
           width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-menu-item-btn:hover {
@@ -1405,6 +1430,7 @@ export default function Navbar({
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          margin-top: 1px;
         }
 
         .mobile-item-info {
@@ -1412,6 +1438,7 @@ export default function Navbar({
           flex-direction: column;
           gap: 2px;
           flex: 1;
+          min-width: 0;
         }
 
         .mobile-item-title-row {
@@ -1419,27 +1446,34 @@ export default function Navbar({
           align-items: center;
           justify-content: space-between;
           gap: 6px;
+          flex-wrap: wrap;
+          width: 100%;
         }
 
         .mobile-item-title {
-          font-size: 0.9rem;
+          font-size: 0.88rem;
           font-weight: 700;
           color: var(--text-primary);
+          word-break: break-word;
+          min-width: 0;
         }
 
         .mobile-item-badge {
-          font-size: 0.65rem;
+          font-size: 0.62rem;
           font-weight: 800;
           color: var(--accent-cyan);
           background: rgba(0, 229, 255, 0.12);
           padding: 1px 6px;
           border-radius: 4px;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
 
         .mobile-item-desc {
-          font-size: 0.75rem;
+          font-size: 0.74rem;
           color: var(--text-tertiary);
-          line-height: 1.3;
+          line-height: 1.35;
+          word-break: break-word;
         }
 
         .mobile-lang-bar {
@@ -1449,6 +1483,8 @@ export default function Navbar({
           display: flex;
           flex-direction: column;
           gap: 8px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-lang-header {
@@ -1469,30 +1505,38 @@ export default function Navbar({
           font-size: 0.8rem;
           font-weight: 700;
           color: var(--accent-cyan);
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
         }
 
         .mobile-lang-scroll-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 6px;
-          max-height: 180px;
+          max-height: 190px;
           overflow-y: auto;
           padding-right: 4px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-lang-pill {
           display: flex;
           align-items: center;
           gap: 6px;
-          padding: 8px 10px;
+          padding: 7px 8px;
           border-radius: var(--radius-xs);
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
           color: var(--text-secondary);
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           font-weight: 700;
           cursor: pointer;
-          min-height: 40px;
+          min-height: 38px;
+          box-sizing: border-box;
+          overflow: hidden;
+          width: 100%;
         }
 
         .mobile-lang-pill.active {
@@ -1572,24 +1616,52 @@ export default function Navbar({
           }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
           .navbar-container {
-            height: 62px;
+            height: 60px;
+            padding: 0 14px;
             gap: 8px;
           }
-          .nav-actions {
-            gap: 6px;
+          .theme-toggle-btn,
+          .settings-btn {
+            display: none;
           }
-          .btn-icon {
-            width: 36px;
-            height: 36px;
+          .brand-icon-wrapper {
+            width: 32px;
+            height: 32px;
+          }
+          .brand-name {
+            font-size: 1.15rem;
           }
           .custom-lang-btn {
-            padding: 6px 8px;
-            font-size: 0.78rem;
+            padding: 5px 8px;
+            font-size: 0.75rem;
+            gap: 4px;
           }
-          .mobile-lang-scroll-grid {
-            grid-template-columns: repeat(2, 1fr);
+          .mobile-menu-btn {
+            width: 34px;
+            height: 34px;
+          }
+          .mobile-drawer {
+            top: 60px;
+            max-height: calc(100dvh - 60px);
+          }
+          .custom-lang-dropdown {
+            position: fixed;
+            top: 64px;
+            right: 12px;
+            left: 12px;
+            width: auto;
+            max-width: calc(100vw - 24px);
+          }
+        }
+
+        @media (max-width: 360px) {
+          .brand-name {
+            font-size: 1.05rem;
+          }
+          .custom-lang-btn .lang-icon {
+            display: none;
           }
         }
 
